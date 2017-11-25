@@ -9,7 +9,8 @@ var models = require('./models');
 
 var index = require('./routes/index');
 var users = require('./routes/users');
-var gta = require('./routes/gta')
+var gta = require('./routes/gta');
+var exercise = require('./routes/exercise');
 
 var app = express();
 
@@ -28,6 +29,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/', index);
 app.use('/users', users);
 app.use('/gta', gta);
+app.use('/exercise', exercise);
 
 // Sync Database
 models.sequelize.sync().then(function() {

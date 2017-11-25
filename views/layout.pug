@@ -4,13 +4,34 @@ html
     meta(charset="UTF-8")
     meta(name="viewport", content="width=device-width, initial-scale=1")
 
-    title= title
+    title GTA-Monitor
 
     link(rel="stylesheet", href="/css/lib/bootstrap.min.css")
-
     link(rel="stylesheet", href="/css/style.css")
 
-    script(src="/js/lib/jquery-3.2.1.min.js")
-    script(src="/js/lib/bootstrap.min.js")
   body
+    nav(class="navbar navbar-expand-lg navbar-dark bg-dark")
+      a(class="navbar-brand", href="#") GTA-Monitor
+      button(class="navbar-toggler", type="button", data-toggle="collapse", data-target="#navbarSupportedContent", aria-controls="navbarSupportedContent",
+             aria-expanded="false", aria-label="Toggle navigation")
+        span(class="navbar-toggler-icon")
+
+      div(class="collapse navbar-collapse", id="navbarSupportedContent")
+        ul(class="navbar-nav mr-auto")
+          li(class="nav-item active")
+            a(class="nav-link", href="/") Home
+              span(class="sr-only") (current)
+          li(class="nav-item")
+            a(class="nav-link", href="/current") Current exercise
+          li(class="nav-item dropdown")
+            a(class="nav-link dropdown-toggle", href="#", id="navbarDropdown", role="button", data-toggle="dropdown", aria-haspopup="true", aria-expanded="false") Past exercises
+            div(class="dropdown-menu", aria-labelledby="navbarDropdown")
+              a(class="dropdown-item" href="#") X
+              a(class="dropdown-item" href="#") Y
+              a(class="dropdown-item" href="#") Z
+
     block content
+
+    script(src="/js/lib/jquery-3.2.1.min.js")
+    script(src="/js/lib/popper.min.js")
+    script(src="/js/lib/bootstrap.min.js")
