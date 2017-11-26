@@ -24,8 +24,11 @@ router.post('/create', function(req, res, next) {
                     starts_at: req.body.starts_at,
                     ends_at: req.body.ends_at}
         models.Exercise.create(data).then(function(exercise) {
-                                              res.redirect('/');
-                                          });
+            var data = exercise.dataValues;
+            var msg = 'Exercise ' + data.name + ' #' + data.number + ' created';
+            req.flash('success', msg);
+            res.redirect('/');
+        });
     }
 });
 

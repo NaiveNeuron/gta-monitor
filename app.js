@@ -5,6 +5,8 @@ var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var expressValidator = require('express-validator');
+var session = require('express-session');
+var flash = require('flash');
 
 var models = require('./models');
 
@@ -27,6 +29,8 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(expressValidator());
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
+app.use(session({secret: 'strong-secret', resave: false, saveUninitialized: false}));
+app.use(flash());
 
 app.use('/', index);
 app.use('/users', users);

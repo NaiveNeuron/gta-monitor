@@ -32,6 +32,9 @@ html
               a(class="dropdown-item" href="#") Y
               a(class="dropdown-item" href="#") Z
 
+    while message = flash.shift()
+      div(class="flash-message narrow-content alert alert-" + message.type)= message.message
+
     block content
 
     script(src="/js/lib/jquery-3.2.1.min.js")

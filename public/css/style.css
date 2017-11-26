@@ -7,3 +7,7 @@ body {
     width: 70%;
     margin: 0 auto;
 }
+
+.flash-message {
+    margin-top: 10px;
+}
