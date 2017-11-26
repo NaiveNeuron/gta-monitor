@@ -2,3 +2,8 @@ body {
     font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
     background-color: #F7F7F9;
 }
+
+.narrow-content {
+    width: 70%;
+    margin: 0 auto;
+}
