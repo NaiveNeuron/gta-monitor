@@ -1,5 +1,8 @@
 doctype html
 html
+  block link
+    -var selected = 'Home'; // default
+
   head
     meta(charset="UTF-8")
     meta(name="viewport", content="width=device-width, initial-scale=1")
@@ -11,6 +14,8 @@ html
 
     link(rel="stylesheet", href="/css/style.css")
 
+  -var menu = { 'Home': '/', 'Current Exercise': '/exercise/current', 'Create Exercise': '/exercise/create' };
+
   body
     nav(class="navbar navbar-expand-lg navbar-dark bg-dark")
       a(class="navbar-brand", href="#") GTA-Monitor
@@ -20,11 +25,14 @@ html
 
       div(class="collapse navbar-collapse", id="navbarSupportedContent")
         ul(class="navbar-nav mr-auto")
-          li(class="nav-item active")
-            a(class="nav-link", href="/") Home
-              span(class="sr-only") (current)
-          li(class="nav-item")
-            a(class="nav-link", href="/current") Current exercise
+          each value, key in menu
+            if selected === key
+              li(class="nav-item active")
+                a(class="nav-link", href=value)= key
+            else
+              li(class="nav-item")
+                a(class="nav-link", href=value)= key
+
           li(class="nav-item dropdown")
             a(class="nav-link dropdown-toggle", href="#", id="navbarDropdown", role="button", data-toggle="dropdown", aria-haspopup="true", aria-expanded="false") Past exercises
             div(class="dropdown-menu", aria-labelledby="navbarDropdown")
