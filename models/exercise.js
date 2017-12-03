@@ -1,39 +1,50 @@
 'use strict';
 
-var Sequelize = require('sequelize');
-
 module.exports = function(sequelize, DataTypes) {
     var Exercise = sequelize.define('Exercise', {
         id: {
             autoIncrement: true,
             primaryKey: true,
-            type: Sequelize.INTEGER
+            type: DataTypes.INTEGER
         },
 
         number: {
-            type: Sequelize.INTEGER,
-            notEmpty: true
+            type: DataTypes.INTEGER,
+            allowNull: false,
+            validate: {
+                isNumeric: true
+            }
         },
 
         name: {
-            type: Sequelize.STRING,
+            type: DataTypes.STRING,
         },
 
         starts_at: {
-            type: Sequelize.DATE,
-            notEmpty: true
+            type: DataTypes.DATE,
+            allowNull: false,
+            validate: {
+                isDate: true
+            }
         },
 
         ends_at: {
-            type: Sequelize.DATE,
-            notEmpty: true
+            type: DataTypes.DATE,
+            allowNull: false,
+            validate: {
+                isDate: true
+            }
         },
 
         status: {
-            type: Sequelize.ENUM('scheduled', 'active', 'done'),
+            type: DataTypes.ENUM('scheduled', 'active', 'done'),
             defaultValue: 'scheduled'
         }
     });
+
+    Exercise.associate = function(models) {
+        Exercise.hasMany(models.Post, {foreignKey: 'exercise_id', onDelete: 'CASCADE'});
+    };
 
     return Exercise;
 };
