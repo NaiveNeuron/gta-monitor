@@ -17,6 +17,7 @@
     "flash": "^1.1.0",
     "morgan": "~1.9.0",
     "mysql2": "^1.5.1",
+    "node-schedule": "^1.2.5",
     "pug": "2.0.0-beta11",
     "sequelize": "^4.23.1",
     "sequelize-cli": "^3.1.0",

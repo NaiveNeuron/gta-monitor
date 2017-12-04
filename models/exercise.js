@@ -10,6 +10,7 @@ module.exports = function(sequelize, DataTypes) {
 
         number: {
             type: DataTypes.INTEGER,
+            unique: true,
             allowNull: false,
             validate: {
                 isNumeric: true

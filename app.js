@@ -7,6 +7,7 @@ var bodyParser = require('body-parser');
 var expressValidator = require('express-validator');
 var session = require('express-session');
 var flash = require('flash');
+var schedule = require('node-schedule');
 
 var models = require('./models');
 
@@ -42,6 +43,24 @@ models.sequelize.sync().then(function() {
     console.log('Nice! Database looks fine');
 }).catch(function(err) {
     console.log(err, 'Something went wrong with the Database Update!');
+});
+
+/* Change status of exercises scheduled -> active, active -> done */
+var j = schedule.scheduleJob('* * * * *', function(){
+    models.Exercise.findAll().then(function(resultset) {
+        resultset.forEach(function(item) {
+            var ex = item.get({plain: true});
+            var curr = new Date();
+            var starts = new Date(ex.starts_at);
+            var ends = new Date(ex.ends_at);
+
+            if (ex.status == 'scheduled' && starts.getTime() < curr.getTime()) {
+                item.update({status: 'active'});
+            } else if (ex.status == 'active' && ends.getTime() < curr.getTime()) {
+                item.update({status: 'done'});
+            }
+        });
+    });
 });
 
 // catch 404 and forward to error handler
