@@ -1,0 +1,14 @@
+extends layout
+
+block link
+  -var selected = 'Active Exercise';
+
+block content
+  if exercise == null
+    div(class="narrow-content")
+      h1 No active exercise at the moment
+  else
+    div(class="active-exercise-container")
+      div(class="active-exercise-header")
+        h5 Exercise #{exercise.name} - number #{exercise.number}
+      div(class="active-exercise-students")

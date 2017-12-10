@@ -14,7 +14,7 @@ html
 
     link(rel="stylesheet", href="/css/style.css")
 
-  -var menu = { 'Home': '/', 'Current Exercise': '/exercise/current', 'Create Exercise': '/exercise/create' };
+  -var menu = {'Home': '/', 'Create Exercise': '/exercise/create', 'Active Exercise': '/exercise/active'};
 
   body
     nav(class="navbar navbar-expand-lg navbar-dark bg-dark")
@@ -48,6 +48,7 @@ html
     script(src="/js/lib/jquery-3.2.1.min.js")
     script(src="/js/lib/popper.min.js")
     script(src="/js/lib/bootstrap.min.js")
+    script(src="/socket.io/socket.io.js")
 
     block js
 

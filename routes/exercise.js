@@ -32,4 +32,14 @@ router.post('/create', function(req, res, next) {
     }
 });
 
+router.get('/active', function(req, res, next) {
+    models.Exercise.findOne({
+        where: {
+            status: 'active',
+        }
+    }).then(function(exercise) {
+        res.render('active_exercise', {header: 'Active Exercise', exercise: exercise});
+    });
+});
+
 module.exports = router;

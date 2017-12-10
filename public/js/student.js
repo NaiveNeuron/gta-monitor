@@ -1,0 +1,4 @@
+function Student()
+{
+    var user;
+}

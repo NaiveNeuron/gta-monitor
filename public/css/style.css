@@ -11,3 +11,11 @@ body {
 .flash-message {
     margin-top: 10px;
 }
+
+.active-exercise-container {
+    padding: 20px;
+}
+
+.active-exercise-container .active-exercise-header {
+    border-bottom: 1px solid #ccc;
+}
