@@ -1,5 +1,7 @@
 var express = require('express');
+var sequelize = require('sequelize');
 var models = require('../models');
+var socketapi = require('../socketapi');
 var router = express.Router();
 
 router.get('/create', function(req, res, next) {
@@ -39,6 +41,28 @@ router.get('/active', function(req, res, next) {
         }
     }).then(function(exercise) {
         res.render('active_exercise', {header: 'Active Exercise', exercise: exercise});
+    });
+});
+
+/* if this event is called, active exercise exists */
+socketapi.io.on('connect', function(socket) {
+    models.Exercise.findOne({
+        where: {
+            status: 'active',
+        },
+        attributes: ['id']
+    }).then(function(exercise) {
+        models.Post.findAll({
+            where: {
+                exercise_id: exercise.id
+            }
+        }).then(function(resultset){
+            models.Post.findAll({
+                attributes: [[sequelize.fn('DISTINCT', sequelize.col('user')), 'user']]
+            }).then(function(users){
+                socket.emit('load_active_exercise', resultset, users);
+            });
+        });
     });
 });
 

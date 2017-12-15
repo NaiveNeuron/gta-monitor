@@ -3,6 +3,13 @@ extends layout
 block link
   -var selected = 'Active Exercise';
 
+block js
+  if exercise != null
+    script(src="/js/socket.js")
+    script(src="/js/command.js")
+    script(src="/js/student.js")
+    script(src="/js/active_exercise.js")
+
 block content
   if exercise == null
     div(class="narrow-content")
