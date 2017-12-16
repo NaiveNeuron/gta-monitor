@@ -57,11 +57,7 @@ socketapi.io.on('connect', function(socket) {
                 exercise_id: exercise.id
             }
         }).then(function(resultset){
-            models.Post.findAll({
-                attributes: [[sequelize.fn('DISTINCT', sequelize.col('user')), 'user']]
-            }).then(function(users){
-                socket.emit('load_active_exercise', resultset, users);
-            });
+            socket.emit('load_active_exercise', resultset);
         });
     });
 });

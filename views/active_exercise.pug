@@ -6,7 +6,7 @@ block link
 block js
   if exercise != null
     script(src="/js/socket.js")
-    script(src="/js/command.js")
+    script(src="/js/post.js")
     script(src="/js/student.js")
     script(src="/js/active_exercise.js")
 
@@ -16,6 +16,6 @@ block content
       h1 No active exercise at the moment
   else
     div(class="active-exercise-container")
-      div(class="active-exercise-header")
+      div(id="active-exercise-header")
         h5 Exercise #{exercise.name} - number #{exercise.number}
-      div(class="active-exercise-students")
+      div(id="active-exercise-students")

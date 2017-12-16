@@ -16,6 +16,76 @@ body {
     padding: 20px;
 }
 
-.active-exercise-container .active-exercise-header {
+.active-exercise-container #active-exercise-header {
     border-bottom: 1px solid #ccc;
+}
+
+.active-exercise-container #active-exercise-students {
+    margin-top: 10px;
+}
+.active-exercise-container #active-exercise-students::after {
+    content: '';
+    display: block;
+    clear: both;
+}
+
+.user-box {
+    width: 32%;
+    font-size: 120%;
+    padding: 10px;
+    margin: 0.5%;
+    float: left;
+    word-wrap: break-word;
+}
+.user-box .user-box-info {
+    text-align: center;
+}
+.user-box span {
+    margin-left: 5px;
+    margin-right: 5px;
+}
+.user-box .user-box-command {
+    font-size: 80%;
+}
+
+
+
+
+
+
+@media (min-width: 1200px) {
+
+}
+
+/* landscape tablets */
+@media (min-width: 992px) and (max-width: 1199px) {
+    .user-box {
+        width: 32%;
+    }
+    .user-box span {
+        width: 100%;
+        display: block;
+    }
+}
+
+/* portrait tablets and landscape phones */
+@media (max-width: 991px) and (min-width: 768px) {
+    .user-box {
+        width: 32%;
+    }
+    .user-box span {
+        width: 100%;
+        display: block;
+    }
+}
+
+/* phones in portrait mode */
+@media (max-width: 767px) {
+    .user-box {
+        width: 32%;
+    }
+    .user-box span {
+        width: 100%;
+        display: block;
+    }
 }
