@@ -1,4 +1,5 @@
 var express = require('express');
+var socketapi = require('../socketapi');
 var router = express.Router();
 
 var models = require('../models');
@@ -27,7 +28,10 @@ router.post('/', function(req, res, next) {
                 data.command = d.command;
                 data.level = d.level;
             }
-            models.Post.create(data);
+
+            models.Post.create(data).then(function(post) {
+                socketapi.io.emit('new_post', post);
+            });
         });
     });
 

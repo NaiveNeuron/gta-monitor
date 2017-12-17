@@ -40,11 +40,11 @@ body {
 .user-box .user-box-info {
     text-align: center;
 }
-.user-box span {
+.user-box .user-box-info span {
     margin-left: 5px;
     margin-right: 5px;
 }
-.user-box .user-box-command {
+.user-box .user-box-command-info {
     font-size: 80%;
 }
 
@@ -62,7 +62,7 @@ body {
     .user-box {
         width: 32%;
     }
-    .user-box span {
+    .user-box .user-box-info span {
         width: 100%;
         display: block;
     }
@@ -73,7 +73,7 @@ body {
     .user-box {
         width: 32%;
     }
-    .user-box span {
+    .user-box .user-box-info span {
         width: 100%;
         display: block;
     }
@@ -84,7 +84,7 @@ body {
     .user-box {
         width: 32%;
     }
-    .user-box span {
+    .user-box .user-box-info span {
         width: 100%;
         display: block;
     }

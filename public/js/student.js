@@ -5,6 +5,7 @@ function Student(user, hostname, ip)
     this.ip = ip;
     this.level = 1;
     this.history = [];
+    this.exit = false;
 }
 
 Student.prototype.get_name_hostname = function() {
@@ -12,8 +13,17 @@ Student.prototype.get_name_hostname = function() {
 }
 
 Student.prototype.get_last_command = function () {
-    // TODO
-    return 'test | test | test | test | test |';
+    for (var i = this.history.length - 1; i >= 0; i--) {
+        if (this.history[i].type == 'command')
+            return this.history[i].command;
+    }
+    return '';
+}
+
+Student.prototype.get_box_background = function() {
+    if (this.exit)
+        return 'bg-success';
+    return 'bg-primary';
 }
 
 Student.prototype.add_post = function(post) {
@@ -26,9 +36,11 @@ Student.prototype.add_post = function(post) {
     if ('command' in post)
         command = post.command
 
+    this.history.push(new Post(post.type, post.date, post.user, post.hostname,
+                               post.ip, level, command));
+
     if (post.type == 'passed')
         this.level++;
-
-    this.history.push(new Post(post.type, post.date, post.user, post.hostname,
-                               post.ip, level, command))
+    else if (post.type == 'exit')
+        this.exit = true;
 }
