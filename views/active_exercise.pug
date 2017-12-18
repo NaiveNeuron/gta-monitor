@@ -17,5 +17,8 @@ block content
   else
     div(class="active-exercise-container")
       div(id="active-exercise-header")
-        h5 Exercise #{exercise.name} - number #{exercise.number}
+        h5 Exercise #{exercise.name} - number #{exercise.number} - students finished/all&nbsp;&nbsp;
+          span(id="active-exercise-students-finished") 0
+          span /
+          span(id="active-exercise-students-all") 0
       div(id="active-exercise-students")

@@ -2,11 +2,14 @@ function Exercise()
 {
     this.number;
     this.students = {};
+    this.all = 0;
+    this.finished = 0;
 }
 
 Exercise.prototype.create_student_and_add_post = function(post) {
     if (!(post.user in this.students)) {
         this.students[post.user] = new Student(post.user, post.hostname, post.ip);
+        this.all++;
     }
     this.students[post.user].add_post(post);
 }
@@ -14,11 +17,16 @@ Exercise.prototype.create_student_and_add_post = function(post) {
 Exercise.prototype.initialize_students = function(posts) {
     for(var i = 0; i < posts.length; i++) {
         this.create_student_and_add_post(posts[i]);
+        if (posts[i].type == 'exit')
+            this.finished++;
     }
 
     for(var user in this.students) {
         this.create_new_box(this.students[user]);
     }
+
+    this.update_started_students();
+    this.update_finished_students();
 }
 
 Exercise.prototype.create_new_box = function(student) {
@@ -41,10 +49,13 @@ Exercise.prototype.new_post = function(post) {
     switch (post.type) {
         case 'start':
             this.create_new_box(this.students[post.user]);
+            this.update_started_students();
             break;
         case 'exit':
             /* TODO: check if we need to remove other bg-xxx classes in the future */
             $('#student-' + post.user).removeClass('bg-primary').addClass('bg-success');
+            this.finished++;
+            this.update_finished_students();
             break;
         case 'command':
             $('#student-' + post.user + ' .user-box-command').text(post.command);
@@ -55,8 +66,12 @@ Exercise.prototype.new_post = function(post) {
     }
 }
 
-
-
+Exercise.prototype.update_started_students = function() {
+    $('#active-exercise-students-all').text(this.all);
+}
+Exercise.prototype.update_finished_students = function() {
+    $('#active-exercise-students-finished').text(this.finished);
+}
 
 var exercise = new Exercise();
 
