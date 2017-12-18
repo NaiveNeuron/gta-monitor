@@ -26,7 +26,7 @@ Exercise.prototype.create_new_box = function(student) {
             +   '<div class="user-box-info">'
             +     '<span class="user-box-user">' + student.get_name_hostname() + '</span>'
             +     '<span class="user-box-ip">' + student.ip + '</span>'
-            +     '<span class="user-box-level">Level: ' + student.level + '</span>'
+            +     '<span>Level: <span class="user-box-level">' + student.level + '</span></span>'
             +   '</div>'
             +   '<div class="user-box-command-info">Latest: $ '
             +     '<span class="user-box-command">' + student.get_last_command() + '</span>'
@@ -49,6 +49,9 @@ Exercise.prototype.new_post = function(post) {
         case 'command':
             $('#student-' + post.user + ' .user-box-command').text(post.command);
             break;
+        case 'passed':
+            $('#student-' + post.user + ' .user-box-level').text(this.students[post.user].level);
+            break;
     }
 }
 
@@ -63,9 +66,4 @@ socket.on('load_active_exercise', function(posts){
 
 socket.on('new_post', function(post) {
     exercise.new_post(post);
-});
-
-$(document).ready(function() {
-
-
 });
