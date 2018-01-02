@@ -33,10 +33,14 @@ router.post('/create', function(req, res, next) {
                     starts_at: req.body.starts_at,
                     ends_at: req.body.ends_at};
         models.Exercise.create(data).then(function(exercise) {
-            var data = exercise.dataValues;
-            var msg = 'Exercise ' + data.name + ' #' + data.number + ' created';
-            req.flash('success', msg);
-            res.redirect('/');
+            models.Exercise.findAll().then(function(resultset) {
+                req.app.locals.navbar_exercises = resultset;
+
+                var data = exercise.dataValues;
+                var msg = 'Exercise ' + data.name + ' #' + data.number + ' created';
+                req.flash('success', msg);
+                res.redirect('/');
+            });
         });
     }
 });
@@ -71,9 +75,13 @@ router.post('/edit/:exercise_id', function(req, res, next) {
                 id: req.params.exercise_id
             }
         }).then(function(exercise) {
-            var msg = 'Exercise ' + data.name + ' #' + data.number + ' updated';
-            req.flash('success', msg);
-            res.redirect('/');
+            models.Exercise.findAll().then(function(resultset) {
+                req.app.locals.navbar_exercises = resultset;
+
+                var msg = 'Exercise ' + data.name + ' #' + data.number + ' updated';
+                req.flash('success', msg);
+                res.redirect('/');
+            });
         });
     }
 });
