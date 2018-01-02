@@ -36,6 +36,7 @@ body {
     margin: 0.5%;
     float: left;
     word-wrap: break-word;
+    cursor: pointer;
 }
 .user-box .user-box-info {
     text-align: center;

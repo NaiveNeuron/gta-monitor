@@ -30,13 +30,12 @@ Exercise.prototype.initialize_students = function(posts) {
 }
 
 Exercise.prototype.create_new_box = function(student) {
-    var box = '<div class="' + student.get_box_background() + ' text-white user-box" id="student-' + student.user + '">'
+    var box = '<div class="' + student.get_box_background() + ' text-white user-box" id="student-' + student.user + '" data-username="' + student.user + '">'
             +   '<div class="user-box-info">'
             +     '<span class="user-box-user">' + student.get_name_hostname() + '</span>'
-            +     '<span class="user-box-ip">' + student.ip + '</span>'
             +     '<span>Level: <span class="user-box-level">' + student.level + '</span></span>'
             +   '</div>'
-            +   '<div class="user-box-command-info">Latest: $ '
+            +   '<div class="user-box-command-info">$ '
             +     '<span class="user-box-command">' + student.get_last_command() + '</span>'
             +   '</div>'
             + '</div>';
@@ -75,10 +74,21 @@ Exercise.prototype.update_finished_students = function() {
 
 var exercise = new Exercise();
 
-socket.on('load_active_exercise', function(posts){
+socket.on('load_active_exercise', function(posts) {
     exercise.initialize_students(posts);
 });
 
 socket.on('new_post', function(post) {
     exercise.new_post(post);
+});
+
+$(document).on('click', '.user-box', function(e) {
+    var user = $(this).attr('data-username');
+    var student = exercise.students[user];
+    //TODO
+    $('.modal-title').text(student.get_name_hostname());
+    $('.modal-ip').text(student.ip);
+
+
+    $('#student-detail-modal').modal('show');
 });

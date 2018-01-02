@@ -1,0 +1,47 @@
+extends layout
+
+block css
+  link(rel="stylesheet", href="/css/lib/flatpickr.min.css")
+
+block js
+  script(src="/js/lib/flatpickr.min.js")
+
+block link
+  -var selected = 'Create Exercise';
+
+block content
+  div(class="narrow-content")
+    h1 #{header}
+    form(method="POST", action="")
+      div(class="form-group")
+        label(for="name") Name:
+        input(id="name", class="form-control", type="text", placeholder="Enter the name of the exercise", name="name", value=exercise.name)
+      div(class="form-group")
+        label(for="number") Number:
+        input(id="name", class="form-control", type="number", placeholder="Enter the exercise number", name="number", value=exercise.number, required)
+      div(class="form-group")
+        label(for="status") Status:
+        select(id="status", class="form-control", name="status", required)
+          each val in ['scheduled', 'active', 'done']
+            if exercise.status == val
+              option(value=val, selected) #{val}
+            else
+              option(value=val) #{val}
+      div(class="form-group")
+        label(for="starts_at") Exercise starts at:
+        input(id="starts_at", class="form-control flatpickr-input", type="text", name="starts_at", value=exercise.starts_at, readonly="readonly", required)
+      div(class="form-group")
+        label(for="ends_at") Exercise ends at:
+        input(id="ends_at", class="form-control flatpickr-input", type="text", name="ends_at", value=exercise.ends_at, readonly="readonly", required)
+      button(class="btn btn-primary", type="submit") Edit
+
+    if errors
+      ul
+        for error in errors
+          li!= error.msg
+
+block script
+  script.
+    $(document).ready(function() {
+      $('#starts_at, #ends_at').flatpickr({enableTime: true});
+    });
