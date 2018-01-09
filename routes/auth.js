@@ -46,7 +46,6 @@ router.post('/signup', function(req, res, next) {
             req.flash('success', 'User ' + user.username + ' created');
             res.redirect('/');
         });
-
     });
 });
 
