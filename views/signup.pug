@@ -1,0 +1,23 @@
+extends layout
+
+block content
+  div(class="narrow-content")
+    h1 #{header}
+    if error
+      ul
+        li!= error
+    form(method="POST", action="")
+      div(class="form-group")
+        label(for="firstname") First Name:
+        input(id="firstname", class="form-control", type="text", placeholder="First Name", name="firstname")
+        label(for="lastname") Last Name:
+        input(id="lastname", class="form-control", type="text", placeholder="Last Name", name="lastname")
+      div(class="form-group")
+        label(for="username") Username:
+        input(id="username", class="form-control", type="text", placeholder="Username", name="username")
+      div(class="form-group")
+        label(for="password") Password:
+        input(id="password", class="form-control", type="password", placeholder="Password", name="password")
+        label(for="password_again") Password again:
+        input(id="password_again", class="form-control", type="password", placeholder="Password again", name="password_again")
+      button(class="btn btn-primary", type="submit") Create user

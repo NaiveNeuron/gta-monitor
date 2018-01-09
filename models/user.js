@@ -1,5 +1,19 @@
 'use strict';
 
+var bcrypt = require('bcrypt-nodejs');
+
+
+function crypt_password(password)
+{
+    return new Promise(function(resolve, reject) {
+        bcrypt.hash(password, null, null, function(err, hash) {
+            if (err)
+                return reject(err);
+            return resolve(hash);
+        });
+    });
+}
+
 module.exports = function(sequelize, DataTypes) {
     var User = sequelize.define('User', {
         id: {
@@ -51,6 +65,14 @@ module.exports = function(sequelize, DataTypes) {
             type: DataTypes.ENUM('active', 'inactive'),
             defaultValue: 'active'
         }
+    });
+
+    User.beforeCreate(function(user, options) {
+        return crypt_password(user.password).then(function(hash) {
+            user.password = hash;
+        }).catch(function(err) {
+            if (err) console.log(err);
+        });
     });
 
     return User;

@@ -8,21 +8,44 @@ var expressValidator = require('express-validator');
 var session = require('express-session');
 var flash = require('flash');
 var schedule = require('node-schedule');
+var bcrypt = require('bcrypt-nodejs');
+var passport = require('passport');
+
+var LocalStrategy = require('passport-local').Strategy;
 
 var models = require('./models');
 
 var index = require('./routes/index');
 var users = require('./routes/users');
+var auth = require('./routes/auth');
 var gta = require('./routes/gta');
 var exercise = require('./routes/exercise');
 
 var app = express();
 
+passport.use(new LocalStrategy(function(username, password, done) {
+    models.User.findOne({
+        where: {
+            username: username
+        }
+    }).then(function(user) {
+        if (user == null) {
+            return done(null, false, { message: 'Incorrect credentials.' });
+        }
+
+        var hashedpwd = bcrypt.hashSync(password);
+        if (user.password == hashedpwd) {
+            return done(null, user);
+        }
+
+        return done(null, false, { message: 'Incorrect credentials.' });
+    });
+}));
+
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'pug');
 
-// uncomment after placing your favicon in /public
 app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
 app.use(logger('dev'));
 app.use(bodyParser.json());
@@ -32,15 +55,23 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(session({secret: 'strong-secret', resave: false, saveUninitialized: false}));
 app.use(flash());
+app.use(passport.initialize());
+app.use(passport.session());
 
 app.use('/', index);
 app.use('/users', users);
+app.use('/auth', auth);
 app.use('/gta', gta);
 app.use('/exercise', exercise);
 
 // Sync Database
 models.sequelize.sync().then(function() {
     console.log('Nice! Database looks fine');
+
+    /* Exercises available in whole application */
+    models.Exercise.findAll().then(function(resultset) {
+        app.locals.navbar_exercises = resultset;
+    });
 }).catch(function(err) {
     console.log(err, 'Something went wrong with the Database Update!');
 });
@@ -63,9 +94,16 @@ var j = schedule.scheduleJob('* * * * *', function(){
     });
 });
 
-/* Exercises available in whole application */
-models.Exercise.findAll().then(function(resultset) {
-    app.locals.navbar_exercises = resultset;
+passport.serializeUser(function(user, done) {
+    done(null, user.id);
+});
+
+passport.deserializeUser(function(id, done) {
+    models.User.findById(id).then(function(user) {
+        done(null, user);
+    }).catch(function(err) {
+        done(err, null);
+    });
 });
 
 // catch 404 and forward to error handler
