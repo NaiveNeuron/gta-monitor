@@ -8,9 +8,11 @@ router.get('/login', function(req, res, next) {
     res.render('login', { header: 'Login' });
 });
 
-router.post('/login', function(req, res, next) {
-
-});
+router.post('/login',
+            passport.authenticate('local', { successRedirect: '/',
+                                             failureRedirect: '/auth/login',
+                                             failureFlash: true })
+);
 
 router.get('/signup', function(req, res, next) {
     res.render('signup', { header: 'Signup' });

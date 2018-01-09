@@ -33,8 +33,7 @@ passport.use(new LocalStrategy(function(username, password, done) {
             return done(null, false, { message: 'Incorrect credentials.' });
         }
 
-        var hashedpwd = bcrypt.hashSync(password);
-        if (user.password == hashedpwd) {
+        if (bcrypt.compareSync(password, user.password)) {
             return done(null, user);
         }
 
