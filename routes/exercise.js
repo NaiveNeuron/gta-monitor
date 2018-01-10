@@ -2,9 +2,10 @@ var express = require('express');
 var sequelize = require('sequelize');
 var models = require('../models');
 var socketapi = require('../socketapi');
+var login_required = require('./middlewares').login_required;
 var router = express.Router();
 
-router.get('/create', function(req, res, next) {
+router.get('/create', login_required, function(req, res, next) {
     res.render('create_exercise', { header: 'Create Exercise' });
 });
 
@@ -20,7 +21,7 @@ function validate_exercise(req)
     return req;
 }
 
-router.post('/create', function(req, res, next) {
+router.post('/create', login_required, function(req, res, next) {
     req = validate_exercise(req);
 
     var errors = req.validationErrors();
@@ -45,7 +46,7 @@ router.post('/create', function(req, res, next) {
     }
 });
 
-router.get('/edit/:exercise_id', function(req, res, next) {
+router.get('/edit/:exercise_id', login_required, function(req, res, next) {
     models.Exercise.findOne({
         where: {
             id: req.params.exercise_id,
@@ -58,7 +59,7 @@ router.get('/edit/:exercise_id', function(req, res, next) {
     });
 });
 
-router.post('/edit/:exercise_id', function(req, res, next) {
+router.post('/edit/:exercise_id', login_required, function(req, res, next) {
     req = validate_exercise(req);
 
     var errors = req.validationErrors();
@@ -86,7 +87,7 @@ router.post('/edit/:exercise_id', function(req, res, next) {
     }
 });
 
-router.get('/active', function(req, res, next) {
+router.get('/active', login_required, function(req, res, next) {
     models.Exercise.findOne({
         where: {
             status: 'active',

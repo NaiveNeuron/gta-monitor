@@ -16,7 +16,6 @@ var LocalStrategy = require('passport-local').Strategy;
 var models = require('./models');
 
 var index = require('./routes/index');
-var users = require('./routes/users');
 var auth = require('./routes/auth');
 var gta = require('./routes/gta');
 var exercise = require('./routes/exercise');
@@ -57,8 +56,13 @@ app.use(flash());
 app.use(passport.initialize());
 app.use(passport.session());
 
+// Make it available to check logged in user in templates
+app.use(function(req, res, next) {
+    res.locals.logged_user = req.user;
+    next();
+});
+
 app.use('/', index);
-app.use('/users', users);
 app.use('/auth', auth);
 app.use('/gta', gta);
 app.use('/exercise', exercise);

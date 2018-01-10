@@ -2,7 +2,13 @@ var express = require('express');
 var passport = require('passport');
 var bcrypt = require('bcrypt-nodejs');
 var models = require('../models');
+var login_required = require('./middlewares').login_required;
 var router = express.Router();
+
+router.get('/logout', function(req, res, next) {
+    req.logout();
+    res.redirect('/auth/login');
+});
 
 router.get('/login', function(req, res, next) {
     res.render('login', { header: 'Login' });
@@ -14,11 +20,11 @@ router.post('/login',
                                              failureFlash: true })
 );
 
-router.get('/signup', function(req, res, next) {
+router.get('/signup', login_required, function(req, res, next) {
     res.render('signup', { header: 'Signup' });
 });
 
-router.post('/signup', function(req, res, next) {
+router.post('/signup', login_required, function(req, res, next) {
     var firstname = req.body.firstname;
     var lastname = req.body.lastname;
     var username = req.body.username;
