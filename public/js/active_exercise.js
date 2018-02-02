@@ -89,6 +89,15 @@ $(document).on('click', '.user-box', function(e) {
     $('.modal-title').text(student.get_name_hostname());
     $('.modal-ip').text(student.ip);
 
+    $('.modal-command-history').empty();
+    for (var i = 0; i < student.history.length; i++) {
+        var post = student.history[i];
+        // TODO: show time (and date) and also information about start / exit
+        //       Green color for command that passed the level
+        if (post.type == 'command') {
+            $('.modal-command-history').append('<code>$ ' + post.command + '</code>');
+        }
+    }
 
     $('#student-detail-modal').modal('show');
 });

@@ -49,8 +49,17 @@ body {
     font-size: 80%;
 }
 
-
-
+.modal .modal-command-history {
+    border: 1px solid #000000;
+    border-radius: 3px;
+    background-color: rgba(27,31,35,0.05);
+    padding: 10px;
+}
+.modal .modal-command-history code {
+    display: block;
+    border-radius: 0;
+    word-wrap: break-word;
+}
 
 
 
