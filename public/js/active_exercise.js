@@ -96,6 +96,10 @@ $(document).on('click', '.user-box', function(e) {
         //       Green color for command that passed the level
         if (post.type == 'command') {
             $('.modal-command-history').append('<code>$ ' + post.command + '</code>');
+        } else if (post.type == 'start') {
+            $('.modal-started-at').text(get_date_from_string(post.date));
+        } else if (post.type == 'exit') {
+            $('.modal-finished-at').text(get_date_from_string(post.date));
         }
     }
 

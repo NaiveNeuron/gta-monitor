@@ -6,6 +6,7 @@ block link
 block js
   if exercise != null
     script(src="/js/socket.js")
+    script(src="/js/utils.js")
     script(src="/js/post.js")
     script(src="/js/student.js")
     script(src="/js/active_exercise.js")
@@ -31,5 +32,9 @@ block content
                 span(aria-hidden="true") &times;
             div(class="modal-body")
               h6(class="modal-ip")
+              h6 Started at &nbsp;
+                span(class="modal-started-at")
               div(class="modal-command-history")
+              h6 Finished at &nbsp;
+                span(class="modal-finished-at")
             div(class="modal-footer")
