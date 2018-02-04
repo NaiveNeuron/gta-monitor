@@ -13,5 +13,9 @@ module.exports = function(sequelize, DataTypes) {
         }
     });
 
+    Hall.associate = function(models) {
+        Hall.belongsTo(models.User, {foreignKey: 'user_id', onDelete: 'CASCADE'});
+    };
+
     return Hall;
 };
