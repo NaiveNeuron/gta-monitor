@@ -23,18 +23,4 @@ block content
           span /
           span(id="active-exercise-students-all") 0
       div(id="active-exercise-students")
-      div(class="modal fade", id="student-detail-modal", tabindex="-1", role="dialog", aria-labelledby="studentDetailLabel", aria-hidden="true")
-        div(class="modal-dialog modal-lg")
-          div(class="modal-content")
-            div(class="modal-header")
-              h5(class="modal-title")
-              button(type="button", class="close", data-dismiss="modal", aria-label="Close")
-                span(aria-hidden="true") &times;
-            div(class="modal-body")
-              h6(class="modal-ip")
-              h6 Started at &nbsp;
-                span(class="modal-started-at")
-              div(class="modal-command-history")
-              h6 Finished at &nbsp;
-                span(class="modal-finished-at")
-            div(class="modal-footer")
+      include snippets/student_modal.pug
