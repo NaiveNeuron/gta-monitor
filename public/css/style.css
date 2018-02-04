@@ -31,6 +31,7 @@ body {
 
 .user-box {
     width: 32%;
+    border: 1px solid #ffffff;
     font-size: 120%;
     padding: 10px;
     margin: 0.5%;
@@ -52,8 +53,7 @@ body {
 .modal .modal-command-history {
     border: 1px solid #000000;
     border-radius: 3px;
-    background-color: rgba(27,31,35,0.05);
-    padding: 10px;
+    padding: 5px;
 }
 .modal .modal-command-history code {
     display: block;
