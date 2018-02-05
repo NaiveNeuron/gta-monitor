@@ -6,6 +6,7 @@ function Student(user, hostname, ip)
     this.level = 1;
     this.history = [];
     this.exit = false;
+    this.active = true;
 }
 
 Student.prototype.get_name_hostname = function() {

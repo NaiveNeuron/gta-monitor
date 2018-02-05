@@ -31,7 +31,7 @@ body {
 
 .user-box {
     width: 32%;
-    border: 1px solid #ffffff;
+    border: 2px solid #ffffff;
     font-size: 120%;
     padding: 10px;
     margin: 0.5%;
@@ -48,6 +48,9 @@ body {
 }
 .user-box .user-box-command-info {
     font-size: 80%;
+}
+.inactive-student {
+    border-color: #ff0000;
 }
 
 .modal .modal-command-history {

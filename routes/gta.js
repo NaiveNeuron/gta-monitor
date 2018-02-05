@@ -22,6 +22,13 @@ router.post('/', function(req, res, next) {
             var dt = new Date(0);
             dt.setUTCSeconds(d.date);
 
+            /* Update last activity of student */
+            if (d.type == global.POST_EXIT && d.user in global.activities) {
+                delete global.activities[item.user];
+            } else {
+                global.activities[d.user] = dt;
+            }
+
             var data = {type: d.type, date: dt, user: d.user,
                         hostname: d.hostname, ip: d.ip, exercise_id: ex.id};
             if (d.type == 'command' || d.type == 'passed') {

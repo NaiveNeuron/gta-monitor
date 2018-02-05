@@ -65,6 +65,19 @@ Exercise.prototype.new_post = function(post) {
     }
 }
 
+Exercise.prototype.new_activity_of_student = function(username, active) {
+    this.students[username].active = active;
+    this.update_activity_of_student(username);
+}
+
+Exercise.prototype.update_activity_of_student = function(username) {
+    var student = this.students[username];
+    if (student.active)
+        $('#student-' + username).removeClass('inactive-student');
+    else
+        $('#student-' + username).addClass('inactive-student');
+}
+
 Exercise.prototype.update_started_students = function() {
     $('#active-exercise-students-all').text(this.all);
 }
@@ -74,12 +87,23 @@ Exercise.prototype.update_finished_students = function() {
 
 var exercise = new Exercise();
 
-socket.on('load_active_exercise', function(posts) {
+socket.on('load_active_exercise', function(posts, inactive) {
     exercise.initialize_students(posts);
+    for (var i = 0; i < inactive; i++) {
+        exercise.new_activity_of_student(inactive[i], false);
+    }
 });
 
 socket.on('new_post', function(post) {
     exercise.new_post(post);
+});
+
+socket.on('new_inactive_student', function(username) {
+    exercise.new_activity_of_student(username, false);
+});
+
+socket.on('new_active_student', function(username) {
+    exercise.new_activity_of_student(username, true);
 });
 
 $(document).on('click', '.user-box', function(e) {

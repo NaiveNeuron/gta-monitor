@@ -110,7 +110,7 @@ socketapi.io.on('connect', function(socket) {
                 exercise_id: exercise.id
             }
         }).then(function(resultset){
-            socket.emit('load_active_exercise', resultset);
+            socket.emit('load_active_exercise', resultset, global.inactive);
         });
     });
 });
