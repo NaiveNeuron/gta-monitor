@@ -31,6 +31,7 @@ body {
 
 .user-box {
     width: 32%;
+    display: inline-block;
     border: 2px solid #ffffff;
     font-size: 120%;
     padding: 10px;

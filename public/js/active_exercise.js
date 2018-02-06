@@ -114,6 +114,7 @@ $(document).on('click', '.user-box', function(e) {
     $('.modal-ip').text(student.ip);
 
     $('.modal-command-history').empty();
+    $('.modal-finished-at').empty();
     for (var i = 0; i < student.history.length; i++) {
         var post = student.history[i];
         // TODO: show time (and date) and also information about start / exit
