@@ -19,16 +19,30 @@ body {
 .active-exercise-container #active-exercise-header {
     border-bottom: 1px solid #ccc;
 }
+.active-exercise-container #active-exercise-header button {
+    right: 0;
+}
 
 .active-exercise-container #active-exercise-students {
     margin-top: 10px;
-}
-.active-exercise-container #active-exercise-students::after {
-    content: '';
-    display: block;
-    clear: both;
+    border: 1px solid #ccc;
+    overflow-x: auto;
+    overflow-y: hidden;
+    white-space: nowrap;
+    min-height: 97px;
+    max-height: 120px;
 }
 
+.active-exercise-container #active-exercise-hall {
+    min-height: 500px;
+    border: 1px solid #ccc;
+    margin-top: 15px;
+    position: relative;
+}
+
+.active-exercise-container #active-exercise-hall .user-box {
+    position: absolute;
+}
 .user-box {
     width: 32%;
     display: inline-block;
@@ -36,7 +50,6 @@ body {
     font-size: 120%;
     padding: 10px;
     margin: 0.5%;
-    float: left;
     word-wrap: break-word;
     cursor: pointer;
 }
