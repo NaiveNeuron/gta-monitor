@@ -4,6 +4,8 @@ function Exercise()
     this.students = {};
     this.all = 0;
     this.finished = 0;
+
+    this.positions = {};
 }
 
 Exercise.prototype.create_student_and_add_post = function(post) {
@@ -30,7 +32,8 @@ Exercise.prototype.initialize_students = function(posts) {
 }
 
 Exercise.prototype.create_new_box = function(student) {
-    var box = '<div class="' + student.get_box_background() + ' text-white user-box" id="student-' + student.user + '" data-username="' + student.user + '">'
+    var box = '<div class="' + student.get_box_background() + ' text-white user-box" id="student-' + student.user + '" data-username="' + student.user
+                    + '" data-hostname="' + student.hostname + '">'
             +   '<div class="user-box-info">'
             +     '<span class="user-box-user">' + student.get_name_hostname() + '</span>'
             +     '<span>Level: <span class="user-box-level">' + student.level + '</span></span>'
@@ -40,14 +43,16 @@ Exercise.prototype.create_new_box = function(student) {
             +   '</div>'
             + '</div>';
 
-    $('#active-exercise-students').append(box);
-
+    $('#active-exercise-students').prepend(box);
+    /* TODO: check if we cannot bind just the created box */
+    bind_draggables();
 }
 
 Exercise.prototype.new_post = function(post) {
     this.create_student_and_add_post(post);
     switch (post.type) {
         case 'start':
+            /* TODO: if student restarted the exercise, just update the box appropriately */
             this.create_new_box(this.students[post.user]);
             this.update_started_students();
             break;
@@ -88,11 +93,18 @@ Exercise.prototype.update_finished_students = function() {
 
 var exercise = new Exercise();
 
+$(document).on('click', '#btn-save-order', function(e) {
+    console.log(exercise.positions);
+    console.log(JSON.stringify(exercise.positions));
+    socket.emit('save_hall_order', JSON.stringify(exercise.positions));
+});
+
+
 socket.on('load_active_exercise', function(posts, inactive) {
     exercise.initialize_students(posts);
     for (var i = 0; i < inactive; i++) {
         exercise.new_activity_of_student(inactive[i], false);
-    }bind_draggables();
+    }
 });
 
 socket.on('new_post', function(post) {

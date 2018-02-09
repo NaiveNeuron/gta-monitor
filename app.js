@@ -10,6 +10,7 @@ var flash = require('flash');
 var schedule = require('node-schedule');
 var bcrypt = require('bcrypt-nodejs');
 var passport = require('passport');
+var passportSocketIo = require('passport.socketio');
 
 var LocalStrategy = require('passport-local').Strategy;
 
@@ -22,6 +23,8 @@ var gta = require('./routes/gta');
 var exercise = require('./routes/exercise');
 
 var app = express();
+
+var secret_key = 'strong-secret';
 
 global.activities = {};
 global.inactive = [];
@@ -66,10 +69,17 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(expressValidator());
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
-app.use(session({secret: 'strong-secret', resave: false, saveUninitialized: false}));
+app.use(session({secret: secret_key, resave: false, saveUninitialized: false}));
 app.use(flash());
 app.use(passport.initialize());
 app.use(passport.session());
+
+socketapi.io.use(passportSocketIo.authorize({
+    key: 'connect.sid',
+    secret: secret_key,
+    passport: passport,
+    cookieParser: cookieParser
+}));
 
 // Make it available to check logged in user in templates
 app.use(function(req, res, next) {

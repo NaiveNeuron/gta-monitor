@@ -19,8 +19,14 @@ body {
 .active-exercise-container #active-exercise-header {
     border-bottom: 1px solid #ccc;
 }
+.active-exercise-container #active-exercise-header h5::after {
+    content: '';
+    display: block;
+    clear: both;
+}
 .active-exercise-container #active-exercise-header button {
-    right: 0;
+    float: right;
+    cursor: pointer;
 }
 
 .active-exercise-container #active-exercise-students {
@@ -34,7 +40,7 @@ body {
 }
 
 .active-exercise-container #active-exercise-hall {
-    min-height: 500px;
+    min-height: 2500px;
     border: 1px solid #ccc;
     margin-top: 15px;
     position: relative;

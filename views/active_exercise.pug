@@ -13,13 +13,15 @@ block js
     script(src="/js/utils.js")
     script(src="/js/post.js")
     script(src="/js/student.js")
+    script(src="/js/position.js")
 
     // exercise initialization
     script(src="/js/active_exercise.js")
 
-    // modal dialog for students detail - needs Exercise class to be initialized
+    // modal dialog for students detail - needs Exercise to be initialized
     script(src="/js/student_detail.js")
 
+    // drag n drop - needs Exercise to be initialized
     script(src="/js/dnd.js")
 
 block content
@@ -33,7 +35,7 @@ block content
           span(id="active-exercise-students-finished") 0
           span /
           span(id="active-exercise-students-all") 0
-          button(class="btn btn-primary") Save order
+          button(class="btn btn-primary", id="btn-save-order") Save order
       div(id="active-exercise-students")
       div(id="active-exercise-hall")
       include snippets/student_modal.pug

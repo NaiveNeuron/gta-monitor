@@ -4,6 +4,12 @@ $(document).ready(function() {
             var pos = ui.position;
             ui.draggable.appendTo(this);
             ui.draggable.css({'position': 'absolute', 'top': pos.top, 'left': pos.left});
+
+            var hostname = ui.draggable.attr('data-hostname');
+            if (hostname in exercise.positions)
+                exercise.positions[hostname].change_position(pos.top, pos.left);
+            else
+                exercise.positions[hostname] = new Position(pos.top, pos.left);
         }
     });
 
@@ -12,6 +18,10 @@ $(document).ready(function() {
             var pos = ui.position;
             ui.draggable.appendTo(this);
             ui.draggable.css({'position': 'relative', 'top': '', 'left': ''});
+
+            var hostname = ui.draggable.attr('data-hostname');
+            if (hostname in exercise.positions)
+                delete exercise.positions[hostname];
         }
     });
 });

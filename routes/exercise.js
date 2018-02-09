@@ -113,6 +113,11 @@ socketapi.io.on('connect', function(socket) {
             socket.emit('load_active_exercise', resultset, global.inactive);
         });
     });
+    console.log(socket.request.user);
+    socket.on('save_hall_order', function(positions) {
+        /* TODO: check which user is saving */
+        console.log(positions);
+    });
 });
 
 module.exports = router;

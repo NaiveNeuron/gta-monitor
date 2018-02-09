@@ -1,4 +1,0 @@
-function Hall()
-{
-    this.positions = [];
-}
