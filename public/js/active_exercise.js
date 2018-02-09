@@ -5,7 +5,7 @@ function Exercise()
     this.all = 0;
     this.finished = 0;
 
-    this.positions = {};
+    this.positions = HALL_INITIAL;
 }
 
 Exercise.prototype.create_student_and_add_post = function(post) {
@@ -94,9 +94,20 @@ Exercise.prototype.update_finished_students = function() {
 var exercise = new Exercise();
 
 $(document).on('click', '#btn-save-order', function(e) {
-    console.log(exercise.positions);
-    console.log(JSON.stringify(exercise.positions));
-    socket.emit('save_hall_order', JSON.stringify(exercise.positions));
+    $.ajax({
+        url: '/exercise/active/save',
+        dataType: 'json',
+        type: 'POST',
+        contentType: 'application/json',
+        data: JSON.stringify(exercise.positions),
+
+        success: function(data, textStatus, jQxhr){
+
+        },
+        error: function( jqXhr, textStatus, errorThrown ){
+            alert('Failed to save data.');
+        }
+    });
 });
 
 
