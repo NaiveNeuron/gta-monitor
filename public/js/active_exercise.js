@@ -29,7 +29,10 @@ Exercise.prototype.initialize_students = function(posts) {
     }
 
     for(var user in this.students) {
-        this.create_new_box(this.students[user]);
+        var u = this.students[user];
+        if (u.hostname in this.positions)
+            this.positions[u.hostname].set_occupy(user);
+        this.create_new_box(u);
     }
 
     this.update_started_students();
@@ -38,10 +41,11 @@ Exercise.prototype.initialize_students = function(posts) {
 
 Exercise.prototype.create_new_box = function(student) {
     var style = '';
-    if (student.hostname in this.positions) {
+    if (student.hostname in this.positions && !student.exit) {
         var pos = this.positions[student.hostname];
-        if (pos.occupied) {
-            /* TODO */
+        if (pos.occupied && pos.user != student.user) {
+            $('#student-' + pos.user).appendTo('#active-exercise-students');
+            $('#student-' + pos.user).css({'position': 'relative', 'top': 0, 'left': 0});
         }
         style = ' style="position:absolute; top:' + pos.top + 'px; left:' + pos.left + 'px;"';
     }
@@ -57,8 +61,11 @@ Exercise.prototype.create_new_box = function(student) {
             +   '</div>'
             + '</div>';
 
-    if (student.hostname in this.positions)
+    if (student.hostname in this.positions && !student.exit) {
+        this.positions[student.hostname].set_occupy(student.user);
         $('#active-exercise-hall').append(box);
+    } else if (student.exit)
+        $('#active-exercise-students').append(box);
     else
         $('#active-exercise-students').prepend(box);
     /* TODO: check if we cannot bind just the created box */
@@ -69,7 +76,7 @@ Exercise.prototype.new_post = function(post) {
     this.create_student_and_add_post(post);
     switch (post.type) {
         case 'start':
-            /* TODO: if student restarted the exercise, just update the box appropriately */
+            /* TODO: if student restarted the exercise, just update the box appropriately (change hostname, ip and stuff) */
             this.create_new_box(this.students[post.user]);
             this.update_started_students();
             break;
