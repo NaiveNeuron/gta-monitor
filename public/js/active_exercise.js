@@ -4,13 +4,12 @@ function Exercise()
     this.students = {};
     this.all = 0;
     this.finished = 0;
+    this.positions = {};
 
-    var temp_pos = {};
-    Object.keys(HALL_INITIAL).forEach(function(key) {
-        temp_pos[key] = new Position(HALL_INITIAL[key][0],
-                                     HALL_INITIAL[key][1]);
-    });
-    this.positions = temp_pos;
+    for (var key in HALL_INITIAL) {
+        this.positions[key] = new Position(HALL_INITIAL[key][0],
+                                           HALL_INITIAL[key][1]);
+    }
 }
 
 Exercise.prototype.create_student_and_add_post = function(post) {
@@ -29,24 +28,29 @@ Exercise.prototype.initialize_students = function(posts) {
     }
 
     for(var user in this.students) {
-        var u = this.students[user];
-        if (u.hostname in this.positions)
-            this.positions[u.hostname].set_occupy(user);
-        this.create_new_box(u);
+        this.create_new_box(this.students[user]);
     }
 
     this.update_started_students();
     this.update_finished_students();
 }
 
+/* TODO: divide this into multiple methods */
 Exercise.prototype.create_new_box = function(student) {
     var style = '';
+
     if (student.hostname in this.positions && !student.exit) {
         var pos = this.positions[student.hostname];
         if (pos.occupied && pos.user != student.user) {
             $('#student-' + pos.user).appendTo('#active-exercise-students');
             $('#student-' + pos.user).css({'position': 'relative', 'top': 0, 'left': 0});
+
+            if (!(this.students[pos.user].exit)) {
+                /* if student hard quit, add grey bg color */
+                $('#student-' + pos.user).removeClass('bg-primary').addClass('bg-secondary');
+            }
         }
+        this.positions[student.hostname].set_occupy(student.user);
         style = ' style="position:absolute; top:' + pos.top + 'px; left:' + pos.left + 'px;"';
     }
 
@@ -62,7 +66,6 @@ Exercise.prototype.create_new_box = function(student) {
             + '</div>';
 
     if (student.hostname in this.positions && !student.exit) {
-        this.positions[student.hostname].set_occupy(student.user);
         $('#active-exercise-hall').append(box);
     } else if (student.exit)
         $('#active-exercise-students').append(box);
@@ -76,9 +79,12 @@ Exercise.prototype.new_post = function(post) {
     this.create_student_and_add_post(post);
     switch (post.type) {
         case 'start':
-            /* TODO: if student restarted the exercise, just update the box appropriately (change hostname, ip and stuff) */
-            this.create_new_box(this.students[post.user]);
-            this.update_started_students();
+            if (!(post.user in this.students)) {
+                this.create_new_box(this.students[post.user]);
+                this.update_started_students();
+            } else {
+                /* TODO: user changed computer, or restarted the exercise -- update info ip, hostname...*/
+            }
             break;
         case 'exit':
             /* TODO: check if we need to remove other bg-xxx classes in the future */
