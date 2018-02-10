@@ -5,7 +5,12 @@ function Exercise()
     this.all = 0;
     this.finished = 0;
 
-    this.positions = HALL_INITIAL;
+    var temp_pos = {};
+    Object.keys(HALL_INITIAL).forEach(function(key) {
+        temp_pos[key] = new Position(HALL_INITIAL[key][0],
+                                     HALL_INITIAL[key][1]);
+    });
+    this.positions = temp_pos;
 }
 
 Exercise.prototype.create_student_and_add_post = function(post) {
@@ -32,8 +37,17 @@ Exercise.prototype.initialize_students = function(posts) {
 }
 
 Exercise.prototype.create_new_box = function(student) {
+    var style = '';
+    if (student.hostname in this.positions) {
+        var pos = this.positions[student.hostname];
+        if (pos.occupied) {
+            /* TODO */
+        }
+        style = ' style="position:absolute; top:' + pos.top + 'px; left:' + pos.left + 'px;"';
+    }
+
     var box = '<div class="' + student.get_box_background() + ' text-white user-box" id="student-' + student.user + '" data-username="' + student.user
-                    + '" data-hostname="' + student.hostname + '">'
+                    + '" data-hostname="' + student.hostname + '"' + style + '>'
             +   '<div class="user-box-info">'
             +     '<span class="user-box-user">' + student.get_name_hostname() + '</span>'
             +     '<span>Level: <span class="user-box-level">' + student.level + '</span></span>'
@@ -43,7 +57,10 @@ Exercise.prototype.create_new_box = function(student) {
             +   '</div>'
             + '</div>';
 
-    $('#active-exercise-students').prepend(box);
+    if (student.hostname in this.positions)
+        $('#active-exercise-hall').append(box);
+    else
+        $('#active-exercise-students').prepend(box);
     /* TODO: check if we cannot bind just the created box */
     bind_draggables();
 }
@@ -93,7 +110,7 @@ Exercise.prototype.update_finished_students = function() {
 
 var exercise = new Exercise();
 
-$(document).on('click', '#btn-save-order', function(e) {
+$(document).on('click', '#btn-save-positions', function(e) {
     $.ajax({
         url: '/exercise/active/save',
         dataType: 'json',
@@ -109,7 +126,6 @@ $(document).on('click', '#btn-save-order', function(e) {
         }
     });
 });
-
 
 socket.on('load_active_exercise', function(posts, inactive) {
     exercise.initialize_students(posts);

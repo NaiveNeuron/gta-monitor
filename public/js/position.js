@@ -2,6 +2,7 @@ function Position(top, left)
 {
     this.top = top;
     this.left = left;
+    this.occupied = false;
 }
 
 Position.prototype.toJSON = function() {
