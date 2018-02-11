@@ -41,7 +41,7 @@ Exercise.prototype.move_away_occupied = function(pos, student) {
 
     if (!(this.students[pos.user].exit)) {
         /* if student hard quit, add grey bg color */
-        $('#student-' + pos.user).removeClass('bg-primary').addClass('bg-secondary');
+        $('#student-' + pos.user).removeClass('bg-primary').removeClass('bg-success').addClass('bg-secondary');
     }
 }
 
@@ -49,7 +49,7 @@ Exercise.prototype.move_away_occupied = function(pos, student) {
 Exercise.prototype.create_new_box = function(student) {
     var style = '';
 
-    if (student.hostname in this.positions && !student.exit) {
+    if (this.position_exists(student.hostname) && !student.exit) {
         var pos = this.positions[student.hostname];
         if (pos.occupied && pos.user != student.user) {
             this.move_away_occupied(pos, student);
@@ -69,9 +69,9 @@ Exercise.prototype.create_new_box = function(student) {
             +   '</div>'
             + '</div>';
 
-    if (student.hostname in this.positions && !student.exit) {
+    if (this.position_exists(student.hostname) && !student.exit)
         $('#active-exercise-hall').append(box);
-    } else if (student.exit)
+    else if (student.exit)
         $('#active-exercise-students').append(box);
     else
         $('#active-exercise-students').prepend(box);
@@ -79,15 +79,50 @@ Exercise.prototype.create_new_box = function(student) {
     bind_draggables();
 }
 
+Exercise.prototype.position_exists = function(hostname) {
+    return hostname in this.positions;
+}
+
 Exercise.prototype.new_post = function(post) {
+    var is_existing_student = (post.user in this.students);
     this.create_student_and_add_post(post);
+
+    var student = this.students[post.user];
     switch (post.type) {
         case 'start':
-            if (!(post.user in this.students)) {
-                this.create_new_box(this.students[post.user]);
+            if (!is_existing_student) {
+                this.create_new_box(student);
                 this.update_started_students();
             } else {
-                /* TODO: user changed computer, or restarted the exercise -- update info ip, hostname...*/
+                /* user restarted the exercise and/or changed computer */
+                if (post.hostname != student.hostname) {
+                    var oldhostname = student.hostname;
+
+                    /* update new info about student */
+                    this.students[post.user].change_computer(post.hostname, post.ip);
+
+                    /* if the new position is occupied by someone else, replace */
+                    if (this.position_exists(post.hostname)) {
+                        if (this.positions[post.hostname].user != post.user) {
+                            this.move_away_occupied(this.positions);
+                            this.positions[student.hostname].set_occupy(student.user);
+                        }
+                    }
+
+                    /* unoccupy the position where student was previously placed */
+                    if (this.position_exists(oldhostname))
+                        this.positions[oldhostname].remove_occupy();
+                } else {
+                    if (this.position_exists(student.hostname)) {
+                        /* if student is in upper container, move them to hall */
+                        if (this.positions[student.hostname].user != student.user) {
+                            var pos = this.positions[student.hostname];
+                            $('#student-' + student.user).appendTo('#active-exercise-hall');
+                            $('#student-' + student.user).css({'position': 'relative', 'top': pos.top, 'left': pos.left});
+                            pos.set_occupy(student.user);
+                        }
+                    }
+                }
             }
             break;
         case 'exit':
@@ -100,22 +135,9 @@ Exercise.prototype.new_post = function(post) {
             $('#student-' + post.user + ' .user-box-command').text(post.command);
             break;
         case 'passed':
-            $('#student-' + post.user + ' .user-box-level').text(this.students[post.user].level);
+            $('#student-' + post.user + ' .user-box-level').text(student.level);
             break;
     }
-}
-
-Exercise.prototype.new_activity_of_student = function(username, active) {
-    this.students[username].active = active;
-    this.update_activity_of_student(username);
-}
-
-Exercise.prototype.update_activity_of_student = function(username) {
-    var student = this.students[username];
-    if (student.active)
-        $('#student-' + username).removeClass('inactive-student');
-    else
-        $('#student-' + username).addClass('inactive-student');
 }
 
 Exercise.prototype.update_started_students = function() {
@@ -146,8 +168,8 @@ $(document).on('click', '#btn-save-positions', function(e) {
 
 socket.on('load_active_exercise', function(posts, inactive) {
     exercise.initialize_students(posts);
-    for (var i = 0; i < inactive; i++) {
-        exercise.new_activity_of_student(inactive[i], false);
+    for (var i = 0; i < inactive.length; i++) {
+        exercise.students[inactive[i]].update_activity(false);
     }
 });
 
@@ -156,9 +178,9 @@ socket.on('new_post', function(post) {
 });
 
 socket.on('new_inactive_student', function(username) {
-    exercise.new_activity_of_student(username, false);
+    exercise.students[username].update_activity(false);
 });
 
 socket.on('new_active_student', function(username) {
-    exercise.new_activity_of_student(username, true);
+    exercise.students[username].update_activity(true);
 });

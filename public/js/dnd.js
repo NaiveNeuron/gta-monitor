@@ -8,8 +8,10 @@ $(document).ready(function() {
             var hostname = ui.draggable.attr('data-hostname');
             if (hostname in exercise.positions)
                 exercise.positions[hostname].change_position(pos.top, pos.left);
-            else
+            else {
                 exercise.positions[hostname] = new Position(pos.top, pos.left);
+                exercise.positions[hostname].set_occupy(ui.draggable.attr('data-username'));
+            }
         }
     });
 

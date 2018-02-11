@@ -21,6 +21,26 @@ Student.prototype.get_last_command = function () {
     return '';
 }
 
+Student.prototype.update_activity_border = function() {
+    if (this.active)
+        $('#student-' + this.user).removeClass('inactive-student');
+    else
+        $('#student-' + this.user).addClass('inactive-student');
+}
+
+Student.prototype.update_activity = function(active) {
+    this.active = active;
+    this.update_activity_border();
+}
+
+Student.prototype.change_computer = function(hostname, ip) {
+    this.hostname = hostname;
+    this.ip = ip;
+
+    $('#student-' + this.user).attr('data-hostname', this.hostname);
+    $('#student-' + this.user + ' .user-box-user').text(this.get_name_hostname());
+}
+
 Student.prototype.get_box_background = function() {
     if (this.exit)
         return 'bg-success';

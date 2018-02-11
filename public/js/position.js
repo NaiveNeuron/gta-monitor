@@ -19,3 +19,8 @@ Position.prototype.set_occupy = function(user) {
     this.user = user;
     this.occupied = true;
 }
+
+Position.prototype.remove_occupy = function() {
+    this.user = '';
+    this.occupied = false;
+}
