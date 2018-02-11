@@ -4,6 +4,12 @@ function Exercise()
     this.students = {};
     this.all = 0;
     this.finished = 0;
+    this.positions = {};
+
+    for (var key in HALL_INITIAL) {
+        this.positions[key] = new Position(HALL_INITIAL[key][0],
+                                           HALL_INITIAL[key][1]);
+    }
 }
 
 Exercise.prototype.create_student_and_add_post = function(post) {
@@ -29,8 +35,31 @@ Exercise.prototype.initialize_students = function(posts) {
     this.update_finished_students();
 }
 
+Exercise.prototype.move_away_occupied = function(pos, student) {
+    $('#student-' + pos.user).appendTo('#active-exercise-students');
+    $('#student-' + pos.user).css({'position': 'relative', 'top': 0, 'left': 0});
+
+    if (!(this.students[pos.user].exit)) {
+        /* if student hard quit, add grey bg color */
+        $('#student-' + pos.user).removeClass('bg-primary').addClass('bg-secondary');
+    }
+}
+
+/* TODO: divide this into multiple methods */
 Exercise.prototype.create_new_box = function(student) {
-    var box = '<div class="' + student.get_box_background() + ' text-white user-box" id="student-' + student.user + '" data-username="' + student.user + '">'
+    var style = '';
+
+    if (student.hostname in this.positions && !student.exit) {
+        var pos = this.positions[student.hostname];
+        if (pos.occupied && pos.user != student.user) {
+            this.move_away_occupied(pos, student);
+        }
+        this.positions[student.hostname].set_occupy(student.user);
+        style = ' style="position:absolute; top:' + pos.top + 'px; left:' + pos.left + 'px;"';
+    }
+
+    var box = '<div class="' + student.get_box_background() + ' text-white user-box" id="student-' + student.user + '" data-username="' + student.user
+                    + '" data-hostname="' + student.hostname + '"' + style + '>'
             +   '<div class="user-box-info">'
             +     '<span class="user-box-user">' + student.get_name_hostname() + '</span>'
             +     '<span>Level: <span class="user-box-level">' + student.level + '</span></span>'
@@ -40,15 +69,26 @@ Exercise.prototype.create_new_box = function(student) {
             +   '</div>'
             + '</div>';
 
-    $('#active-exercise-students').append(box);
+    if (student.hostname in this.positions && !student.exit) {
+        $('#active-exercise-hall').append(box);
+    } else if (student.exit)
+        $('#active-exercise-students').append(box);
+    else
+        $('#active-exercise-students').prepend(box);
+    /* TODO: check if we cannot bind just the created box */
+    bind_draggables();
 }
 
 Exercise.prototype.new_post = function(post) {
     this.create_student_and_add_post(post);
     switch (post.type) {
         case 'start':
-            this.create_new_box(this.students[post.user]);
-            this.update_started_students();
+            if (!(post.user in this.students)) {
+                this.create_new_box(this.students[post.user]);
+                this.update_started_students();
+            } else {
+                /* TODO: user changed computer, or restarted the exercise -- update info ip, hostname...*/
+            }
             break;
         case 'exit':
             /* TODO: check if we need to remove other bg-xxx classes in the future */
@@ -87,6 +127,23 @@ Exercise.prototype.update_finished_students = function() {
 
 var exercise = new Exercise();
 
+$(document).on('click', '#btn-save-positions', function(e) {
+    $.ajax({
+        url: '/exercise/active/save',
+        dataType: 'json',
+        type: 'POST',
+        contentType: 'application/json',
+        data: JSON.stringify(exercise.positions),
+
+        success: function(data, textStatus, jQxhr){
+
+        },
+        error: function( jqXhr, textStatus, errorThrown ){
+            alert('Failed to save data.');
+        }
+    });
+});
+
 socket.on('load_active_exercise', function(posts, inactive) {
     exercise.initialize_students(posts);
     for (var i = 0; i < inactive; i++) {
@@ -104,29 +161,4 @@ socket.on('new_inactive_student', function(username) {
 
 socket.on('new_active_student', function(username) {
     exercise.new_activity_of_student(username, true);
-});
-
-$(document).on('click', '.user-box', function(e) {
-    var user = $(this).attr('data-username');
-    var student = exercise.students[user];
-    //TODO
-    $('.modal-title').text(student.get_name_hostname());
-    $('.modal-ip').text(student.ip);
-
-    $('.modal-command-history').empty();
-    $('.modal-finished-at').empty();
-    for (var i = 0; i < student.history.length; i++) {
-        var post = student.history[i];
-        // TODO: show time (and date) and also information about start / exit
-        //       Green color for command that passed the level
-        if (post.type == 'command') {
-            $('.modal-command-history').append('<code>$ ' + post.command + '</code>');
-        } else if (post.type == 'start') {
-            $('.modal-started-at').text(get_date_from_string(post.date));
-        } else if (post.type == 'exit') {
-            $('.modal-finished-at').text(get_date_from_string(post.date));
-        }
-    }
-
-    $('#student-detail-modal').modal('show');
 });

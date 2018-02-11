@@ -23,6 +23,8 @@ var exercise = require('./routes/exercise');
 
 var app = express();
 
+var secret_key = 'strong-secret';
+
 global.activities = {};
 global.inactive = [];
 global.inactivity = 300; /* inactivity in seconds */
@@ -66,7 +68,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(expressValidator());
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
-app.use(session({secret: 'strong-secret', resave: false, saveUninitialized: false}));
+app.use(session({secret: secret_key, resave: false, saveUninitialized: false}));
 app.use(flash());
 app.use(passport.initialize());
 app.use(passport.session());
