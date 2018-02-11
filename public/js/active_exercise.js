@@ -35,6 +35,16 @@ Exercise.prototype.initialize_students = function(posts) {
     this.update_finished_students();
 }
 
+Exercise.prototype.move_away_occupied = function(pos, student) {
+    $('#student-' + pos.user).appendTo('#active-exercise-students');
+    $('#student-' + pos.user).css({'position': 'relative', 'top': 0, 'left': 0});
+
+    if (!(this.students[pos.user].exit)) {
+        /* if student hard quit, add grey bg color */
+        $('#student-' + pos.user).removeClass('bg-primary').addClass('bg-secondary');
+    }
+}
+
 /* TODO: divide this into multiple methods */
 Exercise.prototype.create_new_box = function(student) {
     var style = '';
@@ -42,13 +52,7 @@ Exercise.prototype.create_new_box = function(student) {
     if (student.hostname in this.positions && !student.exit) {
         var pos = this.positions[student.hostname];
         if (pos.occupied && pos.user != student.user) {
-            $('#student-' + pos.user).appendTo('#active-exercise-students');
-            $('#student-' + pos.user).css({'position': 'relative', 'top': 0, 'left': 0});
-
-            if (!(this.students[pos.user].exit)) {
-                /* if student hard quit, add grey bg color */
-                $('#student-' + pos.user).removeClass('bg-primary').addClass('bg-secondary');
-            }
+            this.move_away_occupied(pos, student);
         }
         this.positions[student.hostname].set_occupy(student.user);
         style = ' style="position:absolute; top:' + pos.top + 'px; left:' + pos.left + 'px;"';
