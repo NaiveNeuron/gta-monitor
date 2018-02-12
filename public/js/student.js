@@ -1,3 +1,9 @@
+var BACKGROUNDS = {
+    'finished': 'bg-success',
+    'working': 'bg-primary',
+    'hardexit': 'bg-secondary'
+};
+
 function Student(user, hostname, ip)
 {
     this.user = user;
@@ -41,10 +47,20 @@ Student.prototype.change_computer = function(hostname, ip) {
     $('#student-' + this.user + ' .user-box-user').text(this.get_name_hostname());
 }
 
+Student.prototype.change_background = function(state) {
+    var selector = $('#student-' + this.user);
+    for (var bg in BACKGROUNDS) {
+        if (bg == state)
+            selector = selector.addClass(BACKGROUNDS[bg]);
+        else
+            selector = selector.removeClass(BACKGROUNDS[bg]);
+    }
+}
+
 Student.prototype.get_box_background = function() {
     if (this.exit)
-        return 'bg-success';
-    return 'bg-primary';
+        return BACKGROUNDS['finished'];
+    return BACKGROUNDS['working'];
 }
 
 Student.prototype.add_post = function(post) {
@@ -64,4 +80,6 @@ Student.prototype.add_post = function(post) {
         this.level++;
     else if (post.type == 'exit')
         this.exit = true;
+    else if (post.type == 'start')
+        this.exit = false;
 }

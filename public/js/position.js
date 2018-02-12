@@ -24,3 +24,7 @@ Position.prototype.remove_occupy = function() {
     this.user = '';
     this.occupied = false;
 }
+
+Position.prototype.is_occupied = function() {
+    return this.occupied;
+}

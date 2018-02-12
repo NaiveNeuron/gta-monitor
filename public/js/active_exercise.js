@@ -35,14 +35,24 @@ Exercise.prototype.initialize_students = function(posts) {
     this.update_finished_students();
 }
 
-Exercise.prototype.move_away_occupied = function(pos, student) {
+Exercise.prototype.move_away_occupied = function(pos) {
     $('#student-' + pos.user).appendTo('#active-exercise-students');
     $('#student-' + pos.user).css({'position': 'relative', 'top': 0, 'left': 0});
 
     if (!(this.students[pos.user].exit)) {
         /* if student hard quit, add grey bg color */
-        $('#student-' + pos.user).removeClass('bg-primary').removeClass('bg-success').addClass('bg-secondary');
+        this.students[pos.user].change_background('hardexit');
     }
+}
+
+Exercise.prototype.replace_box = function (pos, student) {
+    if (pos.is_occupied())
+        this.move_away_occupied(pos);
+
+    $('#student-' + student.user).appendTo('#active-exercise-hall');
+    $('#student-' + student.user).css({'position': 'absolute', 'top': pos.top , 'left': pos.left});
+
+    this.positions[student.hostname].set_occupy(student.user);
 }
 
 /* TODO: divide this into multiple methods */
@@ -51,8 +61,8 @@ Exercise.prototype.create_new_box = function(student) {
 
     if (this.position_exists(student.hostname) && !student.exit) {
         var pos = this.positions[student.hostname];
-        if (pos.occupied && pos.user != student.user) {
-            this.move_away_occupied(pos, student);
+        if (pos.is_occupied() && pos.user != student.user) {
+            this.move_away_occupied(pos);
         }
         this.positions[student.hostname].set_occupy(student.user);
         style = ' style="position:absolute; top:' + pos.top + 'px; left:' + pos.left + 'px;"';
@@ -94,19 +104,28 @@ Exercise.prototype.new_post = function(post) {
                 this.create_new_box(student);
                 this.update_started_students();
             } else {
+                /* if user exited previously, update statistics */
+                if (student.exit) {
+                    this.finished--;
+                    student.exit = false;
+                    this.update_finished_students();
+                }
+
                 /* user restarted the exercise and/or changed computer */
                 if (post.hostname != student.hostname) {
                     var oldhostname = student.hostname;
 
                     /* update new info about student */
-                    this.students[post.user].change_computer(post.hostname, post.ip);
+                    student.change_computer(post.hostname, post.ip);
 
                     /* if the new position is occupied by someone else, replace */
-                    if (this.position_exists(post.hostname)) {
-                        if (this.positions[post.hostname].user != post.user) {
-                            this.move_away_occupied(this.positions);
-                            this.positions[student.hostname].set_occupy(student.user);
-                        }
+                    if (this.position_exists(student.hostname)) {
+                        if (this.positions[student.hostname].user != student.user) {
+                            this.replace_box(this.positions[student.hostname], student);
+                        }/* TODO TODO TODO !!!!!! -- see paper */
+                    } else {
+                        /* if we do not have specified position for new hostname */
+                        $('#student-' + student.user).prependTo('#active-exercise-students');
                     }
 
                     /* unoccupy the position where student was previously placed */
@@ -116,18 +135,19 @@ Exercise.prototype.new_post = function(post) {
                     if (this.position_exists(student.hostname)) {
                         /* if student is in upper container, move them to hall */
                         if (this.positions[student.hostname].user != student.user) {
-                            var pos = this.positions[student.hostname];
-                            $('#student-' + student.user).appendTo('#active-exercise-hall');
-                            $('#student-' + student.user).css({'position': 'relative', 'top': pos.top, 'left': pos.left});
-                            pos.set_occupy(student.user);
+                            this.replace_box(this.positions[post.hostname], student);
                         }
+                    } else {
+                        /* if the user is in upper container, move it to the beginning */
+                        $('#student-' + student.user).prependTo('#active-exercise-students');
                     }
                 }
+
+                student.change_background('working');
             }
             break;
         case 'exit':
-            /* TODO: check if we need to remove other bg-xxx classes in the future */
-            $('#student-' + post.user).removeClass('bg-primary').addClass('bg-success');
+            student.change_background('finished');
             this.finished++;
             this.update_finished_students();
             break;
@@ -169,7 +189,8 @@ $(document).on('click', '#btn-save-positions', function(e) {
 socket.on('load_active_exercise', function(posts, inactive) {
     exercise.initialize_students(posts);
     for (var i = 0; i < inactive.length; i++) {
-        exercise.students[inactive[i]].update_activity(false);
+        if (inactive[i] in exercise.students)
+            exercise.students[inactive[i]].update_activity(false);
     }
 });
 
