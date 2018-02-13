@@ -85,6 +85,7 @@ Exercise.prototype.create_new_box = function(student) {
         $('#active-exercise-students').append(box);
     else
         $('#active-exercise-students').prepend(box);
+
     /* TODO: check if we cannot bind just the created box */
     bind_draggables();
 }
@@ -122,10 +123,11 @@ Exercise.prototype.new_post = function(post) {
                     if (this.position_exists(student.hostname)) {
                         if (this.positions[student.hostname].user != student.user) {
                             this.replace_box(this.positions[student.hostname], student);
-                        }/* TODO TODO TODO !!!!!! -- see paper */
+                        }
                     } else {
                         /* if we do not have specified position for new hostname */
                         $('#student-' + student.user).prependTo('#active-exercise-students');
+                        $('#student-' + student.user).css({'position': 'relative', 'top': 0, 'left': 0});
                     }
 
                     /* unoccupy the position where student was previously placed */
