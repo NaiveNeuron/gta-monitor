@@ -10,6 +10,7 @@ var flash = require('flash');
 var schedule = require('node-schedule');
 var bcrypt = require('bcrypt-nodejs');
 var passport = require('passport');
+var ip = require('ip');
 
 var LocalStrategy = require('passport-local').Strategy;
 
@@ -32,6 +33,12 @@ global.POST_START = 'start';
 global.POST_COMMAND = 'command';
 global.POST_PASSED = 'passed';
 global.POST_EXIT = 'exit';
+global.ALLOWED_SUBNETS = [
+    ip.cidrSubnet('158.195.28.128/26'), /* eth0 h3 */
+    ip.cidrSubnet('158.195.28.192/26'), /* eth0 f1-248 */
+    ip.cidrSubnet('158.195.28.0/25'), /* eth0 h6 */
+    ip.cidrSubnet('158.195.252.0/23'), /* wlan eduroam */
+];
 
 if (!Date.now) {
     Date.now = function now() {
