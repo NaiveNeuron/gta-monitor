@@ -57,7 +57,15 @@ module.exports = function(sequelize, DataTypes) {
         command: {
             type: DataTypes.TEXT
             // TODO: escape command after set?
-        }
+        },
+
+        /*indexes: [
+            {
+                name: 'post_index',
+                method: 'HASH',
+                fields: ['exercise_id', {attribute: 'title', collate: 'en_US', order: 'DESC', length: 5}]
+            }
+        ]*/
     });
 
     Post.associate = function(models) {

@@ -11,7 +11,7 @@ router.get('/create', login_required, function(req, res, next) {
 
 function validate_exercise(req)
 {
-    req.checkBody('number', 'The number of the exercise required').notEmpty();
+    req.checkBody('id', 'The id of the exercise required').notEmpty();
     req.checkBody('starts_at', 'The date and time of exercise start required').notEmpty();
     req.checkBody('ends_at', 'The date and time of exercise finish required').notEmpty();
 
@@ -30,7 +30,7 @@ router.post('/create', login_required, function(req, res, next) {
         res.render('create_exercise', { header: 'Create Exercise', errors: errors});
         return;
     } else {
-        var data = {name: req.body.name, number: req.body.number,
+        var data = {name: req.body.name, id: req.body.id,
                     starts_at: req.body.starts_at,
                     ends_at: req.body.ends_at};
         models.Exercise.create(data).then(function(exercise) {
@@ -38,10 +38,13 @@ router.post('/create', login_required, function(req, res, next) {
                 req.app.locals.navbar_exercises = resultset;
 
                 var data = exercise.dataValues;
-                var msg = 'Exercise ' + data.name + ' #' + data.number + ' created';
+                var msg = 'Exercise ' + data.name + ' #' + data.id + ' created';
                 req.flash('success', msg);
                 res.redirect('/');
             });
+        }).catch(function(err) {
+            res.render('create_exercise', { header: 'Create Exercise',
+                                            errors: [ {msg: 'Something went wrong with database (check exercise ID is unique)'} ]});
         });
     }
 });
@@ -65,10 +68,16 @@ router.post('/edit/:exercise_id', login_required, function(req, res, next) {
     var errors = req.validationErrors();
 
     if (errors) {
-        res.render('create_exercise', { header: 'Create Exercise', errors: errors});
-        return;
+        models.Exercise.findOne({
+            where: {
+                id: req.params.exercise_id,
+            }
+        }).then(function(exercise) {
+            res.render('edit_exercise', { header: 'Edit Exercise', exercise: exercise, errors: errors});
+            return;
+        });
     } else {
-        var data = {name: req.body.name, number: req.body.number,
+        var data = {name: req.body.name, id: req.body.id,
                     status: req.body.status, starts_at: req.body.starts_at,
                     ends_at: req.body.ends_at};
         models.Exercise.update(data, {
@@ -79,9 +88,19 @@ router.post('/edit/:exercise_id', login_required, function(req, res, next) {
             models.Exercise.findAll().then(function(resultset) {
                 req.app.locals.navbar_exercises = resultset;
 
-                var msg = 'Exercise ' + data.name + ' #' + data.number + ' updated';
+                var msg = 'Exercise ' + data.name + ' #' + data.id + ' updated';
                 req.flash('success', msg);
                 res.redirect('/');
+            });
+        }).catch(function(err) {
+            models.Exercise.findOne({
+                where: {
+                    id: req.params.exercise_id,
+                }
+            }).then(function(exercise) {
+                res.render('edit_exercise', { header: 'Edit Exercise',
+                                              exercise: exercise,
+                                              errors: [ {msg: 'Something went wrong with database (check exercise ID is unique)'} ]});
             });
         });
     }

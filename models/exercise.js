@@ -3,14 +3,9 @@
 module.exports = function(sequelize, DataTypes) {
     var Exercise = sequelize.define('Exercise', {
         id: {
-            autoIncrement: true,
-            primaryKey: true,
-            type: DataTypes.INTEGER
-        },
-
-        number: {
+            autoIncrement: false,
             type: DataTypes.INTEGER,
-            unique: true,
+            primaryKey: true,
             allowNull: false,
             validate: {
                 isNumeric: true

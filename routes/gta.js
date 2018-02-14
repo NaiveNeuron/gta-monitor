@@ -24,7 +24,7 @@ router.post('/', function(req, res, next) {
         models.Exercise.findAll({
             where: {
                 status: 'active',
-                number: d.exercise_number
+                id: d.exercise_number
             }
         }).then(function(resultset) {
             /* if exercise matches the query, the resultset should contain one item */
