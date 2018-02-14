@@ -40,7 +40,8 @@ body {
 }
 
 .active-exercise-container #active-exercise-hall {
-    min-height: 2500px;
+    /* TODO: for the future, make the container auto resizable */
+    min-height: 4000px;
     border: 1px solid #ccc;
     margin-top: 15px;
     position: relative;
@@ -50,7 +51,7 @@ body {
     position: absolute;
 }
 .user-box {
-    width: 32%;
+    width: 20%;
     display: inline-block;
     border: 2px solid #ffffff;
     font-size: 120%;

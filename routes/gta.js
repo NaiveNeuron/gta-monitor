@@ -15,8 +15,8 @@ function is_ip_allowed(ip)
 
 /* POST from GTA application. */
 router.post('/', function(req, res, next) {
-    console.log('GOT POST');
-    console.log(req.body);
+    /* console.log('GOT POST'); */
+    /* console.log(req.body); */
 
     var d = req.body;
 
