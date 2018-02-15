@@ -118,7 +118,7 @@ router.get('/active', login_required, function(req, res, next) {
             }
         }).then(function(hall) {
             if (!hall)
-                hall = {};
+                hall = "{}";
             else
                 hall = hall.positions;
             res.render('active_exercise', {header: 'Active Exercise', exercise: exercise, hall: hall});
