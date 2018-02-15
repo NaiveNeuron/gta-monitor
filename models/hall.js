@@ -9,7 +9,7 @@ module.exports = function(sequelize, DataTypes) {
         },
 
         positions: {
-            type: DataTypes.JSON
+            type: DataTypes.TEXT
         }
     });
 

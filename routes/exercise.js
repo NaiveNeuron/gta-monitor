@@ -121,19 +121,20 @@ router.get('/active', login_required, function(req, res, next) {
                 hall = {};
             else
                 hall = hall.positions;
-            res.render('active_exercise', {header: 'Active Exercise', exercise: exercise, hall: JSON.stringify(hall)});
+            res.render('active_exercise', {header: 'Active Exercise', exercise: exercise, hall: hall});
         });
     });
 });
 
 router.post('/active/save', login_required, function(req, res, next) {
+    var data = JSON.stringify(req.body);
     models.Hall.findOne({
         where: {
             user_id: req.user.id
         }
     }).then(function(hall) {
         if (hall) {
-            models.Hall.update({positions: req.body}, {
+            models.Hall.update({positions: data}, {
                 where: {
                     user_id: req.user.id
                 }
@@ -141,7 +142,7 @@ router.post('/active/save', login_required, function(req, res, next) {
                 res.json({success : 'Updated Successfully', status : 200});
             });
         } else {
-            models.Hall.create({user_id: req.user.id, positions: req.body}).then(function(hall) {
+            models.Hall.create({user_id: req.user.id, positions: data}).then(function(hall) {
                 res.json({success : 'Created Successfully', status : 200});
             });
         }
