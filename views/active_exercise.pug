@@ -9,7 +9,7 @@ block css
 block js
   if exercise != null
     script.
-      var HALL_INITIAL = !{hall};
+      var HALL_INITIAL = #{hall};
     script(src="/js/lib/jquery-ui.min.js")
     script(src="/js/socket.js")
     script(src="/js/utils.js")
