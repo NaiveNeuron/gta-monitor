@@ -51,10 +51,11 @@ body {
     position: absolute;
 }
 .user-box {
+    position: relative;
     width: 20%;
     display: inline-block;
     border: 2px solid #ffffff;
-    font-size: 120%;
+    font-size: 110%;
     padding: 10px;
     margin: 0.5%;
     word-wrap: break-word;
@@ -66,6 +67,11 @@ body {
 .user-box .user-box-info span {
     margin-left: 5px;
     margin-right: 5px;
+}
+.user-box .user-box-info .user-box-level {
+    position: absolute;
+    top: 0;
+    right: 0;
 }
 .user-box .user-box-command-info {
     font-size: 80%;

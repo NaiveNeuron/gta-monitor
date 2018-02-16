@@ -72,7 +72,7 @@ Exercise.prototype.create_new_box = function(student) {
                     + '" data-hostname="' + student.hostname + '"' + style + '>'
             +   '<div class="user-box-info">'
             +     '<span class="user-box-user">' + student.get_name_hostname() + '</span>'
-            +     '<span>Level: <span class="user-box-level">' + student.level + '</span></span>'
+            +     '<span class="user-box-level">' + student.level + '</span>'
             +   '</div>'
             +   '<div class="user-box-command-info">$ '
             +     '<span class="user-box-command">' + student.get_last_command() + '</span>'
@@ -154,9 +154,8 @@ Exercise.prototype.new_post = function(post) {
             this.update_finished_students();
             break;
         case 'command':
-            $('#student-' + post.user + ' .user-box-command').text(post.command);
-            break;
         case 'passed':
+            $('#student-' + post.user + ' .user-box-command').text(post.command);
             $('#student-' + post.user + ' .user-box-level').text(student.level);
             break;
     }

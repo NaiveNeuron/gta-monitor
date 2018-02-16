@@ -48,10 +48,7 @@ module.exports = function(sequelize, DataTypes) {
         },
 
         level: {
-            type: DataTypes.INTEGER,
-            validate: {
-                isNumeric: true
-            }
+            type: DataTypes.STRING,
         },
 
         command: {

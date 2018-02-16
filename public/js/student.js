@@ -9,7 +9,7 @@ function Student(user, hostname, ip)
     this.user = user;
     this.hostname = hostname;
     this.ip = ip;
-    this.level = 1;
+    this.level = '-';
     this.history = [];
     this.exit = false;
     this.active = true;
@@ -64,21 +64,16 @@ Student.prototype.get_box_background = function() {
 }
 
 Student.prototype.add_post = function(post) {
-    var level = null;
-    var command = null;
+    var level = post.level;
+    var command = post.command;
 
-    if ('level' in post)
-        level = post.level
-
-    if ('command' in post)
-        command = post.command
+    if (level)
+        this.level = level;
 
     this.history.push(new Post(post.type, post.date, post.user, post.hostname,
                                post.ip, level, command));
 
-    if (post.type == 'passed')
-        this.level++;
-    else if (post.type == 'exit')
+    if (post.type == 'exit')
         this.exit = true;
     else if (post.type == 'start')
         this.exit = false;
