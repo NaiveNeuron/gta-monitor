@@ -107,7 +107,11 @@ models.sequelize.sync().then(function() {
         }
     }).then(function(exercise) {
         if (exercise) {
-            models.Post.findAll().then(function(resultset) {
+            models.Post.findAll({
+                where: {
+                    exercise_id: exercise.id
+                }
+            }).then(function(resultset) {
                 resultset.forEach(function(item) {
                     if (item.type == global.POST_EXIT && item.user in global.activities) {
                         delete global.activities[item.user];
