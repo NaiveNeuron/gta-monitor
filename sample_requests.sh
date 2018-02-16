@@ -9,7 +9,7 @@ SERVER=${4-"http://localhost:3000"}
 IP=${5:-"158.195.28.190"}
 
 if [ "$TYPE" = "start" ]; then
-    wget --header="Content-Type: application/json" --post-data '{"type": "start", "user": "'$USR'", "hostname": "'$HOSTNAME'", "date": '"`date +%s`"', "exercise_number": '$EXERCISE_NUM', "ip": "'$IP'"}' "$SERVER"/gta -O /dev/null
+    wget --header="Content-Type: application/json" --post-data '{"type": "start", "user": "'$USR'", "hostname": "'$HOSTNAME'", "date": '"`date +%s`"', "exercise_number": '$EXERCISE_NUM', "ip": "'$IP'"}' $SERVER/gta -O /dev/null
 elif [ "$TYPE" = "command" ]; then
     wget --header="Content-Type: application/json" --post-data '{"type": "command", "user": "'$USR'", "hostname": "'$HOSTNAME'", "date": '"`date +%s`"', "exercise_number": '$EXERCISE_NUM', "ip": "'$IP'", "level": 1, "command": "ls -l"}' $SERVER/gta -O /dev/null
 elif [ "$TYPE" = "passed" ]; then

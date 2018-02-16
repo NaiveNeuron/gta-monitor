@@ -21,15 +21,14 @@ router.post('/', function(req, res, next) {
     var d = req.body;
 
     if (is_ip_allowed(d.ip)) {
-        models.Exercise.findAll({
+        models.Exercise.findOne({
             where: {
                 status: 'active',
                 id: d.exercise_number
             }
-        }).then(function(resultset) {
+        }).then(function(ex) {
             /* if exercise matches the query, the resultset should contain one item */
-            resultset.forEach(function(item) {
-                var ex = item.get({plain: true});
+            if (ex) {
                 var dt = new Date(0);
                 dt.setUTCSeconds(d.date);
 
@@ -50,7 +49,7 @@ router.post('/', function(req, res, next) {
                 models.Post.create(data).then(function(post) {
                     socketapi.io.emit('new_post', post);
                 });
-            });
+            }
         });
     }
     res.status(200).send();
