@@ -9,7 +9,7 @@ function Student(user, hostname, ip)
     this.user = user;
     this.hostname = hostname;
     this.ip = ip;
-    this.level = '-';
+    this.level = 'l02';
     this.history = [];
     this.exit = false;
     this.active = true;
