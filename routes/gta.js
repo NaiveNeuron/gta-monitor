@@ -16,15 +16,17 @@ function is_ip_allowed(ip)
 /* POST from GTA application. */
 router.post('/', function(req, res, next) {
     /* console.log('GOT POST'); */
-    /* console.log(req.body); */
+    console.log(req.body);
 
     var d = req.body;
 
-    if (is_ip_allowed(d.ip)) {
+    if (true) { // is_ip_allowed(d.ip)) {
+        /* exercise comes as a exercise_id.gta, but we want to get only id */
+        var ex_number = parseInt(d.exercise_number.replace(/\D/g,''));
         models.Exercise.findOne({
             where: {
                 status: 'active',
-                id: d.exercise_number
+                id: ex_number
             }
         }).then(function(ex) {
             /* if exercise matches the query, the resultset should contain one item */
@@ -34,7 +36,7 @@ router.post('/', function(req, res, next) {
 
                 /* Update last activity of student */
                 if (d.type == global.POST_EXIT && d.user in global.activities) {
-                    delete global.activities[item.user];
+                    delete global.activities[d.user];
                 } else {
                     global.activities[d.user] = dt;
                 }
@@ -42,7 +44,7 @@ router.post('/', function(req, res, next) {
                 var data = {type: d.type, date: dt, user: d.user,
                             hostname: d.hostname, ip: d.ip, exercise_id: ex.id};
                 if (d.type == 'command' || d.type == 'passed') {
-                    data.command = d.command;
+                    data.command = decodeURI(d.command);
                     data.level = d.level;
                 }
 
