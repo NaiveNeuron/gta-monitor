@@ -5,7 +5,7 @@ EXERCISE_NUM=1
 TYPE=$1
 USR=${2:-`whoami`}
 HOSTNAME=${3:-`hostname`}
-SERVER=${4-"http://localhost:3000"}
+SERVER=${4:-"http://localhost:3000"}
 IP=${5:-"158.195.28.190"}
 
 LVL="l01"
