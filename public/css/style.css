@@ -12,6 +12,10 @@ body {
     margin-top: 10px;
 }
 
+code.passed-command {
+    color: green;
+}
+
 .active-exercise-container {
     padding: 20px;
 }
