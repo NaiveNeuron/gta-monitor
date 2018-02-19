@@ -9,7 +9,7 @@ function Student(user, hostname, ip)
     this.user = user;
     this.hostname = hostname;
     this.ip = ip;
-    this.level = 'l02';
+    this.level = '-';
     this.history = [];
     this.exit = false;
     this.active = true;
@@ -21,7 +21,7 @@ Student.prototype.get_name_hostname = function() {
 
 Student.prototype.get_last_command = function () {
     for (var i = this.history.length - 1; i >= 0; i--) {
-        if (this.history[i].type == 'command')
+        if (this.history[i].type == 'command' || this.history[i].type == 'passed')
             return this.history[i].command;
     }
     return '';
