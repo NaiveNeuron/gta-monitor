@@ -6,6 +6,9 @@ function Exercise()
     this.finished = 0;
     this.positions = {};
 
+    this.modal_shown = false;
+    this.modal_shown_user = '';
+
     for (var key in HALL_INITIAL) {
         this.positions[key] = new Position(HALL_INITIAL[key][0],
                                            HALL_INITIAL[key][1]);
@@ -157,6 +160,8 @@ Exercise.prototype.new_post = function(post) {
         case 'passed':
             $('#student-' + post.user + ' .user-box-command').text(post.command);
             $('#student-' + post.user + ' .user-box-level').text(student.level);
+            if (this.modal_shown && this.modal_shown_user == post.user)
+                modal_append_command(post.command, post.level, post.type == 'passed');
             break;
     }
 }

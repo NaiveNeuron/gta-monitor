@@ -1,3 +1,12 @@
+function modal_append_command(command, level, passed)
+{
+    if (passed)
+        var msg = '<code class="passed-command">' + level + ' $ ' + command + '</code>';
+    else
+        var msg = '<code>' + level + ' $ ' + command + '</code>';
+    $('.modal-command-history').append(msg);
+}
+
 $(document).on('click', '.user-box', function(e) {
     var user = $(this).attr('data-username');
     var student = exercise.students[user];
@@ -12,9 +21,9 @@ $(document).on('click', '.user-box', function(e) {
         // TODO: show time (and date) and also information about start / exit
         //       Green color for command that passed the level
         if (post.type == 'command') {
-            $('.modal-command-history').append('<code>$ ' + post.command + '</code>');
+            modal_append_command(post.command, post.level, false);
         } else if (post.type == 'passed') {
-            $('.modal-command-history').append('<code class="passed-command">$ ' + post.command + '</code>');
+            modal_append_command(post.command, post.level, true);
         } else if (post.type == 'start') {
             $('.modal-started-at').text(get_date_from_string(post.date));
         } else if (post.type == 'exit') {
@@ -22,5 +31,15 @@ $(document).on('click', '.user-box', function(e) {
         }
     }
 
+    exercise.modal_shown_user = user;
     $('#student-detail-modal').modal('show');
+});
+
+$('#student-detail-modal').on('shown.bs.modal', function(e) {
+    exercise.modal_shown = true;
+});
+
+$('#student-detail-modal').on('hide.bs.modal', function(e) {
+    exercise.modal_shown_user = '';
+    exercise.modal_shown = false;
 });
