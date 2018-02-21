@@ -1,0 +1,16 @@
+{
+    "development": {
+        "ssl": {
+            "use_ssl": false,
+            "key": "",
+            "cert": ""
+        }
+    },
+    "production": {
+        "ssl": {
+            "use_ssl": false,
+            "key": "",
+            "cert": ""
+        }
+    }
+}
