@@ -92,6 +92,8 @@ code.passed-command {
     border: 1px solid #000000;
     border-radius: 3px;
     padding: 5px;
+    height: 60vh;
+    overflow-y: auto;
 }
 .modal .modal-command-history code {
     display: block;
