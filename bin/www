@@ -5,8 +5,13 @@
  */
 
 var app = require('../app');
+var fs = require('fs');
 var debug = require('debug')('gta-monitor:server');
 var http = require('http');
+var https = require('https');
+var env = process.env.NODE_ENV || 'development';
+
+var app_config = require('../config/app_config.json')[env];
 
 /**
  * Get port from environment and store in Express.
@@ -16,10 +21,16 @@ var port = normalizePort(process.env.PORT || '3000');
 app.set('port', port);
 
 /**
- * Create HTTP server.
+ * Create HTTP/S server.
  */
 
-var server = http.createServer(app);
+if (app_config.ssl.use_ssl) {
+    var credentials = {key: fs.readFileSync(app_config.ssl.key, 'utf8'),
+                       cert: fs.readFileSync(app_config.ssl.cert, 'utf8')}
+    var server = https.createServer(credentials, app);
+} else {
+    var server = http.createServer(app);
+}
 
 var socketapi = require('../socketapi');
 var io = socketapi.io;

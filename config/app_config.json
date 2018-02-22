@@ -1,9 +1,9 @@
 {
     "development": {
         "ssl": {
-            "use_ssl": false,
-            "key": "",
-            "cert": ""
+            "use_ssl": true,
+            "key": "../../certs/monitor.key",
+            "cert": "../../certs/monitor.crt"
         }
     },
     "production": {

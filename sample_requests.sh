@@ -15,18 +15,18 @@ EXERCISE_NUM="cvicenie_01.gta"
 TYPE=$1
 USR=${2:-`whoami`}
 HOSTNAME=${3:-`hostname`}
-SERVER=${4:-"http://localhost:3000"}
+SERVER=${4:-"https://localhost:3000"}
 IP=${5:-"158.195.28.190"}
 
 LVL="l01"
 CMD=$(urlencode "cat file | grep something | awk blablabla")
 
 if [ "$TYPE" = "start" ]; then
-    wget --header="Content-Type: application/json" --post-data '{"type": "start", "user": "'$USR'", "hostname": "'$HOSTNAME'", "date": '`date +%s`', "exercise_number": "'$EXERCISE_NUM'", "ip": "'$IP'"}' $SERVER/gta -O /dev/null
+    wget --no-check-certificate --header="Content-Type: application/json" --post-data '{"type": "start", "user": "'$USR'", "hostname": "'$HOSTNAME'", "date": '`date +%s`', "exercise_number": "'$EXERCISE_NUM'", "ip": "'$IP'"}' $SERVER/gta -O /dev/null
 elif [ "$TYPE" = "command" ]; then
-    wget --header="Content-Type: application/json" --post-data '{"type": "command", "user": "'$USR'", "hostname": "'$HOSTNAME'", "date": '`date +%s`', "exercise_number": "'$EXERCISE_NUM'", "ip": "'$IP'", "level": "'$LVL'", "command": "'$CMD'"}' $SERVER/gta -O /dev/null
+    wget --no-check-certificate --header="Content-Type: application/json" --post-data '{"type": "command", "user": "'$USR'", "hostname": "'$HOSTNAME'", "date": '`date +%s`', "exercise_number": "'$EXERCISE_NUM'", "ip": "'$IP'", "level": "'$LVL'", "command": "'$CMD'"}' $SERVER/gta -O /dev/null
 elif [ "$TYPE" = "passed" ]; then
-    wget --header="Content-Type: application/json" --post-data '{"type": "passed", "user": "'$USR'", "hostname": "'$HOSTNAME'", "date": '`date +%s`', "exercise_number": "'$EXERCISE_NUM'", "ip": "'$IP'", "level": "'$LVL'", "command": "'$CMD'"}' $SERVER/gta -O /dev/null
+    wget --no-check-certificate --header="Content-Type: application/json" --post-data '{"type": "passed", "user": "'$USR'", "hostname": "'$HOSTNAME'", "date": '`date +%s`', "exercise_number": "'$EXERCISE_NUM'", "ip": "'$IP'", "level": "'$LVL'", "command": "'$CMD'"}' $SERVER/gta -O /dev/null
 elif [ "$TYPE" = "exit" ]; then
-    wget --header="Content-Type: application/json" --post-data '{"type": "exit", "user": "'$USR'", "hostname": "'$HOSTNAME'", "date": '`date +%s`', "exercise_number": "'$EXERCISE_NUM'", "ip": "'$IP'"}' $SERVER/gta -O /dev/null
+    wget --no-check-certificate --header="Content-Type: application/json" --post-data '{"type": "exit", "user": "'$USR'", "hostname": "'$HOSTNAME'", "date": '`date +%s`', "exercise_number": "'$EXERCISE_NUM'", "ip": "'$IP'"}' $SERVER/gta -O /dev/null
 fi
