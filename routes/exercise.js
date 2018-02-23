@@ -149,6 +149,21 @@ router.post('/active/save', login_required, function(req, res, next) {
     });
 });
 
+router.get('/evaluate/:exercise_id', login_required, function(req, res, next) {
+    models.Exercise.findById(req.params.exercise_id).then(function(exercise) {
+        models.Post.findAll({
+            where: {
+                exercise_id: exercise.id
+            }
+        }).then(function(resultset) {
+            var posts = resultset.map(function(post) { return post.dataValues; });
+            res.render('evaluate_exercise', { header: 'Evaluate Exercise',
+                                              exercise: exercise,
+                                              posts: JSON.stringify(posts)});
+        });
+    });
+});
+
 /* if this event is called, active exercise exists */
 socketapi.io.on('connect', function(socket) {
     models.Exercise.findOne({
@@ -157,13 +172,15 @@ socketapi.io.on('connect', function(socket) {
         },
         attributes: ['id']
     }).then(function(exercise) {
-        models.Post.findAll({
-            where: {
-                exercise_id: exercise.id
-            }
-        }).then(function(resultset){
-            socket.emit('load_active_exercise', resultset, global.inactive);
-        });
+        if (exercise) {
+            models.Post.findAll({
+                where: {
+                    exercise_id: exercise.id
+                }
+            }).then(function(resultset){
+                socket.emit('load_active_exercise', resultset, global.inactive);
+            });
+        }
     });
 });
 

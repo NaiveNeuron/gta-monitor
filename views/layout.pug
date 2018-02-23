@@ -6,6 +6,7 @@ html
   head
     meta(charset="UTF-8")
     meta(name="viewport", content="width=device-width, initial-scale=1")
+    meta(name="author", content="Adrian Matejov")
 
     title GTA-Monitor
 
@@ -43,10 +44,10 @@ html
                   a(class="dropdown-item" href="/exercise/edit/" + ex.id) ##{ex.id} #{ex.name}
 
             li(class="nav-item dropdown")
-              a(class="nav-link dropdown-toggle", href="#", id="navbarDropdown", role="button", data-toggle="dropdown", aria-haspopup="true", aria-expanded="false") Past exercises
+              a(class="nav-link dropdown-toggle", href="#", id="navbarDropdown", role="button", data-toggle="dropdown", aria-haspopup="true", aria-expanded="false") Evaluate exercise
               div(class="dropdown-menu", aria-labelledby="navbarDropdown")
-                a(class="dropdown-item" href="#") X
-                a(class="dropdown-item" href="#") Y
+                each ex in navbar_evaluate_exercises
+                  a(class="dropdown-item" href="/exercise/evaluate/" + ex.id) ##{ex.id} #{ex.name}
 
         ul(class="navbar-nav navbar-right")
           if logged_user

@@ -101,6 +101,10 @@ code.passed-command {
     word-wrap: break-word;
 }
 
+.evaluate-exercise-table tbody td {
+    cursor: pointer;
+}
+
 
 
 @media (min-width: 1200px) {

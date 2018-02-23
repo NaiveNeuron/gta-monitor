@@ -1,0 +1,29 @@
+extends layout
+
+block link
+  -var selected = 'Evaluate Exercise';
+
+block js
+  if exercise != null
+    script.
+      var POSTS = !{posts};
+    script(src="/js/socket.js")
+    script(src="/js/utils.js")
+    script(src="/js/post.js")
+    script(src="/js/student.js")
+
+    script(src="/js/evaluate_exercise.js")
+
+block content
+  div(class="narrow-content")
+    h1 #{header}
+    h5 Exercise #{exercise.name} - id #{exercise.id}
+    table(class="table table-striped table-hover evaluate-exercise-table")
+      thead(class="thead-dark")
+        tr
+          th Username
+          th Hostname
+          th IP
+          th Last level
+          th Score
+      tbody
