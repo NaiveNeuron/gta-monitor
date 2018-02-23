@@ -13,6 +13,9 @@ function Student(user, hostname, ip)
     this.history = [];
     this.exit = false;
     this.active = true;
+
+    /* Evaluation stuff */
+    this.score = null;
 }
 
 Student.prototype.get_name_hostname = function() {
@@ -25,6 +28,10 @@ Student.prototype.get_last_command = function () {
             return this.history[i].command;
     }
     return '';
+}
+
+Student.prototype.get_score = function() {
+    return this.score == null ? '-' : this.score;
 }
 
 Student.prototype.update_activity_border = function() {

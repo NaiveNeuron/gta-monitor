@@ -155,11 +155,19 @@ router.get('/evaluate/:exercise_id', login_required, function(req, res, next) {
             where: {
                 exercise_id: exercise.id
             }
-        }).then(function(resultset) {
-            var posts = resultset.map(function(post) { return post.dataValues; });
-            res.render('evaluate_exercise', { header: 'Evaluate Exercise',
-                                              exercise: exercise,
-                                              posts: JSON.stringify(posts)});
+        }).then(function(resultset_posts) {
+            models.Evaluate.findAll({
+                where: {
+                    exercise_id: exercise.id
+                }
+            }).then(function(resultset_evals) {
+                var posts = resultset_posts.map(function(post) { return post.dataValues; });
+                var evals = resultset_evals.map(function(eval) { return eval.dataValues; });
+                res.render('evaluate_exercise', { header: 'Evaluate Exercise',
+                                                  exercise: exercise,
+                                                  posts: JSON.stringify(posts),
+                                                  evals: JSON.stringify(evals)});
+            });
         });
     });
 });

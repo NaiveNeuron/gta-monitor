@@ -7,10 +7,12 @@ block js
   if exercise != null
     script.
       var POSTS = !{posts};
+      var EVALS = !{evals};
     script(src="/js/socket.js")
     script(src="/js/utils.js")
     script(src="/js/post.js")
     script(src="/js/student.js")
+    script(src="/js/student_detail.js")
 
     script(src="/js/evaluate_exercise.js")
 
@@ -18,7 +20,7 @@ block content
   div(class="narrow-content")
     h1 #{header}
     h5 Exercise #{exercise.name} - id #{exercise.id}
-    table(class="table table-striped table-hover evaluate-exercise-table")
+    table(class="table table-hover evaluate-exercise-table")
       thead(class="thead-dark")
         tr
           th Username
@@ -27,3 +29,4 @@ block content
           th Last level
           th Score
       tbody
+    include snippets/student_modal.pug
