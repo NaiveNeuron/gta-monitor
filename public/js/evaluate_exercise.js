@@ -58,6 +58,8 @@ $(document).on('submit','form.modal-evaluate-form', function(e) {
     var score = $(this).find('input[name="modal_evaluate_score"]').val();
     var user = $(this).find('input[name="modal_evaluate_user"]').val();
 
+    $('form.modal-evaluate-form .loader').css('visibility', 'visible');
+
     $.ajax({
         url: window.location.pathname,
         type: 'POST',
@@ -71,6 +73,9 @@ $(document).on('submit','form.modal-evaluate-form', function(e) {
         },
         error: function(jqXhr, textStatus, errorThrown) {
             console.log('FAIL: ' + textStatus);
+        },
+        complete: function(jqXhr, textStatus) {
+            $('form.modal-evaluate-form .loader').css('visibility', 'hidden');
         }
     });
 

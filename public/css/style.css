@@ -101,6 +101,17 @@ code.passed-command {
     word-wrap: break-word;
 }
 
+.modal .loader {
+    border: 5px solid #f3f3f3;
+    -webkit-animation: spin 1s linear infinite;
+    animation: spin 1s linear infinite;
+    border-top: 5px solid #555;
+    border-radius: 50%;
+    width: 25px;
+    height: 25px;
+    visibility: hidden;
+}
+
 .evaluate-exercise-table tbody td {
     cursor: pointer;
 }
@@ -108,6 +119,10 @@ code.passed-command {
     font-weight: bold;
 }
 
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
 
 
 @media (min-width: 1200px) {
