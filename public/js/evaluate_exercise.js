@@ -30,7 +30,7 @@ EVExercise.prototype.initialize = function(posts, evals)
                 +   '<td>' + student.hostname + '</td>'
                 +   '<td>' + student.ip + '</td>'
                 +   '<td>' + student.level + '</td>'
-                +   '<td>' + student.get_score() + '</td>'
+                +   '<td class="score-cell">' + student.get_score_or_dash() + '</td>'
                 + '</tr>';
 
         $('.evaluate-exercise-table tbody').append(row);
@@ -49,5 +49,30 @@ $(document).on('click', '.user-row', function(e) {
 
     initialize_modal(student);
 
+    initialize_modal_footer(student);
+
     $('#student-detail-modal').modal('show');
+});
+
+$(document).on('submit','form.modal-evaluate-form', function(e) {
+    var score = $(this).find('input[name="modal_evaluate_score"]').val();
+    var user = $(this).find('input[name="modal_evaluate_user"]').val();
+
+    $.ajax({
+        url: window.location.pathname,
+        type: 'POST',
+        data: {
+            user: user,
+            score: score
+        },
+        success: function(response) {
+            evexercise.students[user].set_score(score);
+            evexercise.students[user].update_score(score);
+        },
+        error: function(jqXhr, textStatus, errorThrown) {
+            console.log('FAIL: ' + textStatus);
+        }
+    });
+
+    return false;
 });

@@ -28,3 +28,9 @@ function initialize_modal(student)
         }
     }
 }
+
+function initialize_modal_footer(student)
+{
+    $('.modal-evaluate-form input[name="modal_evaluate_score"]').val(student.get_score());
+    $('.modal-evaluate-form input[name="modal_evaluate_user"]').val(student.user);
+}

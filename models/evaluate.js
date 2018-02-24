@@ -27,6 +27,7 @@ module.exports = function(sequelize, DataTypes) {
 
     Evaluate.associate = function(models) {
         Evaluate.belongsTo(models.Exercise, {foreignKey: 'exercise_id', onDelete: 'CASCADE'});
+        Evaluate.belongsTo(models.User, {foreignKey: 'user_id', onDelete: 'SET NULL'});
     };
 
     return Evaluate;

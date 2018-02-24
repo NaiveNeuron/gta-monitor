@@ -104,6 +104,9 @@ code.passed-command {
 .evaluate-exercise-table tbody td {
     cursor: pointer;
 }
+.evaluate-exercise-table .score-cell {
+    font-weight: bold;
+}
 
 
 
