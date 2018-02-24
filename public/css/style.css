@@ -101,6 +101,13 @@ code.passed-command {
     word-wrap: break-word;
 }
 
+.evaluate-exercise-table tbody td {
+    cursor: pointer;
+}
+.evaluate-exercise-table .score-cell {
+    font-weight: bold;
+}
+
 
 
 @media (min-width: 1200px) {

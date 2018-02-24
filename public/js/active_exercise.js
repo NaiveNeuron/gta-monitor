@@ -192,6 +192,25 @@ $(document).on('click', '#btn-save-positions', function(e) {
     });
 });
 
+$(document).on('click', '.user-box', function(e) {
+    var user = $(this).attr('data-username');
+    var student = exercise.students[user];
+
+    initialize_modal(student);
+
+    exercise.modal_shown_user = user;
+    $('#student-detail-modal').modal('show');
+});
+
+$('#student-detail-modal').on('shown.bs.modal', function(e) {
+    exercise.modal_shown = true;
+});
+
+$('#student-detail-modal').on('hide.bs.modal', function(e) {
+    exercise.modal_shown_user = '';
+    exercise.modal_shown = false;
+});
+
 socket.on('load_active_exercise', function(posts, inactive) {
     exercise.initialize_students(posts);
     for (var i = 0; i < inactive.length; i++) {

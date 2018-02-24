@@ -40,6 +40,7 @@ module.exports = function(sequelize, DataTypes) {
 
     Exercise.associate = function(models) {
         Exercise.hasMany(models.Post, {foreignKey: 'exercise_id', onDelete: 'CASCADE'});
+        Exercise.hasMany(models.Evaluate, {foreignKey: 'exercise_id', onDelete: 'CASCADE'});
     };
 
     return Exercise;

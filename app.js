@@ -26,6 +26,8 @@ var app = express();
 
 var secret_key = 'strong-secret';
 
+app.locals.pretty = true;
+
 global.activities = {};
 global.inactive = [];
 global.inactivity = 300; /* inactivity in seconds */
@@ -98,6 +100,12 @@ models.sequelize.sync().then(function() {
     /* Exercises available in whole application */
     models.Exercise.findAll().then(function(resultset) {
         app.locals.navbar_exercises = resultset;
+        app.locals.navbar_evaluate_exercises = [];
+
+        resultset.forEach(function(item) {
+            if (item.status == 'done')
+                app.locals.navbar_evaluate_exercises.push(item);
+        });
     });
 
     /* If there is already an active exercise, check and save last activities of students */
@@ -138,7 +146,13 @@ var j = schedule.scheduleJob('* * * * *', function(){
             if (ex.status == 'scheduled' && starts.getTime() < curr.getTime()) {
                 item.update({status: 'active'});
             } else if (ex.status == 'active' && ends.getTime() < curr.getTime()) {
-                item.update({status: 'done'});
+                item.update({status: 'done'}).then(function() {
+                    app.locals.navbar_evaluate_exercises.push(item);
+
+                    /* reset activities*/
+                    global.activities = {};
+                    global.inactive = [];
+                });
             }
         });
     });

@@ -7,10 +7,8 @@ function modal_append_command(command, level, passed)
     $('.modal-command-history').append(msg);
 }
 
-$(document).on('click', '.user-box', function(e) {
-    var user = $(this).attr('data-username');
-    var student = exercise.students[user];
-    //TODO
+function initialize_modal(student)
+{
     $('.modal-title').text(student.get_name_hostname());
     $('.modal-ip').text(student.ip);
 
@@ -19,7 +17,6 @@ $(document).on('click', '.user-box', function(e) {
     for (var i = 0; i < student.history.length; i++) {
         var post = student.history[i];
         // TODO: show time (and date) and also information about start / exit
-        //       Green color for command that passed the level
         if (post.type == 'command') {
             modal_append_command(post.command, post.level, false);
         } else if (post.type == 'passed') {
@@ -30,16 +27,10 @@ $(document).on('click', '.user-box', function(e) {
             $('.modal-finished-at').text(get_date_from_string(post.date));
         }
     }
+}
 
-    exercise.modal_shown_user = user;
-    $('#student-detail-modal').modal('show');
-});
-
-$('#student-detail-modal').on('shown.bs.modal', function(e) {
-    exercise.modal_shown = true;
-});
-
-$('#student-detail-modal').on('hide.bs.modal', function(e) {
-    exercise.modal_shown_user = '';
-    exercise.modal_shown = false;
-});
+function initialize_modal_footer(student)
+{
+    $('.modal-evaluate-form input[name="modal_evaluate_score"]').val(student.get_score());
+    $('.modal-evaluate-form input[name="modal_evaluate_user"]').val(student.user);
+}

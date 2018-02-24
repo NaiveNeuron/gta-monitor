@@ -13,3 +13,10 @@ div(class="modal fade", id="student-detail-modal", tabindex="-1", role="dialog",
         h6 Finished at &nbsp;
           span(class="modal-finished-at")
       div(class="modal-footer")
+        if modal_evaluate
+          form(action=".", method="POST", class="form-inline modal-evaluate-form")
+            div(class="form-group")
+              label(for="modal_evaluate_score", class="col-form-label m-2") Set score
+              input(type="number", class="form-control m-2", name="modal_evaluate_score", id="modal_evaluate_score", value="")
+              input(type="hidden", name="modal_evaluate_user", value="")
+              button(type="submit", name="modal_evaluate_btn", class="btn btn-primary m-2") Save

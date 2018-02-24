@@ -149,6 +149,61 @@ router.post('/active/save', login_required, function(req, res, next) {
     });
 });
 
+router.get('/evaluate/:exercise_id', login_required, function(req, res, next) {
+    models.Exercise.findById(req.params.exercise_id).then(function(exercise) {
+        models.Post.findAll({
+            where: {
+                exercise_id: exercise.id
+            }
+        }).then(function(resultset_posts) {
+            models.Evaluate.findAll({
+                where: {
+                    exercise_id: exercise.id
+                }
+            }).then(function(resultset_evals) {
+                var posts = resultset_posts.map(function(post) { return post.dataValues; });
+                var evals = resultset_evals.map(function(eval) { return eval.dataValues; });
+                res.render('evaluate_exercise', { header: 'Evaluate Exercise',
+                                                  modal_evaluate: true,
+                                                  exercise: exercise,
+                                                  posts: JSON.stringify(posts),
+                                                  evals: JSON.stringify(evals)});
+            });
+        });
+    });
+});
+
+router.post('/evaluate/:exercise_id', login_required, function(req, res, next) {
+    var user = req.body.user;
+    var score = req.body.score;
+    var exercise_id = req.params.exercise_id;
+    var user_id = req.user.id;
+
+    models.Evaluate.findOne({
+        where: {
+            exercise_id: exercise_id,
+            user: user
+        }
+    }).then(function(evaluation) {
+        if (evaluation) {
+            evaluation.update({user_id: user_id, score: score}).then(function() {
+                res.status(200).send({success: "Updated successfully"});
+            });
+        } else {
+            models.Evaluate.create({
+                user: user,
+                score: score,
+                exercise_id: exercise_id,
+                user_id: user_id
+            }).then(function(ev) {
+                res.status(200).send({success: "Created successfully"});
+            });
+        }
+    }).catch(function(err) {
+        res.status(err.code).send({fail: err.message});
+    });
+});
+
 /* if this event is called, active exercise exists */
 socketapi.io.on('connect', function(socket) {
     models.Exercise.findOne({
@@ -157,13 +212,15 @@ socketapi.io.on('connect', function(socket) {
         },
         attributes: ['id']
     }).then(function(exercise) {
-        models.Post.findAll({
-            where: {
-                exercise_id: exercise.id
-            }
-        }).then(function(resultset){
-            socket.emit('load_active_exercise', resultset, global.inactive);
-        });
+        if (exercise) {
+            models.Post.findAll({
+                where: {
+                    exercise_id: exercise.id
+                }
+            }).then(function(resultset){
+                socket.emit('load_active_exercise', resultset, global.inactive);
+            });
+        }
     });
 });
 

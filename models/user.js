@@ -75,5 +75,9 @@ module.exports = function(sequelize, DataTypes) {
         });
     });
 
+    User.associate = function(models) {
+        User.hasMany(models.Evaluate, {foreignKey: 'user_id', onDelete: 'SET NULL'});
+    };
+
     return User;
 };
