@@ -112,11 +112,20 @@ code.passed-command {
     visibility: hidden;
 }
 
+.evaluate-exercise-container h5::after {
+    content: '';
+    display: block;
+    clear: both;
+}
 .evaluate-exercise-table tbody td {
     cursor: pointer;
 }
 .evaluate-exercise-table .score-cell {
     font-weight: bold;
+}
+#btn-csv-export {
+    float: right;
+    cursor: pointer;
 }
 
 @keyframes spin {

@@ -1,5 +1,6 @@
 var express = require('express');
 var sequelize = require('sequelize');
+var json2csv = require('json2csv').parse;
 var models = require('../models');
 var socketapi = require('../socketapi');
 var login_required = require('./middlewares').login_required;
@@ -203,6 +204,23 @@ router.post('/evaluate/:exercise_id', login_required, function(req, res, next) {
         }
     }).catch(function(err) {
         res.status(err.code).send({fail: err.message});
+    });
+});
+
+router.get('/evaluate/:exercise_id/csvexport', login_required, function(req, res, next) {
+    var fields = ['username', 'score', 'comment'];
+
+    models.Evaluate.findAll({
+        where: {
+            exercise_id: req.params.exercise_id
+        },
+        attributes: [['user', 'username'], 'score', 'comment']
+    }).then(function(resultset) {
+        var data = resultset.map(function(ev) { return ev.toJSON(); })
+
+        var csv = json2csv(data, { fields, quote: '' });
+        res.attachment('score.csv');
+        res.status(200).send(csv);
     });
 });
 

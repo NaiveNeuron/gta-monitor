@@ -20,15 +20,17 @@ block js
 block content
   div(class="narrow-content")
     h1 #{header}
-    h5 Exercise #{exercise.name} - id #{exercise.id}
-    table(class="table table-hover evaluate-exercise-table")
-      thead(class="thead-dark")
-        tr
-          th Username
-          th Hostname
-          th IP
-          th Last level
-          th Time spent
-          th Score
-      tbody
-    include snippets/student_modal.pug
+    div(class="evaluate-exercise-container")
+      h5 Exercise #{exercise.name} - id #{exercise.id}
+        a(href="/exercise/evaluate/" + exercise.id + "/csvexport", class="btn btn-outline-dark", id="btn-csv-export") Export to csv
+      table(class="table table-hover evaluate-exercise-table")
+        thead(class="thead-dark")
+          tr
+            th Username
+            th Hostname
+            th IP
+            th Last level
+            th Time spent
+            th Score
+        tbody
+      include snippets/student_modal.pug
