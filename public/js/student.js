@@ -14,6 +14,9 @@ function Student(user, hostname, ip)
     this.exit = false;
     this.active = true;
 
+    this.started_at = null;
+    this.finished_at = null;
+
     /* Evaluation stuff */
     this.evaluate = new Evaluate(user);
 }
@@ -28,6 +31,14 @@ Student.prototype.get_last_command = function () {
             return this.history[i].command;
     }
     return '';
+}
+
+Student.prototype.get_working_time_or_dash = function() {
+    if (this.started_at != null && this.finished_at != null) {
+        var diff = new Date(this.finished_at - this.started_at);
+        return diff.getHours() + ':' + diff.getMinutes() + ':' + diff.getSeconds();
+    }
+    return '-';
 }
 
 Student.prototype.update_activity_border = function() {
@@ -76,8 +87,14 @@ Student.prototype.add_post = function(post) {
     this.history.push(new Post(post.type, post.date, post.user, post.hostname,
                                post.ip, level, command));
 
-    if (post.type == 'exit')
+    if (post.type == 'exit') {
         this.exit = true;
-    else if (post.type == 'start')
+        this.finished_at = new Date(post.date);
+    } else if (post.type == 'start') {
         this.exit = false;
+        this.started_at = new Date(post.date);
+
+        if (this.finished_at != null)
+            this.finished_at = null;
+    }
 }
