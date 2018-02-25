@@ -208,13 +208,13 @@ router.post('/evaluate/:exercise_id', login_required, function(req, res, next) {
 });
 
 router.get('/evaluate/:exercise_id/csvexport', login_required, function(req, res, next) {
-    var fields = ['username', 'score', 'comment'];
+    var fields = ['username', 'grade', 'comment'];
 
     models.Evaluate.findAll({
         where: {
             exercise_id: req.params.exercise_id
         },
-        attributes: [['user', 'username'], 'score', 'comment']
+        attributes: [['user', 'username'], ['score', 'grade'], 'comment']
     }).then(function(resultset) {
         var data = resultset.map(function(ev) { return ev.toJSON(); })
 
