@@ -19,7 +19,8 @@ EVExercise.prototype.initialize = function(posts, evals)
 
     for (var i = 0; i < evals.length; i++) {
         var eval = evals[i];
-        this.students[eval.user].score = eval.score;
+        this.students[eval.user].evaluate.set_score(eval.score);
+        this.students[eval.user].evaluate.set_comment(eval.comment);
     }
 
     for (var stud in this.students) {
@@ -30,7 +31,7 @@ EVExercise.prototype.initialize = function(posts, evals)
                 +   '<td>' + student.hostname + '</td>'
                 +   '<td>' + student.ip + '</td>'
                 +   '<td>' + student.level + '</td>'
-                +   '<td class="score-cell">' + student.get_score_or_dash() + '</td>'
+                +   '<td class="score-cell">' + student.evaluate.get_score_or_dash() + '</td>'
                 + '</tr>';
 
         $('.evaluate-exercise-table tbody').append(row);
@@ -56,26 +57,31 @@ $(document).on('click', '.user-row', function(e) {
 
 $(document).on('submit','form.modal-evaluate-form', function(e) {
     var score = $(this).find('input[name="modal_evaluate_score"]').val();
+    var comment = $(this).find('textarea[name="comment"]').val();
     var user = $(this).find('input[name="modal_evaluate_user"]').val();
 
     $('form.modal-evaluate-form .loader').css('visibility', 'visible');
+    $('form.modal-evaluate-form button').css('visibility', 'hidden');
 
     $.ajax({
         url: window.location.pathname,
         type: 'POST',
         data: {
             user: user,
-            score: score
+            score: score,
+            comment: comment
         },
         success: function(response) {
-            evexercise.students[user].set_score(score);
-            evexercise.students[user].update_score(score);
+            evexercise.students[user].evaluate.set_score(score);
+            evexercise.students[user].evaluate.set_comment(comment);
+            evexercise.students[user].evaluate.update_score(score);
         },
         error: function(jqXhr, textStatus, errorThrown) {
             console.log('FAIL: ' + textStatus);
         },
         complete: function(jqXhr, textStatus) {
             $('form.modal-evaluate-form .loader').css('visibility', 'hidden');
+            $('form.modal-evaluate-form button').css('visibility', 'visible');
         }
     });
 

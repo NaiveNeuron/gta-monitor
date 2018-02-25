@@ -22,6 +22,10 @@ module.exports = function(sequelize, DataTypes) {
             validate: {
                 notEmpty: true,
             }
+        },
+
+        comment: {
+            type: DataTypes.TEXT
         }
     });
 

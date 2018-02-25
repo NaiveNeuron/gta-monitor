@@ -176,6 +176,7 @@ router.get('/evaluate/:exercise_id', login_required, function(req, res, next) {
 router.post('/evaluate/:exercise_id', login_required, function(req, res, next) {
     var user = req.body.user;
     var score = req.body.score;
+    var comment = req.body.comment;
     var exercise_id = req.params.exercise_id;
     var user_id = req.user.id;
 
@@ -186,13 +187,14 @@ router.post('/evaluate/:exercise_id', login_required, function(req, res, next) {
         }
     }).then(function(evaluation) {
         if (evaluation) {
-            evaluation.update({user_id: user_id, score: score}).then(function() {
+            evaluation.update({user_id: user_id, score: score, comment: comment}).then(function() {
                 res.status(200).send({success: "Updated successfully"});
             });
         } else {
             models.Evaluate.create({
                 user: user,
                 score: score,
+                comment: comment,
                 exercise_id: exercise_id,
                 user_id: user_id
             }).then(function(ev) {

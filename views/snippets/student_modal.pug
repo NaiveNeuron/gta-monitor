@@ -14,10 +14,12 @@ div(class="modal fade", id="student-detail-modal", tabindex="-1", role="dialog",
           span(class="modal-finished-at")
       div(class="modal-footer")
         if modal_evaluate
-          form(action=".", method="POST", class="form-inline modal-evaluate-form")
-            div(class="form-group")
+          form(action=".", method="POST", class="modal-evaluate-form")
+            input(type="hidden", name="modal_evaluate_user", value="")
+            div(class="form-inline")
               label(for="modal_evaluate_score", class="col-form-label m-2") Set score
               input(type="number", class="form-control m-2", name="modal_evaluate_score", id="modal_evaluate_score", value="", step=0.01)
-              input(type="hidden", name="modal_evaluate_user", value="")
-              button(type="submit", name="modal_evaluate_btn", class="btn btn-primary m-2") Save
+            div(class="form-inline")
+              textarea(name="comment", class="form-control", placeholder="Comment", cols="30")
               div(class="loader")
+              button(type="submit", name="modal_evaluate_btn", class="btn btn-primary m-2") Save
