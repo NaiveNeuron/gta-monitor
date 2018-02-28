@@ -22,13 +22,12 @@ function initialize_modal(student)
 
     $('.modal-command-history').empty();
     $('.modal-finished-at').empty();
-    var lines = 0;
+
     for (var i = 0; i < student.history.length; i++) {
         var post = student.history[i];
 
         if (post.type == 'command' || post.type == 'passed') {
             modal_append_command(post.command, post.level, post.date, post.type == 'passed');
-            lines++;
         } else if (post.type == 'start') {
             $('.modal-started-at').text(get_date_from_string(post.date));
         } else if (post.type == 'exit') {
@@ -36,7 +35,7 @@ function initialize_modal(student)
         }
     }
 
-    modal_update_lines(lines);
+    modal_update_lines(student.lines);
 }
 
 function initialize_modal_footer(student)

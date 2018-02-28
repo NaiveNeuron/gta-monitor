@@ -17,6 +17,8 @@ function Student(user, hostname, ip)
     this.started_at = null;
     this.finished_at = null;
 
+    this.lines = 0;
+
     /* Evaluation stuff */
     this.evaluate = new Evaluate(user);
 }
@@ -96,5 +98,7 @@ Student.prototype.add_post = function(post) {
 
         if (this.finished_at != null)
             this.finished_at = null;
+    } else if (post.type == 'command' || post.type == 'passed') {
+        this.lines++;
     }
 }
