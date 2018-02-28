@@ -160,8 +160,10 @@ Exercise.prototype.new_post = function(post) {
         case 'passed':
             $('#student-' + post.user + ' .user-box-command').text(post.command);
             $('#student-' + post.user + ' .user-box-level').text(student.level);
-            if (this.modal_shown && this.modal_shown_user == post.user)
-                modal_append_command(post.command, post.level, post.type == 'passed');
+            if (this.modal_shown && this.modal_shown_user == post.user) {
+                modal_append_command(post.command, post.level, post.date, post.type == 'passed');
+                modal_update_lines(parseInt($('.modal-number-of-lines').text()) + 1);
+            }
             break;
     }
 }
