@@ -3,11 +3,15 @@ extends layout
 block link
   -var selected = 'Evaluate Exercise';
 
+block css
+  link(rel="stylesheet", href="/css/lib/bootstrap-table.min.css")
+
 block js
   if exercise != null
     script.
       var POSTS = !{posts};
       var EVALS = !{evals};
+    script(src="/js/lib/bootstrap-table.min.js")
     script(src="/js/socket.js")
     script(src="/js/utils.js")
     script(src="/js/post.js")
@@ -26,12 +30,12 @@ block content
       table(class="table table-hover evaluate-exercise-table")
         thead(class="thead-dark")
           tr
-            th Username
-            th Hostname
-            th IP
-            th Last level
-            th Time spent
-            th Lines
-            th Score
+            th(data-sortable="true") Username
+            th(data-sortable="true") Hostname
+            th(data-sortable="true") IP
+            th(data-sortable="true") Last level
+            th(data-sortable="true") Time spent
+            th(data-sortable="true") Lines
+            th(data-sortable="true") Score
         tbody
       include snippets/student_modal.pug

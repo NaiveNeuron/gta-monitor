@@ -38,6 +38,8 @@ EVExercise.prototype.initialize = function(posts, evals)
 
         $('.evaluate-exercise-table tbody').append(row);
     }
+
+    $('.evaluate-exercise-table').bootstrapTable({'search': true});
 }
 
 var evexercise = new EVExercise();
