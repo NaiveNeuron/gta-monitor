@@ -44,3 +44,9 @@ function initialize_modal_footer(student)
     $('.modal-evaluate-form input[name="modal_evaluate_user"]').val(student.user);
     $('.modal-evaluate-form textarea[name="comment"]').val(student.evaluate.get_comment());
 }
+
+function initialize_modal_evaluate(student)
+{
+    initialize_modal(student);
+    initialize_modal_footer(student);
+}

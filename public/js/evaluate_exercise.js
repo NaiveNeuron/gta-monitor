@@ -50,9 +50,7 @@ $(document).on('click', '.user-row', function(e) {
     var user = $(this).attr('data-username');
     var student = evexercise.students[user];
 
-    initialize_modal(student);
-
-    initialize_modal_footer(student);
+    initialize_modal_evaluate(student);
 
     $('#student-detail-modal').modal('show');
 });
@@ -61,6 +59,8 @@ $(document).on('submit','form.modal-evaluate-form', function(e) {
     var score = $(this).find('input[name="modal_evaluate_score"]').val();
     var comment = $(this).find('textarea[name="comment"]').val();
     var user = $(this).find('input[name="modal_evaluate_user"]').val();
+
+    var current_select = $('#student-' + user);
 
     $('form.modal-evaluate-form .loader').css('visibility', 'visible');
     $('form.modal-evaluate-form button').css('visibility', 'hidden');
@@ -77,6 +77,14 @@ $(document).on('submit','form.modal-evaluate-form', function(e) {
             evexercise.students[user].evaluate.set_score(score);
             evexercise.students[user].evaluate.set_comment(comment);
             evexercise.students[user].evaluate.update_score(score);
+
+            /* TODO open next student */
+            var next_user = current_select.next().attr('data-username');
+            if (next_user) {
+                initialize_modal_evaluate(evexercise.students[next_user]);
+            } else {
+                $('#student-detail-modal').modal('hide');
+            }
         },
         error: function(jqXhr, textStatus, errorThrown) {
             console.log('FAIL: ' + textStatus);
