@@ -38,7 +38,7 @@ Student.prototype.get_last_command = function () {
 Student.prototype.get_working_time_or_dash = function() {
     if (this.started_at != null && this.finished_at != null) {
         var diff = new Date(this.finished_at - this.started_at);
-        return diff.getUTCHours() + ':' + diff.getUTCMinutes() + ':' + diff.getUTCSeconds();
+        return pad(diff.getUTCHours()) + ':' + pad(diff.getUTCMinutes()) + ':' + pad(diff.getUTCSeconds());
     }
     return '-';
 }
