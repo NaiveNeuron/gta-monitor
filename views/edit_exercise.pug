@@ -20,6 +20,9 @@ block content
         label(for="id") Exercise ID:
         input(id="id", class="form-control", type="number", placeholder="Enter the exercise number", name="id", value=exercise.id, required)
       div(class="form-group")
+        label(for="last_leve") Last level:
+        input(id="last_level", class="form-control", type="text", placeholder="Enter the name of the last level", name="last_level", value=exercise.last_level)
+      div(class="form-group")
         label(for="status") Status:
         select(id="status", class="form-control", name="status", required)
           each val in ['scheduled', 'active', 'done']

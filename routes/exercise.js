@@ -19,6 +19,9 @@ function validate_exercise(req)
     req.sanitize('name').escape();
     req.sanitize('name').trim();
 
+    req.sanitize('last_level').escape();
+    req.sanitize('last_level').trim();
+
     return req;
 }
 
@@ -32,8 +35,9 @@ router.post('/create', login_required, function(req, res, next) {
         return;
     } else {
         var data = {name: req.body.name, id: req.body.id,
+                    last_level: req.body.last_level,
                     starts_at: req.body.starts_at,
-                    ends_at: req.body.ends_at};
+                    ends_at: req.body.ends_at,};
         models.Exercise.create(data).then(function(exercise) {
             models.Exercise.findAll().then(function(resultset) {
                 req.app.locals.navbar_exercises = resultset;
@@ -79,6 +83,7 @@ router.post('/edit/:exercise_id', login_required, function(req, res, next) {
         });
     } else {
         var data = {name: req.body.name, id: req.body.id,
+                    last_level: req.body.last_level,
                     status: req.body.status, starts_at: req.body.starts_at,
                     ends_at: req.body.ends_at};
         models.Exercise.update(data, {

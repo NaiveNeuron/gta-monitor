@@ -16,6 +16,10 @@ module.exports = function(sequelize, DataTypes) {
             type: DataTypes.STRING,
         },
 
+        last_level: {
+            type: DataTypes.STRING,
+        },
+
         starts_at: {
             type: DataTypes.DATE,
             allowNull: false,
