@@ -48,6 +48,7 @@ router.post('/', function(req, res, next) {
                     data.level = d.level;
                 } else if (d.type == global.POST_EXIT) {
                     data.hash = d.hash;
+                    data.homedir = d.homedir;
                 }
 
                 models.Post.create(data).then(function(post) {
