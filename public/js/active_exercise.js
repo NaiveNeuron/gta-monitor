@@ -6,6 +6,11 @@ function Exercise()
     this.finished = 0;
     this.positions = {};
 
+    var last_level = parse_level_id(LAST_LEVEL);
+    this.one_level_width = 0;
+    if (last_level)
+        this.one_level_width = 100 / last_level;
+
     this.modal_shown = false;
     this.modal_shown_user = '';
 
@@ -58,7 +63,6 @@ Exercise.prototype.replace_box = function (pos, student) {
     this.positions[student.hostname].set_occupy(student.user);
 }
 
-/* TODO: divide this into multiple methods */
 Exercise.prototype.create_new_box = function(student) {
     var style = '';
 
@@ -80,6 +84,9 @@ Exercise.prototype.create_new_box = function(student) {
             +   '<div class="user-box-command-info">$ '
             +     '<span class="user-box-command">' + student.get_last_command() + '</span>'
             +   '</div>'
+            +   '<div class="user-box-progress-bar">'
+            +     '<div class="user-box-progress"></div>'
+            +   '</div>'
             + '</div>';
 
     if (this.position_exists(student.hostname) && !student.exit)
@@ -88,6 +95,8 @@ Exercise.prototype.create_new_box = function(student) {
         $('#active-exercise-students').append(box);
     else
         $('#active-exercise-students').prepend(box);
+
+    student.update_progress_bar(this.one_level_width);
 
     /* TODO: check if we cannot bind just the created box */
     bind_draggables();
@@ -104,6 +113,7 @@ Exercise.prototype.new_post = function(post) {
     var student = this.students[post.user];
     switch (post.type) {
         case 'start':
+            student.level = '-';
             if (!is_existing_student) {
                 this.create_new_box(student);
                 this.update_started_students();
@@ -166,6 +176,7 @@ Exercise.prototype.new_post = function(post) {
             }
             break;
     }
+    student.update_progress_bar(this.one_level_width);
 }
 
 Exercise.prototype.update_started_students = function() {

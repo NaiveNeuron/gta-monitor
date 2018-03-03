@@ -3,6 +3,8 @@ function EVExercise()
     this.number;
     this.students = {};
 
+    this.last_level = '';
+
     this.all = 0;
 }
 

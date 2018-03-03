@@ -79,6 +79,18 @@ Student.prototype.get_box_background = function() {
     return BACKGROUNDS['working'];
 }
 
+Student.prototype.update_progress_bar = function(one_level_width) {
+    var width = '0%';
+    if (this.level != '-') {
+        var curr_lvl = parse_level_id(this.level);
+
+        if (curr_lvl != null) {
+            width = Math.min(100, (one_level_width * (curr_lvl + 1))) + '%';
+        }
+    }
+    $('#student-' + this.user + ' .user-box-progress').width(width);
+}
+
 Student.prototype.add_post = function(post) {
     var level = post.level;
     var command = post.command;
