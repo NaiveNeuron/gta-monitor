@@ -56,6 +56,10 @@ module.exports = function(sequelize, DataTypes) {
             // TODO: escape command after set?
         },
 
+        hash: {
+            type: DataTypes.STRING
+        },
+
         /*indexes: [
             {
                 name: 'post_index',
