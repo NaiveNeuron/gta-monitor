@@ -36,6 +36,7 @@ router.post('/create', login_required, function(req, res, next) {
     } else {
         var data = {name: req.body.name, id: req.body.id,
                     last_level: req.body.last_level,
+                    max_points: req.body.max_points,
                     starts_at: req.body.starts_at,
                     ends_at: req.body.ends_at,};
         models.Exercise.create(data).then(function(exercise) {
@@ -84,6 +85,7 @@ router.post('/edit/:exercise_id', login_required, function(req, res, next) {
     } else {
         var data = {name: req.body.name, id: req.body.id,
                     last_level: req.body.last_level,
+                    max_points: req.body.max_points,
                     status: req.body.status, starts_at: req.body.starts_at,
                     ends_at: req.body.ends_at};
         models.Exercise.update(data, {

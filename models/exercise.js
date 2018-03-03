@@ -20,6 +20,13 @@ module.exports = function(sequelize, DataTypes) {
             type: DataTypes.STRING,
         },
 
+        max_points: {
+            type: DataTypes.DOUBLE,
+            validate: {
+                isNumeric: true
+            }
+        },
+
         starts_at: {
             type: DataTypes.DATE,
             allowNull: false,

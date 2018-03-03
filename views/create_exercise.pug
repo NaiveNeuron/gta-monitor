@@ -23,6 +23,9 @@ block content
         label(for="last_leve") Last level:
         input(id="last_level", class="form-control", type="text", placeholder="Enter the name of the last level", name="last_level")
       div(class="form-group")
+        label(for="last_level") Max points:
+        input(id="max_points", class="form-control", type="number", step=0.01, placeholder="Enter max points for the exercise", name="max_points")
+      div(class="form-group")
         label(for="starts_at") Exercise starts at:
         input(id="starts_at", class="form-control flatpickr-input", type="text", name="starts_at", readonly="readonly", required)
       div(class="form-group")
