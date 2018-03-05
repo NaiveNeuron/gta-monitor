@@ -82,7 +82,6 @@ $(document).on('submit','form.modal-evaluate-form', function(e) {
             evexercise.students[user].evaluate.set_comment(comment);
             evexercise.students[user].evaluate.update_score(score);
 
-            /* TODO open next student */
             var next_user = current_select.next().attr('data-username');
             if (next_user) {
                 initialize_modal_evaluate(evexercise.students[next_user]);
