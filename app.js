@@ -6,6 +6,7 @@ var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var expressValidator = require('express-validator');
 var session = require('express-session');
+var sessionStore = require('express-session-sequelize')(session.Store);
 var flash = require('flash');
 var schedule = require('node-schedule');
 var bcrypt = require('bcrypt-nodejs');
@@ -77,7 +78,8 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(expressValidator());
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
-app.use(session({secret: secret_key, resave: false, saveUninitialized: false}));
+app.use(session({secret: secret_key, resave: false, saveUninitialized: false,
+                 store: new sessionStore({ db: models.sequelize})}));
 app.use(flash());
 app.use(passport.initialize());
 app.use(passport.session());
