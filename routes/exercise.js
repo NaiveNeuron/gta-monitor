@@ -95,6 +95,11 @@ router.post('/edit/:exercise_id', login_required, function(req, res, next) {
         }).then(function(exercise) {
             models.Exercise.findAll().then(function(resultset) {
                 req.app.locals.navbar_exercises = resultset;
+                req.app.locals.navbar_evaluate_exercises = [];
+                resultset.forEach(function(item) {
+                    if (item.status == 'done')
+                        req.app.locals.navbar_evaluate_exercises.push(item);
+                });
 
                 var msg = 'Exercise ' + data.name + ' #' + data.id + ' updated';
                 req.flash('success', msg);
