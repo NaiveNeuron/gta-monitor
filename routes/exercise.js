@@ -230,6 +230,10 @@ router.get('/evaluate/:exercise_id/csvexport', login_required, function(req, res
     }).then(function(resultset) {
         var data = resultset.map(function(ev) { return ev.toJSON(); })
 
+        if (data.length == 0) {
+            return res.status(204).send();
+        }
+
         var csv = json2csv(data, { fields, quote: '' });
         res.attachment('score.csv');
         res.status(200).send(csv);
