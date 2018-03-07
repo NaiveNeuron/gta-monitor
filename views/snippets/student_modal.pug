@@ -7,10 +7,10 @@ div(class="modal fade", id="student-detail-modal", tabindex="-1", role="dialog",
           span(aria-hidden="true") &times;
       div(class="modal-body")
         p(class="modal-ip")
-        p Started at &nbsp;
-          span(class="modal-started-at")
         p Number of lines: &nbsp;
           span(class="modal-number-of-lines") 0
+        p Started at &nbsp;
+          span(class="modal-started-at")
         div(class="modal-command-history")
         p Finished at &nbsp;
           span(class="modal-finished-at")
@@ -19,9 +19,8 @@ div(class="modal fade", id="student-detail-modal", tabindex="-1", role="dialog",
           form(action=".", method="POST", class="modal-evaluate-form")
             input(type="hidden", name="modal_evaluate_user", value="")
             div(class="form-inline")
+              textarea(name="comment", class="form-control", placeholder="Comment", cols="30")
               label(for="modal_evaluate_score", class="col-form-label m-2") Set score
               input(type="number", class="form-control m-2", name="modal_evaluate_score", id="modal_evaluate_score", value="", step=0.01)
-              div(class="loader")
-            div(class="form-inline")
-              textarea(name="comment", class="form-control", placeholder="Comment", cols="30")
               button(type="submit", name="modal_evaluate_btn", class="btn btn-primary m-2") Save
+              div(class="loader")
