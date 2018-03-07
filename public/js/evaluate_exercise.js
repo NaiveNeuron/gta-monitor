@@ -100,3 +100,21 @@ $(document).on('submit','form.modal-evaluate-form', function(e) {
 
     return false;
 });
+
+$(document).on('click', '#btn-auto-evaluate', function(e) {
+    $.ajax({
+        url: window.location.pathname.replace(/\/$/, '') + '/auto',
+        type: 'POST',
+        success: function(response) {
+            console.log('fero');
+        },
+        error: function(jqXhr, textStatus, errorThrown) {
+            console.log('FAIL: ' + textStatus);
+        },
+        complete: function(jqXhr, textStatus) {
+
+        }
+    });
+
+    return false;
+});

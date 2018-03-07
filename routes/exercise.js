@@ -240,6 +240,20 @@ router.get('/evaluate/:exercise_id/csvexport', login_required, function(req, res
     });
 });
 
+router.post('/evaluate/:exercise_id/auto', login_required, function(req, res, next) {
+    models.Exercise.findOne({
+        where: {
+            id: req.params.exercise_id
+        }
+    }).then(function(exercise) {
+        if (!exercise)
+            return res.status(404).send();
+
+        console.log('xxx');
+        res.status(204).send();
+    });
+});
+
 /* if this event is called, active exercise exists */
 socketapi.io.on('connect', function(socket) {
     models.Exercise.findOne({

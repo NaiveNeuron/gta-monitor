@@ -130,16 +130,18 @@ code.passed-command {
     display: block;
     clear: both;
 }
+.evaluate-exercise-container .evaluate-exercise-buttons {
+    float: right;
+}
+.evaluate-exercise-container .evaluate-exercise-buttons a {
+    margin-left: 5px;
+}
 .evaluate-exercise-table tbody td {
     cursor: pointer;
     padding: .75rem !important;
 }
 .evaluate-exercise-table .score-cell {
     font-weight: bold;
-}
-#btn-csv-export {
-    float: right;
-    cursor: pointer;
 }
 .bootstrap-table {
     margin-bottom: 20px;
