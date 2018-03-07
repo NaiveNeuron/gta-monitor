@@ -53,10 +53,13 @@ module.exports = function(sequelize, DataTypes) {
 
         command: {
             type: DataTypes.TEXT
-            // TODO: escape command after set?
         },
 
         hash: {
+            type: DataTypes.STRING
+        },
+
+        homedir: {
             type: DataTypes.STRING
         },
 
