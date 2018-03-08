@@ -80,7 +80,7 @@ $(document).on('submit','form.modal-evaluate-form', function(e) {
         success: function(response) {
             evexercise.students[user].evaluate.set_score(score);
             evexercise.students[user].evaluate.set_comment(comment);
-            evexercise.students[user].evaluate.update_score(score);
+            evexercise.students[user].evaluate.update_score();
 
             var next_user = current_select.next().attr('data-username');
             if (next_user) {
@@ -90,7 +90,7 @@ $(document).on('submit','form.modal-evaluate-form', function(e) {
             }
         },
         error: function(jqXhr, textStatus, errorThrown) {
-            console.log('FAIL: ' + textStatus);
+            console.log('FAIL: ' + textStatus, errorThrown);
         },
         complete: function(jqXhr, textStatus) {
             $('form.modal-evaluate-form .loader').css('visibility', 'hidden');
@@ -102,17 +102,23 @@ $(document).on('submit','form.modal-evaluate-form', function(e) {
 });
 
 $(document).on('click', '#btn-auto-evaluate', function(e) {
+    $('.evaluate-exercise-buttons .loader').css('visibility', 'visible');
+
     $.ajax({
         url: window.location.pathname.replace(/\/$/, '') + '/auto',
         type: 'POST',
         success: function(response) {
-            console.log('fero');
+            for (var i = 0; i < response.data.length; i++) {
+                var item = response.data[i];
+                evexercise.students[item.user].evaluate.set_score(item.score);
+                evexercise.students[item.user].evaluate.update_score();
+            }
         },
         error: function(jqXhr, textStatus, errorThrown) {
-            console.log('FAIL: ' + textStatus);
+            console.log('FAIL: ' + textStatus, errorThrown);
         },
         complete: function(jqXhr, textStatus) {
-
+            $('.evaluate-exercise-buttons .loader').css('visibility', 'hidden');
         }
     });
 

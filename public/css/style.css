@@ -114,7 +114,7 @@ code.passed-command {
     word-wrap: break-word;
 }
 
-.modal .loader {
+.loader {
     border: 5px solid #f3f3f3;
     -webkit-animation: spin 1s linear infinite;
     animation: spin 1s linear infinite;
@@ -122,6 +122,14 @@ code.passed-command {
     border-radius: 50%;
     width: 25px;
     height: 25px;
+}
+
+.modal .loader {
+    visibility: hidden;
+}
+
+.evaluate-exercise-buttons .loader {
+    display: inline-block;
     visibility: hidden;
 }
 

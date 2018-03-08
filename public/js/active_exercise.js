@@ -200,7 +200,7 @@ $(document).on('click', '#btn-save-positions', function(e) {
 
         },
         error: function( jqXhr, textStatus, errorThrown ){
-            alert('Failed to save data.');
+            console.log('Failed to save data.', textStatus, errorThrown);
         }
     });
 });

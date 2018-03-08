@@ -1,14 +1,30 @@
 var express = require('express');
 var sequelize = require('sequelize');
+var md5 = require('md5');
 var json2csv = require('json2csv').parse;
 var models = require('../models');
 var socketapi = require('../socketapi');
 var login_required = require('./middlewares').login_required;
 var router = express.Router();
 
-router.get('/create', login_required, function(req, res, next) {
-    res.render('create_exercise', { header: 'Create Exercise' });
-});
+function get_md5_hash(challenge_name, level, homedir)
+{
+    return md5('i' + challenge_name + 'j%!d(string=' + level + ')k' + homedir + 'l');
+}
+
+function my_evaluate_upsert(values, condition)
+{
+    return models.Evaluate
+        .findOne({ where: condition })
+        .then(function(obj) {
+            if(obj) {
+                return obj.update(values);
+            }
+            else {
+                return models.Evaluate.create(values);
+            }
+        });
+}
 
 function validate_exercise(req)
 {
@@ -24,6 +40,10 @@ function validate_exercise(req)
 
     return req;
 }
+
+router.get('/create', login_required, function(req, res, next) {
+    res.render('create_exercise', { header: 'Create Exercise' });
+});
 
 router.post('/create', login_required, function(req, res, next) {
     req = validate_exercise(req);
@@ -152,11 +172,11 @@ router.post('/active/save', login_required, function(req, res, next) {
                     user_id: req.user.id
                 }
             }).then(function(hall) {
-                res.json({success : 'Updated Successfully', status : 200});
+                res.json({success : true, message: 'Updated Successfully', status : 200});
             });
         } else {
             models.Hall.create({user_id: req.user.id, positions: data}).then(function(hall) {
-                res.json({success : 'Created Successfully', status : 200});
+                res.json({success : true, message: 'Created Successfully', status : 200});
             });
         }
     });
@@ -246,11 +266,41 @@ router.post('/evaluate/:exercise_id/auto', login_required, function(req, res, ne
             id: req.params.exercise_id
         }
     }).then(function(exercise) {
-        if (!exercise)
+        if (!exercise || !exercise.max_points)
             return res.status(404).send();
 
-        console.log('xxx');
-        res.status(204).send();
+        models.Post.findAll({
+            where: {
+                exercise_id: exercise.id,
+                type: global.POST_EXIT
+            }
+        }).then(function(resultset) {
+            var grades = {};
+            resultset.forEach(function(item) {
+                var success_hash = get_md5_hash(exercise.name, exercise.last_level, item.homedir)
+                var users_hash = item.hash;
+
+                if (success_hash == users_hash)
+                    grades[item.user] = exercise.max_points;
+                else if (item.user in grades)
+                    delete grades[item.user];
+            });
+
+            var promises = [];
+            for (user in grades) {
+                promises.push(my_evaluate_upsert({user: user, score: grades[user],
+                                                  exercise_id: exercise.id, user_id: req.user.id},
+                                                  {user: user, exercise_id: exercise.id}));
+            }
+
+            Promise.all(promises).then(function(result) {
+                var results = result.map(function(r) { return {user: r.user, score: r.score}});
+                res.json({success : true, message: 'Evaluated Successfully',
+                          status : 200, data: results});
+            }).catch(function(err) {
+                res.json({success : true, message: err, status : 500});
+            });
+        });
     });
 });
 
