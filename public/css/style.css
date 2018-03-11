@@ -3,6 +3,10 @@ body {
     background-color: #F7F7F9;
 }
 
+@keyframes fadeInOut {
+    from { background-color: rgba(242, 43, 43, 1); }
+}
+
 .narrow-content {
     width: 70%;
     margin: 0 auto;
@@ -78,11 +82,24 @@ code.passed-command {
     top: 2px;
     right: 2px;
 }
-.user-box .user-box-command-info {
+/*.user-box .user-box-command-info {
     font-size: 80%;
     background-color: #000000;
     overflow-x: hidden;
     white-space: nowrap;
+}*/
+.user-box .user-box-activity-info {
+    font-size: 80%;
+}
+.user-box .user-box-activity-info div {
+    width: 50%;
+    text-align: center;
+}
+.user-box .user-box-activity-attempts {
+    background-color: rgba(242, 43, 43, 0);
+}
+.user-box .slow-fadeinout {
+    animation: fadeInOut 2s infinite alternate;
 }
 .user-box .user-box-progress-bar {
     width: 100%;

@@ -4,6 +4,8 @@ var BACKGROUNDS = {
     'hardexit': 'bg-secondary'
 };
 
+var MAX_LEVEL_ATTEMPTS = 7;
+
 function Student(user, hostname, ip)
 {
     this.user = user;
@@ -18,6 +20,8 @@ function Student(user, hostname, ip)
     this.finished_at = null;
 
     this.lines = 0;
+
+    this.level_attempts = 0;
 
     /* Evaluation stuff */
     this.evaluate = new Evaluate(user);
@@ -91,12 +95,29 @@ Student.prototype.update_progress_bar = function(one_level_width) {
     $('#student-' + this.user + ' .user-box-progress').width(width);
 }
 
+Student.prototype.update_attempts = function() {
+    var selector = $('#student-' + this.user + ' .user-box-activity-attempts');
+
+    if (this.level_attempts > MAX_LEVEL_ATTEMPTS && !selector.hasClass('slow-fadeinout'))
+        selector.addClass('slow-fadeinout');
+    else if (selector.hasClass('slow-fadeinout'))
+        selector.removeClass('slow-fadeinout');
+
+    $('#student-' + this.user + ' .user-box-activity-attempts-number').text(this.level_attempts);
+}
+
 Student.prototype.add_post = function(post) {
     var level = post.level;
     var command = post.command;
 
-    if (level)
+    if (level) {
+        if (this.level == level)
+            this.level_attempts++;
+        else
+            this.level_attempts = 1;
+
         this.level = level;
+    }
 
     this.history.push(new Post(post.type, post.date, post.user, post.hostname,
                                post.ip, level, command));
