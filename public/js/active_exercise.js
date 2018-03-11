@@ -97,6 +97,7 @@ Exercise.prototype.create_new_box = function(student) {
         $('#active-exercise-students').prepend(box);
 
     student.update_progress_bar(this.one_level_width);
+    student.update_attempts();
 
     /* TODO: check if we cannot bind just the created box */
     bind_draggables();
