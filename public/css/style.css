@@ -82,12 +82,6 @@ code.passed-command {
     top: 2px;
     right: 2px;
 }
-/*.user-box .user-box-command-info {
-    font-size: 80%;
-    background-color: #000000;
-    overflow-x: hidden;
-    white-space: nowrap;
-}*/
 .user-box .user-box-activity-info {
     font-size: 80%;
 }

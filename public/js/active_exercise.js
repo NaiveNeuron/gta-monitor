@@ -81,9 +81,6 @@ Exercise.prototype.create_new_box = function(student) {
             +     '<span class="user-box-user">' + student.get_name_hostname() + '</span>'
             +   '</div>'
             +   '<span class="user-box-level">' + student.level + '</span>'
-            /*+   '<div class="user-box-command-info">$ '
-            +     '<span class="user-box-command">' + student.get_last_command() + '</span>'
-            +   '</div>'*/
             +   '<div class="user-box-activity-info">'
             +     '<div class="user-box-activity-attempts">Attempts: <span class="user-box-activity-attempts-number">' + student.level_attempts + '</span></div>'
             +   '</div>'
@@ -171,7 +168,6 @@ Exercise.prototype.new_post = function(post) {
             break;
         case 'command':
         case 'passed':
-            //$('#student-' + post.user + ' .user-box-command').text(post.command);
             $('#student-' + post.user + ' .user-box-level').text(student.level);
             if (this.modal_shown && this.modal_shown_user == post.user) {
                 modal_append_command(post.command, post.level, post.date, post.type == 'passed');
