@@ -32,11 +32,16 @@ Student.prototype.get_name_hostname = function() {
 }
 
 Student.prototype.get_last_command = function () {
+    var last_post = this.get_last_action_post();
+    return last_post ? last_post.command : '';
+}
+
+Student.prototype.get_last_action_post = function() {
     for (var i = this.history.length - 1; i >= 0; i--) {
         if (this.history[i].type == 'command' || this.history[i].type == 'passed')
-            return this.history[i].command;
+            return this.history[i];
     }
-    return '';
+    return null;
 }
 
 Student.prototype.get_working_time_or_dash = function() {
@@ -98,9 +103,10 @@ Student.prototype.update_progress_bar = function(one_level_width) {
 Student.prototype.update_attempts = function() {
     var selector = $('#student-' + this.user + ' .user-box-activity-attempts');
 
-    if (this.level_attempts > MAX_LEVEL_ATTEMPTS && !selector.hasClass('slow-fadeinout'))
-        selector.addClass('slow-fadeinout');
-    else if (selector.hasClass('slow-fadeinout'))
+    if (this.level_attempts > MAX_LEVEL_ATTEMPTS && !this.exit && this.get_last_action_post().type != 'passed') {
+        if (!selector.hasClass('slow-fadeinout'))
+            selector.addClass('slow-fadeinout');
+    } else if (selector.hasClass('slow-fadeinout'))
         selector.removeClass('slow-fadeinout');
 
     $('#student-' + this.user + ' .user-box-activity-attempts-number').text(this.level_attempts);

@@ -115,6 +115,8 @@ Exercise.prototype.new_post = function(post) {
     switch (post.type) {
         case 'start':
             student.level = '-';
+            student.level_attempts = 0;
+
             if (!is_existing_student) {
                 this.create_new_box(student);
                 this.update_started_students();
@@ -174,10 +176,10 @@ Exercise.prototype.new_post = function(post) {
                 modal_append_command(post.command, post.level, post.date, post.type == 'passed');
                 modal_update_lines(parseInt($('.modal-number-of-lines').text()) + 1);
             }
-            student.update_attempts();
             break;
     }
     student.update_progress_bar(this.one_level_width);
+    student.update_attempts();
 }
 
 Exercise.prototype.update_started_students = function() {
