@@ -11,7 +11,7 @@ module.exports = function(sequelize, DataTypes) {
         },
 
         type: {
-            type: DataTypes.ENUM('start', 'command', 'passed', 'exit'),
+            type: DataTypes.ENUM('start', 'command', 'passed', 'exit', 'help', 'ack'),
             defaultValue: 'command'
         },
 
