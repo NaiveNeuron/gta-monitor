@@ -32,18 +32,16 @@ code.passed-command {
     display: block;
     clear: both;
 }
-.active-exercise-container #active-exercise-header button {
+.active-exercise-container .active-exercise-buttons {
     float: right;
-    cursor: pointer;
 }
-
 .active-exercise-container #active-exercise-students {
     margin-top: 10px;
     border: 1px solid #ccc;
     overflow-x: auto;
     overflow-y: hidden;
     white-space: nowrap;
-    min-height: 97px;
+    min-height: 107px;
     max-height: 120px;
 }
 

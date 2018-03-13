@@ -212,6 +212,10 @@ $(document).on('click', '#btn-save-positions', function(e) {
     });
 });
 
+$(document).on('click', '#btn-toggle-userboxes', function(e) {
+    $('#active-exercise-students').toggle();
+});
+
 $(document).on('click', '.user-box', function(e) {
     var user = $(this).attr('data-username');
     var student = exercise.students[user];

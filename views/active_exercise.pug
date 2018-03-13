@@ -37,7 +37,9 @@ block content
           span(id="active-exercise-students-finished") 0
           span /
           span(id="active-exercise-students-all") 0
-          button(class="btn btn-primary", id="btn-save-positions") Save positions
+          span(class="active-exercise-buttons")
+            button(class="btn btn-outline-info", id="btn-toggle-userboxes") Toggle
+            button(class="btn btn-primary", id="btn-save-positions") Save positions
       div(id="active-exercise-students")
       div(id="active-exercise-hall")
       include snippets/student_modal.pug
