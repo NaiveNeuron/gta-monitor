@@ -45,11 +45,13 @@ router.post('/', function(req, res, next) {
                             hostname: d.hostname, ip: d.ip, exercise_id: ex.id};
                 if (d.type == global.POST_COMMAND || d.type == global.POST_PASSED) {
                     data.command = decodeURI(decodeURIComponent(d.command));
-                    data.level = d.level;
                 } else if (d.type == global.POST_EXIT) {
                     data.hash = d.hash;
                     data.homedir = d.homedir;
                 }
+
+                if ('level' in d)
+                    data.level = d.level;
 
                 models.Post.create(data).then(function(post) {
                     socketapi.io.emit('new_post', post);

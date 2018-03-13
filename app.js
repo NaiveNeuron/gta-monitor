@@ -36,6 +36,8 @@ global.POST_START = 'start';
 global.POST_COMMAND = 'command';
 global.POST_PASSED = 'passed';
 global.POST_EXIT = 'exit';
+global.POST_HELP = 'help';
+global.POST_ACK = 'ack';
 global.ALLOWED_SUBNETS = [
     ip.cidrSubnet('158.195.28.128/26'), /* eth0 h3 */
     ip.cidrSubnet('158.195.28.192/26'), /* eth0 f1-248 */
