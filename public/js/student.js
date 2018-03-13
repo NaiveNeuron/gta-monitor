@@ -31,6 +31,14 @@ Student.prototype.get_name_hostname = function() {
     return this.user + '@' + this.hostname;
 }
 
+Student.prototype.get_last_passed_level = function() {
+    for (var i = this.history.length - 1; i >= 0; i--) {
+        if (this.history[i].type == 'passed')
+            return this.history[i].level;
+    }
+    return '-';
+}
+
 Student.prototype.get_last_command = function () {
     var last_post = this.get_last_action_post();
     return last_post ? last_post.command : '';

@@ -32,7 +32,7 @@ EVExercise.prototype.initialize = function(posts, evals)
                 +   '<td>' + student.user + '</td>'
                 +   '<td>' + student.hostname + '</td>'
                 +   '<td>' + student.ip + '</td>'
-                +   '<td>' + student.level + '</td>'
+                +   '<td>' + student.get_last_passed_level() + '</td>'
                 +   '<td>' + student.get_working_time_or_dash() + '</td>'
                 +   '<td>' + student.lines + '</td>'
                 +   '<td class="score-cell">' + student.evaluate.get_score_or_dash() + '</td>'
