@@ -95,6 +95,12 @@ code.passed-command {
 .user-box .slow-fadeinout {
     animation: fadeInOut 2s infinite alternate;
 }
+.user-box .user-box-command-info {
+    font-size: 80%;
+    background-color: #000000;
+    overflow-x: hidden;
+    white-space: nowrap;
+}
 .user-box .user-box-progress-bar {
     width: 100%;
     height: 7px;

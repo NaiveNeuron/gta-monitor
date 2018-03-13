@@ -31,7 +31,7 @@ app.locals.pretty = true;
 
 global.activities = {};
 global.inactive = [];
-global.inactivity = 300; /* inactivity in seconds */
+global.inactivity = 60; /* inactivity in seconds TODO: move this to config */
 global.POST_START = 'start';
 global.POST_COMMAND = 'command';
 global.POST_PASSED = 'passed';
