@@ -29,15 +29,15 @@ var secret_key = 'strong-secret';
 
 app.locals.pretty = true;
 
-global.activities = {};
-global.inactive = [];
 global.inactivity = 60; /* inactivity in seconds TODO: move this to config */
+
 global.POST_START = 'start';
 global.POST_COMMAND = 'command';
 global.POST_PASSED = 'passed';
 global.POST_EXIT = 'exit';
 global.POST_HELP = 'help';
 global.POST_ACK = 'ack';
+
 global.ALLOWED_SUBNETS = [
     ip.cidrSubnet('158.195.28.128/26'), /* eth0 h3 */
     ip.cidrSubnet('158.195.28.192/26'), /* eth0 f1-248 */
@@ -111,29 +111,6 @@ models.sequelize.sync().then(function() {
                 app.locals.navbar_evaluate_exercises.push(item);
         });
     });
-
-    /* If there is already an active exercise, check and save last activities of students */
-    models.Exercise.findOne({
-        where: {
-            status: 'active',
-        }
-    }).then(function(exercise) {
-        if (exercise) {
-            models.Post.findAll({
-                where: {
-                    exercise_id: exercise.id
-                }
-            }).then(function(resultset) {
-                resultset.forEach(function(item) {
-                    if (item.type == global.POST_EXIT && item.user in global.activities) {
-                        delete global.activities[item.user];
-                    } else {
-                        global.activities[item.user] = item.date;
-                    }
-                });
-            });
-        }
-    });
 }).catch(function(err) {
     console.log(err, 'Something went wrong with the Database Update!');
 });
@@ -159,26 +136,6 @@ var j = schedule.scheduleJob('* * * * *', function(){
                 });
             }
         });
-    });
-});
-
-/* Periodically check for inactive students */
-var inactive_students_job = schedule.scheduleJob('* * * * *', function() {
-    console.log('Checking inactive students...');
-    var curr = Date.now() / 1000;
-    Object.keys(global.activities).forEach(function(user) {
-        var index = global.inactive.indexOf(user);
-        /* if the user is inactive and not in inactive group, add them */
-        if (curr - (global.activities[user].getTime() / 1000) > global.inactivity) {
-            if (index == -1) {
-                global.inactive.push(user);
-                socketapi.io.emit('new_inactive_student', user);
-            }
-        } else if (index > -1) {
-            /* if the user is active and in inactive group, remove them */
-            global.inactive.splice(index, 1);
-            socketapi.io.emit('new_active_student', user);
-        }
     });
 });
 

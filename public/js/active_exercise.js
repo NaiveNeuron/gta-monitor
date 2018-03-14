@@ -26,6 +26,11 @@ Exercise.prototype.create_student_and_add_post = function(post) {
         this.all++;
     }
     this.students[post.user].add_post(post);
+
+    if (post.type != POST_HELP && post.type != POST_ACK)
+        this.students[post.user].set_active(post.date);
+
+    this.students[post.user].add_post(post);
 }
 
 Exercise.prototype.initialize_students = function(posts) {
@@ -83,6 +88,7 @@ Exercise.prototype.create_new_box = function(student) {
             +   '<span class="user-box-level">' + student.level + '</span>'
             +   '<div class="user-box-activity-info">'
             +     '<div class="user-box-activity-attempts">Attempts: <span class="user-box-activity-attempts-number">' + student.level_attempts + '</span></div>'
+            +     '<div class="user-box-inactivity-time">' + student.get_inactivity_time() + '</div>'
             +   '</div>'
             +   '<div class="user-box-command-info">$ '
             +     '<span class="user-box-command">' + student.get_last_command() + '</span>'
@@ -195,6 +201,13 @@ Exercise.prototype.update_finished_students = function() {
 
 var exercise = new Exercise();
 
+setInterval(function() {
+    for (user in exercise.students) {
+        if (!exercise.students[user].exit)
+            exercise.students[user].update_activity_time();
+    }
+}, 5000);
+
 $(document).on('click', '#btn-save-positions', function(e) {
     $.ajax({
         url: '/exercise/active/save',
@@ -235,22 +248,10 @@ $('#student-detail-modal').on('hide.bs.modal', function(e) {
     exercise.modal_shown = false;
 });
 
-socket.on('load_active_exercise', function(posts, inactive) {
+socket.on('load_active_exercise', function(posts) {
     exercise.initialize_students(posts);
-    for (var i = 0; i < inactive.length; i++) {
-        if (inactive[i] in exercise.students)
-            exercise.students[inactive[i]].update_activity(false);
-    }
 });
 
 socket.on('new_post', function(post) {
     exercise.new_post(post);
-});
-
-socket.on('new_inactive_student', function(username) {
-    exercise.students[username].update_activity(false);
-});
-
-socket.on('new_active_student', function(username) {
-    exercise.students[username].update_activity(true);
 });

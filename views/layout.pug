@@ -70,6 +70,13 @@ html
     script(src="/js/lib/popper.min.js")
     script(src="/js/lib/bootstrap.min.js")
     script(src="/socket.io/socket.io.js")
+    script.
+      var POST_START = 'start';
+      var POST_COMMAND = 'command';
+      var POST_PASSED = 'passed';
+      var POST_EXIT = 'exit';
+      var POST_HELP = 'help';
+      var POST_ACK = 'ack';
 
     block js
 

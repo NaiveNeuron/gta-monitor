@@ -154,7 +154,8 @@ router.get('/active', login_required, function(req, res, next) {
                 hall = "{}";
             else
                 hall = hall.positions;
-            res.render('active_exercise', {header: 'Active Exercise', exercise: exercise, hall: hall});
+            res.render('active_exercise', {header: 'Active Exercise', exercise: exercise,
+                                           hall: hall, inactivity_time: global.inactivity});
         });
     });
 });
@@ -318,7 +319,7 @@ socketapi.io.on('connect', function(socket) {
                     exercise_id: exercise.id
                 }
             }).then(function(resultset){
-                socket.emit('load_active_exercise', resultset, global.inactive);
+                socket.emit('load_active_exercise', resultset);
             });
         }
     });

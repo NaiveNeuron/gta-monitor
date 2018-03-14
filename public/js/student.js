@@ -23,6 +23,8 @@ function Student(user, hostname, ip)
 
     this.level_attempts = 0;
 
+    this.last_activity_time = null;
+
     /* Evaluation stuff */
     this.evaluate = new Evaluate(user);
 }
@@ -60,6 +62,11 @@ Student.prototype.get_working_time_or_dash = function() {
     return '-';
 }
 
+Student.prototype.get_inactivity_time = function() {
+    var diff = new Date(new Date() - this.last_activity_time);
+    return pad(diff.getUTCMinutes()) + ':' + pad(diff.getUTCSeconds());
+}
+
 Student.prototype.update_activity_border = function() {
     if (this.active)
         $('#student-' + this.user).removeClass('inactive-student');
@@ -67,8 +74,15 @@ Student.prototype.update_activity_border = function() {
         $('#student-' + this.user).addClass('inactive-student');
 }
 
-Student.prototype.update_activity = function(active) {
-    this.active = active;
+Student.prototype.update_activity_time = function() {
+    $('#student-' + this.user + ' .user-box-inactivity-time').text(this.get_inactivity_time());
+}
+
+Student.prototype.set_active = function(date) {
+    this.active = true;
+    this.last_activity_time = get_date_from_string(date);
+
+    this.update_activity_time();
     this.update_activity_border();
 }
 
