@@ -83,15 +83,22 @@ code.passed-command {
 .user-box .user-box-activity-info {
     font-size: 80%;
 }
+.user-box .user-box-activity-info::after {
+    content: '';
+    display: block;
+    clear: both;
+}
 .user-box .user-box-activity-info div {
     width: 50%;
     text-align: center;
+    float: left;
 }
-.user-box .user-box-activity-attempts {
+.user-box .user-box-activity-attempts,
+.user-box .user-box-inactivity-time {
     background-color: rgba(242, 43, 43, 0);
 }
 .user-box .slow-fadeinout {
-    animation: fadeInOut 2s infinite alternate;
+    animation: fadeInOut 1.5s infinite alternate;
 }
 .user-box .user-box-command-info {
     font-size: 80%;
@@ -108,9 +115,6 @@ code.passed-command {
     height: 7px;
     background-color: #36d87f;
     max-width: 100%;
-}
-.inactive-student {
-    border-color: #ff0000;
 }
 
 .modal .modal-body p {

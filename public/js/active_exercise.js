@@ -25,6 +25,7 @@ Exercise.prototype.create_student_and_add_post = function(post) {
         this.students[post.user] = new Student(post.user, post.hostname, post.ip);
         this.all++;
     }
+
     this.students[post.user].add_post(post);
 
     if (post.type != POST_HELP && post.type != POST_ACK)
@@ -42,6 +43,7 @@ Exercise.prototype.initialize_students = function(posts) {
 
     for(var user in this.students) {
         this.create_new_box(this.students[user]);
+        this.students[user].update_activity_time();
     }
 
     this.update_started_students();
@@ -88,7 +90,7 @@ Exercise.prototype.create_new_box = function(student) {
             +   '<span class="user-box-level">' + student.level + '</span>'
             +   '<div class="user-box-activity-info">'
             +     '<div class="user-box-activity-attempts">Attempts: <span class="user-box-activity-attempts-number">' + student.level_attempts + '</span></div>'
-            +     '<div class="user-box-inactivity-time">' + student.get_inactivity_time() + '</div>'
+            +     '<div class="user-box-inactivity-time">' + student.get_inactivity_time(new Date())['string'] + '</div>'
             +   '</div>'
             +   '<div class="user-box-command-info">$ '
             +     '<span class="user-box-command">' + student.get_last_command() + '</span>'
@@ -190,6 +192,7 @@ Exercise.prototype.new_post = function(post) {
     }
     student.update_progress_bar(this.one_level_width);
     student.update_attempts();
+    student.update_activity_time();
 }
 
 Exercise.prototype.update_started_students = function() {

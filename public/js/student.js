@@ -62,28 +62,33 @@ Student.prototype.get_working_time_or_dash = function() {
     return '-';
 }
 
-Student.prototype.get_inactivity_time = function() {
-    var diff = new Date(new Date() - this.last_activity_time);
-    return pad(diff.getUTCMinutes()) + ':' + pad(diff.getUTCSeconds());
+/* Return dict containing {'string': MM:SS, 'seconds': diff} */
+Student.prototype.get_inactivity_time = function(now) {
+    var diff = new Date(now - this.last_activity_time);
+    return {'string': pad(diff.getUTCMinutes()) + ':' + pad(diff.getUTCSeconds()),
+            'seconds': diff.getTime() / 1000};
 }
 
-Student.prototype.update_activity_border = function() {
-    if (this.active)
-        $('#student-' + this.user).removeClass('inactive-student');
-    else
-        $('#student-' + this.user).addClass('inactive-student');
+Student.prototype.update_activity = function() {
+    var selector = $('#student-' + this.user + ' .user-box-inactivity-time');
+    if (!this.active && !selector.hasClass('slow-fadeinout'))
+        selector.addClass('slow-fadeinout');
+    else if (this.active && selector.hasClass('slow-fadeinout'))
+        selector.removeClass('slow-fadeinout');
 }
 
 Student.prototype.update_activity_time = function() {
-    $('#student-' + this.user + ' .user-box-inactivity-time').text(this.get_inactivity_time());
+    var times = this.get_inactivity_time(new Date());
+    if (times['seconds'] > INACTIVITY_TIME && this.active) {
+        this.active = false;
+    }
+    this.update_activity();
+    $('#student-' + this.user + ' .user-box-inactivity-time').text(times['string']);
 }
 
 Student.prototype.set_active = function(date) {
     this.active = true;
     this.last_activity_time = get_date_from_string(date);
-
-    this.update_activity_time();
-    this.update_activity_border();
 }
 
 Student.prototype.change_computer = function(hostname, ip) {
