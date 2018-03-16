@@ -3,10 +3,9 @@ function modal_append_command(command, level, date, passed)
     var date = get_date_from_string(date);
     var date_str = pad(date.getHours()) + ':' + pad(date.getMinutes()) + ':' + pad(date.getSeconds());
 
-    if (passed)
-        var msg = '<code class="passed-command">' + date_str + ' ' + level + ' $ ' + command + '</code>';
-    else
-        var msg = '<code>' + date_str + ' ' + level + ' $ ' + command + '</code>';
+    var msg = '<code' + (passed ? ' class="passed-command"' : '') + '>'
+            +    date_str + ' ' + level + ' $ ' + command
+            + '</code>';
     $('.modal-command-history').append(msg);
 }
 
@@ -26,11 +25,11 @@ function initialize_modal(student)
     for (var i = 0; i < student.history.length; i++) {
         var post = student.history[i];
 
-        if (post.type == 'command' || post.type == 'passed') {
-            modal_append_command(post.command, post.level, post.date, post.type == 'passed');
-        } else if (post.type == 'start') {
+        if (post.type == POST_COMMAND || post.type == POST_PASSED) {
+            modal_append_command(post.command, post.level, post.date, post.type == POST_PASSED);
+        } else if (post.type == POST_START) {
             $('.modal-started-at').text(get_date_from_string(post.date));
-        } else if (post.type == 'exit') {
+        } else if (post.type == POST_EXIT) {
             $('.modal-finished-at').text(get_date_from_string(post.date));
         }
     }

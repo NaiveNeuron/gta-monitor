@@ -35,7 +35,7 @@ Student.prototype.get_name_hostname = function() {
 
 Student.prototype.get_last_passed_level = function() {
     for (var i = this.history.length - 1; i >= 0; i--) {
-        if (this.history[i].type == 'passed')
+        if (this.history[i].type == POST_PASSED)
             return this.history[i].level;
     }
     return '-';
@@ -48,7 +48,7 @@ Student.prototype.get_last_command = function () {
 
 Student.prototype.get_last_action_post = function() {
     for (var i = this.history.length - 1; i >= 0; i--) {
-        if (this.history[i].type == 'command' || this.history[i].type == 'passed')
+        if (this.history[i].type == POST_COMMAND || this.history[i].type == POST_PASSED)
             return this.history[i];
     }
     return null;
@@ -130,7 +130,7 @@ Student.prototype.update_progress_bar = function(one_level_width) {
 Student.prototype.update_attempts = function() {
     var selector = $('#student-' + this.user + ' .user-box-activity-attempts');
 
-    if (this.level_attempts > MAX_LEVEL_ATTEMPTS && !this.exit && this.get_last_action_post().type != 'passed') {
+    if (this.level_attempts > MAX_LEVEL_ATTEMPTS && !this.exit && this.get_last_action_post().type != POST_PASSED) {
         if (!selector.hasClass('slow-fadeinout'))
             selector.addClass('slow-fadeinout');
     } else if (selector.hasClass('slow-fadeinout'))
@@ -155,16 +155,16 @@ Student.prototype.add_post = function(post) {
     this.history.push(new Post(post.type, post.date, post.user, post.hostname,
                                post.ip, level, command));
 
-    if (post.type == 'exit') {
+    if (post.type == POST_EXIT) {
         this.exit = true;
         this.finished_at = new Date(post.date);
-    } else if (post.type == 'start') {
+    } else if (post.type == POST_START) {
         this.exit = false;
         this.started_at = new Date(post.date);
 
         if (this.finished_at != null)
             this.finished_at = null;
-    } else if (post.type == 'command' || post.type == 'passed') {
+    } else if (post.type == POST_COMMAND || post.type == POST_PASSED) {
         this.lines++;
     }
 }

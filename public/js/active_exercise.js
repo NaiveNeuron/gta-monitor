@@ -37,7 +37,7 @@ Exercise.prototype.create_student_and_add_post = function(post) {
 Exercise.prototype.initialize_students = function(posts) {
     for(var i = 0; i < posts.length; i++) {
         this.create_student_and_add_post(posts[i]);
-        if (posts[i].type == 'exit')
+        if (posts[i].type == POST_EXIT)
             this.finished++;
     }
 
@@ -124,7 +124,7 @@ Exercise.prototype.new_post = function(post) {
 
     var student = this.students[post.user];
     switch (post.type) {
-        case 'start':
+        case POST_START:
             student.level = '-';
             student.level_attempts = 0;
 
@@ -175,17 +175,17 @@ Exercise.prototype.new_post = function(post) {
                 student.change_background('working');
             }
             break;
-        case 'exit':
+        case POST_EXIT:
             student.change_background('finished');
             this.finished++;
             this.update_finished_students();
             break;
-        case 'command':
-        case 'passed':
+        case POST_COMMAND:
+        case POST_PASSED:
             $('#student-' + post.user + ' .user-box-command').text(post.command);
             $('#student-' + post.user + ' .user-box-level').text(student.level);
             if (this.modal_shown && this.modal_shown_user == post.user) {
-                modal_append_command(post.command, post.level, post.date, post.type == 'passed');
+                modal_append_command(post.command, post.level, post.date, post.type == POST_PASSED);
                 modal_update_lines(parseInt($('.modal-number-of-lines').text()) + 1);
             }
             break;
