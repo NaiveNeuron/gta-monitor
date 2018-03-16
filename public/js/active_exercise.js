@@ -26,8 +26,6 @@ Exercise.prototype.create_student_and_add_post = function(post) {
         this.all++;
     }
 
-    this.students[post.user].add_post(post);
-
     if (post.type != POST_HELP && post.type != POST_ACK)
         this.students[post.user].set_active(post.date);
 
@@ -186,7 +184,7 @@ Exercise.prototype.new_post = function(post) {
             $('#student-' + post.user + ' .user-box-level').text(student.level);
             if (this.modal_shown && this.modal_shown_user == post.user) {
                 modal_append_command(post.command, post.level, post.date, post.type == POST_PASSED);
-                modal_update_lines(parseInt($('.modal-number-of-lines').text()) + 1);
+                modal_update_lines(student.lines);
             }
             break;
     }
