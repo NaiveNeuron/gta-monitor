@@ -33,12 +33,17 @@ Student.prototype.get_name_hostname = function() {
     return this.user + '@' + this.hostname;
 }
 
-Student.prototype.get_last_passed_level = function() {
+Student.prototype.get_last_passed_post = function() {
     for (var i = this.history.length - 1; i >= 0; i--) {
         if (this.history[i].type == POST_PASSED)
-            return this.history[i].level;
+            return this.history[i];
     }
-    return '-';
+    return null;
+}
+
+Student.prototype.get_last_passed_level = function() {
+    var last_passed = this.get_last_passed_post();
+    return last_passed ? last_passed.level : '-';
 }
 
 Student.prototype.get_last_command = function () {
@@ -117,11 +122,12 @@ Student.prototype.get_box_background = function() {
 
 Student.prototype.update_progress_bar = function(one_level_width) {
     var width = '0%';
-    if (this.level != '-') {
-        var curr_lvl = parse_level_id(this.level);
+    var last_passed = this.get_last_passed_post();
+    if (last_passed) {
+        var last_lvl = parse_level_id(last_passed.level);
 
-        if (curr_lvl != null) {
-            width = Math.min(100, (one_level_width * (curr_lvl + 1))) + '%';
+        if (last_lvl != null) {
+            width = Math.min(100, (one_level_width * (last_lvl + 1))) + '%';
         }
     }
     $('#student-' + this.user + ' .user-box-progress').width(width);
