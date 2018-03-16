@@ -1,7 +1,8 @@
 var BACKGROUNDS = {
     'finished': 'bg-success',
     'working': 'bg-primary',
-    'hardexit': 'bg-secondary'
+    'hardexit': 'bg-secondary',
+    'help': 'bg-warning'
 };
 
 var MAX_LEVEL_ATTEMPTS = 7;
@@ -20,10 +21,10 @@ function Student(user, hostname, ip)
     this.finished_at = null;
 
     this.lines = 0;
-
     this.level_attempts = 0;
-
     this.last_activity_time = null;
+
+    this.help = false;
 
     /* Evaluation stuff */
     this.evaluate = new Evaluate(user);
@@ -145,15 +146,29 @@ Student.prototype.update_attempts = function() {
     $('#student-' + this.user + ' .user-box-activity-attempts-number').text(this.level_attempts);
 }
 
+Student.prototype.set_help = function() {
+    this.help = true;
+    this.change_background('help');
+}
+
+Student.prototype.set_ack = function() {
+    if (!this.exit && this.help)
+        this.change_background('working');
+
+    this.help = false;
+}
+
 Student.prototype.add_post = function(post) {
     var level = post.level;
     var command = post.command;
 
     if (level) {
-        if (this.level == level)
-            this.level_attempts++;
-        else
-            this.level_attempts = 1;
+        if (post.type != POST_HELP && post.type != POST_ACK) {
+            if (this.level == level)
+                this.level_attempts++;
+            else
+                this.level_attempts = 1;
+        }
 
         this.level = level;
     }

@@ -187,6 +187,12 @@ Exercise.prototype.new_post = function(post) {
                 modal_update_lines(student.lines);
             }
             break;
+        case POST_HELP:
+            student.set_help();
+            break;
+        case POST_ACK:
+            student.set_ack();
+            break;
     }
     student.update_progress_bar(this.one_level_width);
     student.update_attempts();
@@ -233,6 +239,8 @@ $(document).on('click', '#btn-toggle-userboxes', function(e) {
 $(document).on('click', '.user-box', function(e) {
     var user = $(this).attr('data-username');
     var student = exercise.students[user];
+
+    student.set_ack();
 
     initialize_modal(student);
 
