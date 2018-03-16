@@ -59,6 +59,10 @@ $(document).on('click', '.user-row', function(e) {
     $('#student-detail-modal').modal('show');
 });
 
+$('#student-detail-modal').on('shown.bs.modal', function(e) {
+    modal_scroll_commands();
+});
+
 $(document).on('submit','form.modal-evaluate-form', function(e) {
     var score = $(this).find('input[name="modal_evaluate_score"]').val();
     var comment = $(this).find('textarea[name="comment"]').val();
@@ -85,6 +89,7 @@ $(document).on('submit','form.modal-evaluate-form', function(e) {
             var next_user = current_select.next().attr('data-username');
             if (next_user) {
                 initialize_modal_evaluate(evexercise.students[next_user]);
+                modal_scroll_commands();
             } else {
                 $('#student-detail-modal').modal('hide');
             }

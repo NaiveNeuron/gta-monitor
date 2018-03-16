@@ -14,6 +14,11 @@ function modal_update_lines(lines)
     $('.modal-number-of-lines').text(lines);
 }
 
+function modal_scroll_commands()
+{
+    $('.modal-command-history').scrollTop($('.modal-command-history')[0].scrollHeight);
+}
+
 function initialize_modal(student)
 {
     $('.modal-title').text(student.get_name_hostname());

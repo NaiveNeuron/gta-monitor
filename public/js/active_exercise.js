@@ -185,6 +185,7 @@ Exercise.prototype.new_post = function(post) {
             if (this.modal_shown && this.modal_shown_user == post.user) {
                 modal_append_command(post.command, post.level, post.date, post.type == POST_PASSED);
                 modal_update_lines(student.lines);
+                modal_scroll_commands();
             }
             break;
         case POST_HELP:
@@ -250,6 +251,7 @@ $(document).on('click', '.user-box', function(e) {
 
 $('#student-detail-modal').on('shown.bs.modal', function(e) {
     exercise.modal_shown = true;
+    modal_scroll_commands();
 });
 
 $('#student-detail-modal').on('hide.bs.modal', function(e) {
