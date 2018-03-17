@@ -26,17 +26,22 @@ Exercise.prototype.create_student_and_add_post = function(post) {
         this.all++;
     }
 
-    if (post.type != POST_HELP && post.type != POST_ACK)
-        this.students[post.user].set_active(post.date);
+    var student = this.students[post.user];
 
-    this.students[post.user].add_post(post);
+    if (post.type != POST_HELP && post.type != POST_ACK)
+        student.set_active(post.date);
+
+    if (!student.exit && post.type == POST_EXIT)
+        this.finished++;
+    else if (student.exit && post.type == POST_START)
+        this.finished--;
+
+    student.add_post(post);
 }
 
 Exercise.prototype.initialize_students = function(posts) {
     for(var i = 0; i < posts.length; i++) {
         this.create_student_and_add_post(posts[i]);
-        if (posts[i].type == POST_EXIT)
-            this.finished++;
     }
 
     for(var user in this.students) {
@@ -132,8 +137,6 @@ Exercise.prototype.new_post = function(post) {
             } else {
                 /* if user exited previously, update statistics */
                 if (student.exit) {
-                    this.finished--;
-                    student.exit = false;
                     this.update_finished_students();
                 }
 
@@ -175,7 +178,6 @@ Exercise.prototype.new_post = function(post) {
             break;
         case POST_EXIT:
             student.change_background('finished');
-            this.finished++;
             this.update_finished_students();
             break;
         case POST_COMMAND:
