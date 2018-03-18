@@ -261,7 +261,8 @@ $('#student-detail-modal').on('hide.bs.modal', function(e) {
     exercise.modal_shown = false;
 });
 
-socket.on('load_active_exercise', function(posts) {
+socket.on('load_active_exercise', function(posts, alternatives) {
+    exercise.alternatives.build_alternatives(alternatives);
     exercise.initialize_students(posts);
 });
 

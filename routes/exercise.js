@@ -12,16 +12,16 @@ function get_md5_hash(challenge_name, level, homedir)
     return md5('i' + challenge_name + 'j%!d(string=' + level + ')k' + homedir + 'l');
 }
 
-function my_evaluate_upsert(values, condition)
+function my_upsert(model, values, condition)
 {
-    return models.Evaluate
+    return model
         .findOne({ where: condition })
         .then(function(obj) {
             if(obj) {
                 return obj.update(values);
             }
             else {
-                return models.Evaluate.create(values);
+                return model.create(values);
             }
         });
 }
@@ -154,6 +154,7 @@ router.get('/active', login_required, function(req, res, next) {
                 hall = "{}";
             else
                 hall = hall.positions;
+
             res.render('active_exercise', {header: 'Active Exercise', exercise: exercise,
                                            hall: hall, inactivity_time: global.inactivity});
         });
@@ -195,13 +196,19 @@ router.get('/evaluate/:exercise_id', login_required, function(req, res, next) {
                     exercise_id: exercise.id
                 }
             }).then(function(resultset_evals) {
-                var posts = resultset_posts.map(function(post) { return post.dataValues; });
-                var evals = resultset_evals.map(function(eval) { return eval.dataValues; });
-                res.render('evaluate_exercise', { header: 'Evaluate Exercise',
-                                                  modal_evaluate: true,
-                                                  exercise: exercise,
-                                                  posts: JSON.stringify(posts),
-                                                  evals: JSON.stringify(evals)});
+                models.Alternative.findAll({
+                    attributes: ['user', 'alternative']
+                }).then(function(resultset_alters){
+                    var posts = resultset_posts.map(function(post) { return post.dataValues; });
+                    var evals = resultset_evals.map(function(eval) { return eval.dataValues; });
+                    var alters = resultset_alters.map(function(alter) { return alter.dataValues; });
+                    res.render('evaluate_exercise', { header: 'Evaluate Exercise',
+                                                      modal_evaluate: true,
+                                                      exercise: exercise,
+                                                      posts: JSON.stringify(posts),
+                                                      evals: JSON.stringify(evals),
+                                                      alternatives: JSON.stringify(alters)});
+                })
             });
         });
     });
@@ -222,7 +229,7 @@ router.post('/evaluate/:exercise_id', login_required, function(req, res, next) {
     }).then(function(evaluation) {
         if (evaluation) {
             evaluation.update({user_id: user_id, score: score, comment: comment}).then(function() {
-                res.status(200).send({success: "Updated successfully"});
+                res.status(200).send({success: 'Updated successfully'});
             });
         } else {
             models.Evaluate.create({
@@ -232,7 +239,7 @@ router.post('/evaluate/:exercise_id', login_required, function(req, res, next) {
                 exercise_id: exercise_id,
                 user_id: user_id
             }).then(function(ev) {
-                res.status(200).send({success: "Created successfully"});
+                res.status(200).send({success: 'Created successfully'});
             });
         }
     }).catch(function(err) {
@@ -289,20 +296,48 @@ router.post('/evaluate/:exercise_id/auto', login_required, function(req, res, ne
 
             var promises = [];
             for (user in grades) {
-                promises.push(my_evaluate_upsert({user: user, score: grades[user],
-                                                  exercise_id: exercise.id, user_id: req.user.id},
-                                                  {user: user, exercise_id: exercise.id}));
+                promises.push(my_upsert(models.Evaluate,
+                                        {user: user, score: grades[user],
+                                         exercise_id: exercise.id, user_id: req.user.id},
+                                        {user: user, exercise_id: exercise.id}));
             }
 
             Promise.all(promises).then(function(result) {
                 var results = result.map(function(r) { return {user: r.user, score: r.score}});
-                res.json({success : true, message: 'Evaluated Successfully',
-                          status : 200, data: results});
+                res.json({success: true, message: 'Evaluated Successfully',
+                          status: 200, data: results});
             }).catch(function(err) {
-                res.json({success : true, message: err, status : 500});
+                res.json({success: false, message: err, status : 500});
             });
         });
     });
+});
+
+router.post('/evaluate/alternative/set', login_required, function(req, res, next) {
+    var user = req.body.user;
+    var alternative = req.body.alternative;
+
+    if (alternative == '') {
+        models.Alternative.findOne({
+            where: {
+                user: user
+            }
+        }).then(function(alter) {
+            alter.destroy();
+        }).then(function() {
+            res.json({success : true, message: 'Destroyed Successfully', status : 200})
+        }).catch(function(err) {
+            res.json({success : false, message: err, status : 500})
+        });
+    } else {
+        my_upsert(models.Alternative,
+                  {user: user, alternative: alternative},
+                  {user: user}).then(function(result) {
+            res.json({success : true, message: 'Updated Successfully', status : 200})
+        }).catch(function(err) {
+            res.json({success : false, message: err, status : 500})
+        });
+    }
 });
 
 /* if this event is called, active exercise exists */
@@ -319,7 +354,11 @@ socketapi.io.on('connect', function(socket) {
                     exercise_id: exercise.id
                 }
             }).then(function(resultset){
-                socket.emit('load_active_exercise', resultset);
+                models.Alternative.findAll({
+                    attributes: ['user', 'alternative']
+                }).then(function(alternatives) {
+                    socket.emit('load_active_exercise', resultset, alternatives);
+                });
             });
         }
     });

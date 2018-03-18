@@ -6,6 +6,8 @@ function EVExercise()
     this.last_level = '';
 
     this.all = 0;
+
+    this.alternative = new Alternative();
 }
 
 EVExercise.prototype.initialize = function(posts, evals)
@@ -29,7 +31,7 @@ EVExercise.prototype.initialize = function(posts, evals)
         var student = this.students[stud];
 
         var row = '<tr class="user-row ' + (student.exit ? 'table-success' : '') + '" id="student-' + student.user + '" data-username="' + student.user + '">'
-                +   '<td>' + student.user + '</td>'
+                +   '<td><div class="user-row-username">' + this.alternative.get_cell(student.user) + '</span></td>'
                 +   '<td>' + student.hostname + '</td>'
                 +   '<td>' + student.ip + '</td>'
                 +   '<td>' + student.get_last_passed_level() + '</td>'
@@ -45,9 +47,50 @@ EVExercise.prototype.initialize = function(posts, evals)
 }
 
 var evexercise = new EVExercise();
+evexercise.alternative.build_alternatives(ALTERNATIVES);
 
 $(document).ready(function() {
     evexercise.initialize(POSTS, EVALS);
+});
+
+$(document).on('click', '.user-row-username', function(){
+    var el = $(this);
+
+    var real_name = el.parent().parent().attr('data-username');
+    var input = $('<input/>').val(evexercise.alternative.get_input_value(real_name));
+    el.replaceWith(input);
+
+    var save = function(){
+        var new_name = input.val();
+
+        $.ajax({
+            url: '/exercise/evaluate/alternative/set',
+            type: 'POST',
+            data: {
+                user: real_name,
+                alternative: new_name
+            },
+            success: function(response) {
+                evexercise.alternative.set_alternative(real_name, new_name);
+            },
+            error: function(jqXhr, textStatus, errorThrown) {
+                console.log('FAIL: ' + textStatus, errorThrown);
+            },
+            complete: function(jqXhr, textStatus) {
+                var div = $('<div class="user-row-username"/>').text(evexercise.alternative.get_cell(real_name));
+                input.replaceWith(div);
+            }
+        });
+    };
+
+    input.one('click', function(e) { return false; });
+    input.on('keydown', function(e) {
+        if(e.keyCode == 13) {
+            save();
+        }
+    });
+    input.one('blur', save).focus();
+    return false;
 });
 
 $(document).on('click', '.user-row', function(e) {
