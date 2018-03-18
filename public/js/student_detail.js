@@ -19,9 +19,13 @@ function modal_scroll_commands()
     $('.modal-command-history').scrollTop($('.modal-command-history')[0].scrollHeight);
 }
 
-function initialize_modal(student)
+function initialize_modal(student, alternative)
 {
-    $('.modal-title').text(student.get_name_hostname());
+    var alter_name = '';
+    if (alternative)
+        alter_name = ' (' + alternative + ')';
+
+    $('.modal-title').text(student.get_name_hostname() + alter_name);
     $('.modal-ip').text(student.ip);
 
     $('.modal-command-history').empty();
@@ -49,8 +53,8 @@ function initialize_modal_footer(student)
     $('.modal-evaluate-form textarea[name="comment"]').val(student.evaluate.get_comment());
 }
 
-function initialize_modal_evaluate(student)
+function initialize_modal_evaluate(student, alternative)
 {
-    initialize_modal(student);
+    initialize_modal(student, alternative);
     initialize_modal_footer(student);
 }

@@ -97,7 +97,7 @@ $(document).on('click', '.user-row', function(e) {
     var user = $(this).attr('data-username');
     var student = evexercise.students[user];
 
-    initialize_modal_evaluate(student);
+    initialize_modal_evaluate(student, evexercise.alternative.get_or_null(user));
 
     $('#student-detail-modal').modal('show');
 });
@@ -131,7 +131,7 @@ $(document).on('submit','form.modal-evaluate-form', function(e) {
 
             var next_user = current_select.next().attr('data-username');
             if (next_user) {
-                initialize_modal_evaluate(evexercise.students[next_user]);
+                initialize_modal_evaluate(evexercise.students[next_user], evexercise.alternative.get_or_null(next_user));
                 modal_scroll_commands();
             } else {
                 $('#student-detail-modal').modal('hide');

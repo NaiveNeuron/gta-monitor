@@ -18,6 +18,8 @@ function Exercise()
         this.positions[key] = new Position(HALL_INITIAL[key][0],
                                            HALL_INITIAL[key][1]);
     }
+
+    this.alternative = new Alternative();
 }
 
 Exercise.prototype.create_student_and_add_post = function(post) {
@@ -245,7 +247,7 @@ $(document).on('click', '.user-box', function(e) {
 
     student.set_ack();
 
-    initialize_modal(student);
+    initialize_modal(student, exercise.alternative.get_or_null(user));
 
     exercise.modal_shown_user = user;
     $('#student-detail-modal').modal('show');
@@ -262,7 +264,7 @@ $('#student-detail-modal').on('hide.bs.modal', function(e) {
 });
 
 socket.on('load_active_exercise', function(posts, alternatives) {
-    exercise.alternatives.build_alternatives(alternatives);
+    exercise.alternative.build_alternatives(alternatives);
     exercise.initialize_students(posts);
 });
 
