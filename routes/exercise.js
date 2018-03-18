@@ -256,15 +256,33 @@ router.get('/evaluate/:exercise_id/csvexport', login_required, function(req, res
         },
         attributes: [['user', 'username'], ['score', 'grade'], 'comment']
     }).then(function(resultset) {
-        var data = resultset.map(function(ev) { return ev.toJSON(); })
+        models.Alternative.findAll({
+            attributes: ['user', 'alternative']
+        }).then(function(resultset_alters) {
+            var alters = {};
+            for (var i = 0; i < resultset_alters.length; i++) {
+                alters[resultset_alters[i].user] = resultset_alters[i].alternative;
+            }
 
-        if (data.length == 0) {
-            return res.status(204).send();
-        }
+            var data = resultset.reduce(function(result, ev) {
+                ev = ev.get({ plain: true });
+                if (ev.username in alters)
+                    ev.username = alters[ev.username];
 
-        var csv = json2csv(data, { fields, quote: '' });
-        res.attachment('score.csv');
-        res.status(200).send(csv);
+                if (ev.username != global.EXCLUDE_NAME)
+                    result.push(ev);
+
+                return result;
+            }, []);
+
+            if (data.length == 0) {
+                return res.status(204).send();
+            }
+
+            var csv = json2csv(data, { fields, quote: '' });
+            res.attachment('score.csv');
+            res.status(200).send(csv);
+        });
     });
 });
 
