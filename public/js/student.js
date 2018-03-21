@@ -97,6 +97,11 @@ Student.prototype.set_active = function(date) {
     this.last_activity_time = get_date_from_string(date);
 }
 
+Student.prototype.remove_activity_alerts = function() {
+    $('#student-' + this.user + ' .user-box-inactivity-time').removeClass('slow-fadeinout');
+    $('#student-' + this.user + ' .user-box-activity-attempts').removeClass('slow-fadeinout');
+}
+
 Student.prototype.change_computer = function(hostname, ip) {
     this.hostname = hostname;
     this.ip = ip;

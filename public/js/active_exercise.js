@@ -47,8 +47,12 @@ Exercise.prototype.initialize_students = function(posts) {
     }
 
     for(var user in this.students) {
-        this.create_new_box(this.students[user]);
-        this.students[user].update_activity_time();
+        var student = this.students[user];
+        this.create_new_box(student);
+        student.update_activity_time();
+
+        if (student.exit)
+            student.remove_activity_alerts();
     }
 
     this.update_started_students();
@@ -180,6 +184,7 @@ Exercise.prototype.new_post = function(post) {
             break;
         case POST_EXIT:
             student.change_background('finished');
+            student.remove_activity_alerts();
             this.update_finished_students();
             break;
         case POST_COMMAND:
