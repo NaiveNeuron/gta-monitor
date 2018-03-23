@@ -49,6 +49,7 @@ function initialize_modal(student, alternative)
 function initialize_modal_footer(student)
 {
     $('.modal-evaluate-form input[name="modal_evaluate_score"]').val(student.evaluate.get_score());
+    $('.modal-evaluate-form input[name="modal_evaluate_bonus"]').val(student.evaluate.get_bonus());
     $('.modal-evaluate-form input[name="modal_evaluate_user"]').val(student.user);
     $('.modal-evaluate-form textarea[name="comment"]').val(student.evaluate.get_comment());
 }

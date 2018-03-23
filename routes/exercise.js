@@ -165,7 +165,7 @@ router.post('/edit/:exercise_id', login_required, function(req, res, next) {
                     });
                 });
             });
-        })/*.catch(function(err) {
+        }).catch(function(err) {
             models.Exercise.findOne({
                 where: {
                     id: req.params.exercise_id,
@@ -175,7 +175,7 @@ router.post('/edit/:exercise_id', login_required, function(req, res, next) {
                                               exercise: exercise,
                                               errors: [ {msg: 'Something went wrong with database (check exercise ID is unique)'} ]});
             });
-        });*/
+        });
     }
 });
 
@@ -257,6 +257,7 @@ router.get('/evaluate/:exercise_id', login_required, function(req, res, next) {
 router.post('/evaluate/:exercise_id', login_required, function(req, res, next) {
     var user = req.body.user;
     var score = req.body.score;
+    var bonus = req.body.bonus;
     var comment = req.body.comment;
     var exercise_id = req.params.exercise_id;
     var user_id = req.user.id;
@@ -268,33 +269,43 @@ router.post('/evaluate/:exercise_id', login_required, function(req, res, next) {
         }
     }).then(function(evaluation) {
         if (evaluation) {
-            evaluation.update({user_id: user_id, score: score, comment: comment}).then(function() {
-                res.status(200).send({success: 'Updated successfully'});
+            evaluation.update({
+                user_id: user_id,
+                score: score,
+                bonus: bonus == '' ? 0 : bonus,
+                comment: comment
+            }).then(function() {
+                return res.json({message: 'Updated Successfully', status : 200});
+            }).catch(function(err) {
+                return res.status(500).json({message: err.errors[0].message, status: 500});
             });
         } else {
             models.Evaluate.create({
                 user: user,
                 score: score,
+                bonus: bonus == '' ? 0 : bonus,
                 comment: comment,
                 exercise_id: exercise_id,
                 user_id: user_id
             }).then(function(ev) {
-                res.status(200).send({success: 'Created successfully'});
+                return res.json({message: 'Created Successfully', status : 200});
+            }).catch(function(err) {
+                return res.status(500).json({message: err.errors[0].message, status: 500});
             });
         }
     }).catch(function(err) {
-        res.status(err.code).send({fail: err.message});
+        return res.status(500).json({message: 'Failed to save', status : err.code});
     });
 });
 
 router.get('/evaluate/:exercise_id/csvexport', login_required, function(req, res, next) {
-    var fields = ['username', 'grade', 'comment'];
+    var fields = ['username', 'grade', 'bonus', 'comment'];
 
     models.Evaluate.findAll({
         where: {
             exercise_id: req.params.exercise_id
         },
-        attributes: [['user', 'username'], ['score', 'grade'], 'comment']
+        attributes: [['user', 'username'], ['score', 'grade'], 'bonus', 'comment']
     }).then(function(resultset) {
         models.Alternative.findAll({
             attributes: ['user', 'alternative']

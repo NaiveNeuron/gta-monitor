@@ -24,6 +24,7 @@ EVExercise.prototype.initialize = function(posts, evals)
     for (var i = 0; i < evals.length; i++) {
         var eval = evals[i];
         this.students[eval.user].evaluate.set_score(eval.score);
+        this.students[eval.user].evaluate.set_bonus(eval.bonus);
         this.students[eval.user].evaluate.set_comment(eval.comment);
     }
 
@@ -38,7 +39,7 @@ EVExercise.prototype.initialize = function(posts, evals)
                 +   '<td>' + student.get_working_time_or_dash() + '</td>'
                 +   '<td>' + student.lines + '</td>'
                 +   '<td class="score-cell">' + student.evaluate.get_score_or_dash() + '</td>'
-                +   '<td class="bonus-cell">' + student.evaluate.get_bonus_or_dash() + '</td>'
+                +   '<td class="bonus-cell">' + student.evaluate.get_bonus() + '</td>'
                 + '</tr>';
 
         $('.evaluate-exercise-table tbody').append(row);
@@ -109,6 +110,7 @@ $('#student-detail-modal').on('shown.bs.modal', function(e) {
 
 $(document).on('submit','form.modal-evaluate-form', function(e) {
     var score = $(this).find('input[name="modal_evaluate_score"]').val();
+    var bonus = $(this).find('input[name="modal_evaluate_bonus"]').val();
     var comment = $(this).find('textarea[name="comment"]').val();
     var user = $(this).find('input[name="modal_evaluate_user"]').val();
 
@@ -123,12 +125,15 @@ $(document).on('submit','form.modal-evaluate-form', function(e) {
         data: {
             user: user,
             score: score,
+            bonus: bonus,
             comment: comment
         },
         success: function(response) {
             evexercise.students[user].evaluate.set_score(score);
+            evexercise.students[user].evaluate.set_bonus(bonus);
             evexercise.students[user].evaluate.set_comment(comment);
             evexercise.students[user].evaluate.update_score();
+            evexercise.students[user].evaluate.update_bonus();
 
             var next_user = current_select.next().attr('data-username');
             if (next_user) {
@@ -140,6 +145,7 @@ $(document).on('submit','form.modal-evaluate-form', function(e) {
         },
         error: function(jqXhr, textStatus, errorThrown) {
             console.log('FAIL: ' + textStatus, errorThrown);
+            console.log(jqXhr.responseJSON.message);
         },
         complete: function(jqXhr, textStatus) {
             $('form.modal-evaluate-form .loader').css('visibility', 'hidden');
