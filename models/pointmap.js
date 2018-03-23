@@ -1,14 +1,14 @@
 'use strict';
 
 module.exports = function(sequelize, DataTypes) {
-    var Evaluate = sequelize.define('Evaluate', {
+    var Pointmap = sequelize.define('Pointmap', {
         id: {
             autoIncrement: true,
             primaryKey: true,
             type: DataTypes.INTEGER
         },
 
-        user: {
+        level: {
             type: DataTypes.STRING,
             allowNull: false,
             validate: {
@@ -16,28 +16,23 @@ module.exports = function(sequelize, DataTypes) {
             }
         },
 
-        score: {
+        points: {
             type: DataTypes.DOUBLE,
             allowNull: false,
             validate: {
-                notEmpty: true,
+                isDecimal: true
             }
         },
 
-        bonus: {
-            type: DataTypes.DOUBLE,
+        is_bonus: {
+            type: DataTypes.BOOLEAN,
             defaultValue: 0
-        },
-
-        comment: {
-            type: DataTypes.TEXT
         }
     });
 
-    Evaluate.associate = function(models) {
-        Evaluate.belongsTo(models.Exercise, {foreignKey: 'exercise_id', onDelete: 'CASCADE'});
-        Evaluate.belongsTo(models.User, {foreignKey: 'user_id', onDelete: 'SET NULL'});
+    Pointmap.associate = function(models) {
+        Pointmap.belongsTo(models.Exercise, {foreignKey: 'exercise_id', onDelete: 'CASCADE'});
     };
 
-    return Evaluate;
+    return Pointmap;
 };

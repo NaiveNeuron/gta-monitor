@@ -5,6 +5,7 @@ block css
 
 block js
   script(src="/js/lib/flatpickr.min.js")
+  script(src="/js/level_points.js")
 
 block link
   -var selected = 'Create Exercise';
@@ -20,11 +21,19 @@ block content
         label(for="id") Exercise ID:
         input(id="id", class="form-control", type="number", placeholder="Enter the exercise id", name="id", required)
       div(class="form-group")
-        label(for="last_leve") Last level:
+        label(for="last_level") Last level:
         input(id="last_level", class="form-control", type="text", placeholder="Enter the name of the last level", name="last_level")
-      div(class="form-group")
-        label(for="last_level") Max points:
-        input(id="max_points", class="form-control", type="number", step=0.01, placeholder="Enter max points for the exercise", name="max_points")
+      fieldset(class="form-group", name="score_map")
+        legend Set score for different levels
+        div(class="exercise-levels-points")
+          div(class="form-inline")
+            label Bonus
+              input(type="hidden", name="pointmap[is_bonus][]", value="off")
+              input(type="checkbox", class="form-check-input")
+            input(type="text", class="form-control m-2", placeholder="Level name", name="pointmap[levels][]")
+            input(type="number", class="form-control m-2", placeholder="Points", name="pointmap[points][]")
+        button(class="btn btn-outline-info", type="button", id="btn-add-levels-points") Add new
+        button(class="btn btn-outline-danger", type="button", id="btn-rm-levels-points") Remove last
       div(class="form-group")
         label(for="starts_at") Exercise starts at:
         input(id="starts_at", class="form-control flatpickr-input", type="text", name="starts_at", readonly="readonly", required)

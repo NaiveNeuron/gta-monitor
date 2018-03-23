@@ -5,6 +5,7 @@ block css
 
 block js
   script(src="/js/lib/flatpickr.min.js")
+  script(src="/js/level_points.js")
 
 block link
   -var selected = 'Edit Exercise';
@@ -23,9 +24,6 @@ block content
         label(for="last_level") Last level:
         input(id="last_level", class="form-control", type="text", placeholder="Enter the name of the last level", name="last_level", value=exercise.last_level)
       div(class="form-group")
-        label(for="last_level") Max points:
-        input(id="max_points", class="form-control", type="number", step=0.01, placeholder="Enter max points for the exercise", name="max_points", value=exercise.max_points)
-      div(class="form-group")
         label(for="status") Status:
         select(id="status", class="form-control", name="status", required)
           each val in ['scheduled', 'active', 'done']
@@ -33,6 +31,30 @@ block content
               option(value=val, selected) #{val}
             else
               option(value=val) #{val}
+      fieldset(class="form-group", name="score_map")
+        legend Set score for different levels
+        div(class="exercise-levels-points")
+          if pointmaps.length
+            each pm in pointmaps
+              div(class="form-inline")
+                label Bonus
+                  if pm.is_bonus
+                    input(type="hidden", name="pointmap[is_bonus][]", value="on")
+                    input(type="checkbox", class="form-check-input", checked)
+                  else
+                    input(type="hidden", name="pointmap[is_bonus][]", value="off")
+                    input(type="checkbox", class="form-check-input")
+                input(type="text", class="form-control m-2", placeholder="Level name", name="pointmap[levels][]", value=pm.level)
+                input(type="number", class="form-control m-2", placeholder="Points", name="pointmap[points][]", value=pm.points)
+          else
+            div(class="form-inline")
+              label Bonus
+                input(type="hidden", name="pointmap[is_bonus][]", value="off")
+                input(type="checkbox", class="form-check-input")
+              input(type="text", class="form-control m-2", placeholder="Level name", name="pointmap[levels][]")
+              input(type="number", class="form-control m-2", placeholder="Points", name="pointmap[points][]")
+        button(class="btn btn-outline-info", type="button", id="btn-add-levels-points") Add new
+        button(class="btn btn-outline-danger", type="button", id="btn-rm-levels-points") Remove last
       div(class="form-group")
         label(for="starts_at") Exercise starts at:
         input(id="starts_at", class="form-control flatpickr-input", type="text", name="starts_at", value=exercise.starts_at, readonly="readonly", required)

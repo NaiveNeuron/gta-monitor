@@ -38,6 +38,7 @@ EVExercise.prototype.initialize = function(posts, evals)
                 +   '<td>' + student.get_working_time_or_dash() + '</td>'
                 +   '<td>' + student.lines + '</td>'
                 +   '<td class="score-cell">' + student.evaluate.get_score_or_dash() + '</td>'
+                +   '<td class="bonus-cell">' + student.evaluate.get_bonus_or_dash() + '</td>'
                 + '</tr>';
 
         $('.evaluate-exercise-table tbody').append(row);

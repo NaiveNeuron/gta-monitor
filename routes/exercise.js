@@ -17,13 +17,27 @@ function my_upsert(model, values, condition)
     return model
         .findOne({ where: condition })
         .then(function(obj) {
-            if(obj) {
+            if(obj)
                 return obj.update(values);
-            }
-            else {
+            else
                 return model.create(values);
-            }
         });
+}
+
+function get_point_mapping(pointmap, exid) {
+    var mapping = [];
+    for (var i = 0; i < pointmap.levels.length; i++) {
+        if (pointmap.levels[i] != '' && pointmap.points[i] != '') {
+            mapping.push({
+                level: pointmap.levels[i],
+                points: pointmap.points[i],
+                is_bonus: pointmap.is_bonus[i] == 'on' ? 1 : 0,
+                exercise_id: exid
+            });
+        }
+    }
+
+    return mapping;
 }
 
 function validate_exercise(req)
@@ -56,17 +70,18 @@ router.post('/create', login_required, function(req, res, next) {
     } else {
         var data = {name: req.body.name, id: req.body.id,
                     last_level: req.body.last_level,
-                    max_points: req.body.max_points,
                     starts_at: req.body.starts_at,
                     ends_at: req.body.ends_at,};
         models.Exercise.create(data).then(function(exercise) {
-            models.Exercise.findAll().then(function(resultset) {
-                req.app.locals.navbar_exercises = resultset;
+            models.Pointmap.bulkCreate(get_point_mapping(req.body.pointmap, exercise.id)).then(function() {
+                models.Exercise.findAll().then(function(resultset) {
+                    req.app.locals.navbar_exercises = resultset;
 
-                var data = exercise.dataValues;
-                var msg = 'Exercise ' + data.name + ' #' + data.id + ' created';
-                req.flash('success', msg);
-                res.redirect('/');
+                    var data = exercise.dataValues;
+                    var msg = 'Exercise ' + data.name + ' #' + data.id + ' created';
+                    req.flash('success', msg);
+                    res.redirect('/');
+                });
             });
         }).catch(function(err) {
             res.render('create_exercise', { header: 'Create Exercise',
@@ -84,7 +99,14 @@ router.get('/edit/:exercise_id', login_required, function(req, res, next) {
         if (!exercise)
             next();
 
-        res.render('edit_exercise', {header: 'Edit Exercise', exercise: exercise});
+        models.Pointmap.findAll({
+            where: {
+                exercise_id: exercise.id
+            }
+        }).then(function(pointmaps){
+            res.render('edit_exercise', {header: 'Edit Exercise', exercise: exercise,
+                                         pointmaps: pointmaps});
+        });
     });
 });
 
@@ -105,7 +127,6 @@ router.post('/edit/:exercise_id', login_required, function(req, res, next) {
     } else {
         var data = {name: req.body.name, id: req.body.id,
                     last_level: req.body.last_level,
-                    max_points: req.body.max_points,
                     status: req.body.status, starts_at: req.body.starts_at,
                     ends_at: req.body.ends_at};
         models.Exercise.update(data, {
@@ -113,19 +134,38 @@ router.post('/edit/:exercise_id', login_required, function(req, res, next) {
                 id: req.params.exercise_id
             }
         }).then(function(exercise) {
-            models.Exercise.findAll().then(function(resultset) {
-                req.app.locals.navbar_exercises = resultset;
-                req.app.locals.navbar_evaluate_exercises = [];
-                resultset.forEach(function(item) {
-                    if (item.status == 'done')
-                        req.app.locals.navbar_evaluate_exercises.push(item);
-                });
+            models.Pointmap.findAll({
+                where: {
+                    exercise_id: req.params.exercise_id
+                }
+            }).then(function(pointmaps) {
+                var promises = [];
+                var levels = req.body.pointmap.levels;
+                var mapping = get_point_mapping(req.body.pointmap, req.params.exercise_id,);
+                for (var i = 0; i < pointmaps.length; i++) {
+                    if (!(levels.indexOf(pointmaps[i].level) > -1))
+                        promises.push(pointmaps[i].destroy());
+                }
+                for (var i = 0; i < mapping.length; i++) {
+                    promises.push(my_upsert(models.Pointmap, mapping[i], { exercise_id: req.params.exercise_id, }));
+                }
 
-                var msg = 'Exercise ' + data.name + ' #' + data.id + ' updated';
-                req.flash('success', msg);
-                res.redirect('/');
+                Promise.all(promises).then(function(result) {
+                    models.Exercise.findAll().then(function(resultset) {
+                        req.app.locals.navbar_exercises = resultset;
+                        req.app.locals.navbar_evaluate_exercises = [];
+                        resultset.forEach(function(item) {
+                            if (item.status == 'done')
+                                req.app.locals.navbar_evaluate_exercises.push(item);
+                        });
+
+                        var msg = 'Exercise ' + data.name + ' #' + data.id + ' updated';
+                        req.flash('success', msg);
+                        res.redirect('/');
+                    });
+                });
             });
-        }).catch(function(err) {
+        })/*.catch(function(err) {
             models.Exercise.findOne({
                 where: {
                     id: req.params.exercise_id,
@@ -135,7 +175,7 @@ router.post('/edit/:exercise_id', login_required, function(req, res, next) {
                                               exercise: exercise,
                                               errors: [ {msg: 'Something went wrong with database (check exercise ID is unique)'} ]});
             });
-        });
+        });*/
     }
 });
 

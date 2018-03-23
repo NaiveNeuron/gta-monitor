@@ -20,13 +20,6 @@ module.exports = function(sequelize, DataTypes) {
             type: DataTypes.STRING,
         },
 
-        max_points: {
-            type: DataTypes.DOUBLE,
-            validate: {
-                isNumeric: true
-            }
-        },
-
         starts_at: {
             type: DataTypes.DATE,
             allowNull: false,
@@ -52,6 +45,7 @@ module.exports = function(sequelize, DataTypes) {
     Exercise.associate = function(models) {
         Exercise.hasMany(models.Post, {foreignKey: 'exercise_id', onDelete: 'CASCADE'});
         Exercise.hasMany(models.Evaluate, {foreignKey: 'exercise_id', onDelete: 'CASCADE'});
+        Exercise.hasMany(models.Pointmap, {foreignKey: 'exercise_id', onDelete: 'CASCADE'});
     };
 
     return Exercise;

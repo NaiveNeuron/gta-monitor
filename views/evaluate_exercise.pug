@@ -24,7 +24,7 @@ block js
     script(src="/js/evaluate_exercise.js")
 
 block content
-  div(class="narrow-content")
+  div(class="narrow-content-bigger")
     h1 #{header}
     div(class="evaluate-exercise-container")
       h5 Exercise #{exercise.name} - id #{exercise.id}
@@ -42,5 +42,6 @@ block content
             th(data-sortable="true") Time spent
             th(data-sortable="true") Lines
             th(data-sortable="true") Score
+            th(data-sortable="true") Bonus
         tbody
       include snippets/student_modal.pug
