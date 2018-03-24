@@ -39,9 +39,11 @@ router.post('/', function(req, res, next) {
                 if (d.type == global.POST_COMMAND || d.type == global.POST_PASSED) {
                     data.command = decodeURI(decodeURIComponent(d.command));
                 } else if (d.type == global.POST_EXIT) {
-                    data.hash = d.hash;
                     data.homedir = d.homedir;
                 }
+
+                if ('hash' in d)
+                    data.hash = d.hash;
 
                 if ('level' in d)
                     data.level = d.level;

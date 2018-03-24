@@ -30,7 +30,8 @@ block content
       h5 Exercise #{exercise.name} - id #{exercise.id}
         span(class="evaluate-exercise-buttons")
           div(class="loader")
-          button(class="btn btn-outline-success", id="btn-auto-evaluate") Auto evaluate
+          if auto_evaluate
+            button(class="btn btn-outline-success .disabled", id="btn-auto-evaluate") Auto evaluate
           a(href="/exercise/evaluate/" + exercise.id + "/csvexport", class="btn btn-outline-dark", id="btn-csv-export") Export to csv
       table(class="table table-hover evaluate-exercise-table")
         thead(class="thead-dark")

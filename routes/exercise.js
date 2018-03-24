@@ -226,29 +226,36 @@ router.post('/active/save', login_required, function(req, res, next) {
 
 router.get('/evaluate/:exercise_id', login_required, function(req, res, next) {
     models.Exercise.findById(req.params.exercise_id).then(function(exercise) {
-        models.Post.findAll({
+        models.Pointmap.findAll({
             where: {
                 exercise_id: exercise.id
             }
-        }).then(function(resultset_posts) {
-            models.Evaluate.findAll({
+        }).then(function(resultset_pointmaps) {
+            models.Post.findAll({
                 where: {
                     exercise_id: exercise.id
                 }
-            }).then(function(resultset_evals) {
-                models.Alternative.findAll({
-                    attributes: ['user', 'alternative']
-                }).then(function(resultset_alters){
-                    var posts = resultset_posts.map(function(post) { return post.dataValues; });
-                    var evals = resultset_evals.map(function(eval) { return eval.dataValues; });
-                    var alters = resultset_alters.map(function(alter) { return alter.dataValues; });
-                    res.render('evaluate_exercise', { header: 'Evaluate Exercise',
-                                                      modal_evaluate: true,
-                                                      exercise: exercise,
-                                                      posts: JSON.stringify(posts),
-                                                      evals: JSON.stringify(evals),
-                                                      alternatives: JSON.stringify(alters)});
-                })
+            }).then(function(resultset_posts) {
+                models.Evaluate.findAll({
+                    where: {
+                        exercise_id: exercise.id
+                    }
+                }).then(function(resultset_evals) {
+                    models.Alternative.findAll({
+                        attributes: ['user', 'alternative']
+                    }).then(function(resultset_alters){
+                        var posts = resultset_posts.map(function(post) { return post.dataValues; });
+                        var evals = resultset_evals.map(function(eval) { return eval.dataValues; });
+                        var alters = resultset_alters.map(function(alter) { return alter.dataValues; });
+                        res.render('evaluate_exercise', { header: 'Evaluate Exercise',
+                                                          modal_evaluate: true,
+                                                          auto_evaluate: resultset_pointmaps.length ? true : false,
+                                                          exercise: exercise,
+                                                          posts: JSON.stringify(posts),
+                                                          evals: JSON.stringify(evals),
+                                                          alternatives: JSON.stringify(alters)});
+                    })
+                });
             });
         });
     });
