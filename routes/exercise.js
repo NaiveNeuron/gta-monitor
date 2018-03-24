@@ -140,14 +140,19 @@ router.post('/edit/:exercise_id', login_required, function(req, res, next) {
                 }
             }).then(function(pointmaps) {
                 var promises = [];
-                var levels = req.body.pointmap.levels;
-                var mapping = get_point_mapping(req.body.pointmap, req.params.exercise_id,);
+                var levels = [];
+                var mapping = [];
+                if (req.body.pointmap) {
+                    levels = req.body.pointmap.levels;
+                    mapping = get_point_mapping(req.body.pointmap, req.params.exercise_id);
+                }
                 for (var i = 0; i < pointmaps.length; i++) {
                     if (!(levels.indexOf(pointmaps[i].level) > -1))
                         promises.push(pointmaps[i].destroy());
                 }
                 for (var i = 0; i < mapping.length; i++) {
-                    promises.push(my_upsert(models.Pointmap, mapping[i], { exercise_id: req.params.exercise_id, }));
+                    promises.push(my_upsert(models.Pointmap, mapping[i],
+                                           {exercise_id: req.params.exercise_id, level: mapping[i].level}));
                 }
 
                 Promise.all(promises).then(function(result) {
@@ -254,7 +259,7 @@ router.get('/evaluate/:exercise_id', login_required, function(req, res, next) {
                                                           posts: JSON.stringify(posts),
                                                           evals: JSON.stringify(evals),
                                                           alternatives: JSON.stringify(alters)});
-                    })
+                    });
                 });
             });
         });
@@ -350,40 +355,81 @@ router.post('/evaluate/:exercise_id/auto', login_required, function(req, res, ne
             id: req.params.exercise_id
         }
     }).then(function(exercise) {
-        if (!exercise || !exercise.max_points)
+        if (!exercise)
             return res.status(404).send();
 
-        models.Post.findAll({
+        models.Pointmap.findAll({
             where: {
-                exercise_id: exercise.id,
-                type: global.POST_EXIT
+                exercise_id: exercise.id
             }
-        }).then(function(resultset) {
-            var grades = {};
-            resultset.forEach(function(item) {
-                var success_hash = get_md5_hash(exercise.name, exercise.last_level, item.homedir)
-                var users_hash = item.hash;
+        }).then(function(pointmaps) {
+            models.Post.findAll({
+                where: {
+                    exercise_id: exercise.id,
+                    type: {
+                        [sequelize.Op.or]: [global.POST_PASSED, global.POST_EXIT]
+                    }
+                }
+            }).then(function(resultset) {
+                var grades = {};
+                var regexps = pointmaps.map(function(pm) { return new RegExp(pm.level); });
+                for (var i = resultset.length - 1; i >= 0; i--) {
+                    var item = resultset[i];
 
-                if (success_hash == users_hash)
-                    grades[item.user] = exercise.max_points;
-                else if (item.user in grades)
-                    delete grades[item.user];
-            });
+                    if (item.type == global.POST_EXIT && item.user in grades) {
+                        grades[item.user].exit = true;
+                        continue;
+                    }
 
-            var promises = [];
-            for (user in grades) {
-                promises.push(my_upsert(models.Evaluate,
-                                        {user: user, score: grades[user],
-                                         exercise_id: exercise.id, user_id: req.user.id},
-                                        {user: user, exercise_id: exercise.id}));
-            }
+                    /* if we already saw user who exited, do not add more points */
+                    if (item.user in grades && grades[item.user].exit)
+                        continue;
 
-            Promise.all(promises).then(function(result) {
-                var results = result.map(function(r) { return {user: r.user, score: r.score}});
-                res.json({success: true, message: 'Evaluated Successfully',
-                          status: 200, data: results});
-            }).catch(function(err) {
-                res.json({success: false, message: err, status : 500});
+                    /* check pointmap for each passed post */
+                    for (var j = pointmaps.length - 1; j >= 0; j--) {
+                        var pm = pointmaps[j];
+
+                        /* if the level doesnt match the pointmap regexp, continue*/
+                        if (!regexps[j].test(item.level))
+                            continue;
+
+                        var success_hash = get_md5_hash(exercise.name, item.level, item.homedir);
+
+                        if (success_hash == item.hash) {
+                            var bonus = 0;
+                            var score = 0;
+                            if (pm.is_bonus)
+                                bonus = pm.points;
+                            else
+                                score = pm.points;
+
+                            if (item.user in grades) {
+                                grades[item.user].score += score;
+                                grades[item.user].bonus += bonus;
+                            } else {
+                                grades[item.user] = {score: score, bonus: bonus, exit: false};
+                            }
+                            break;
+                        }
+                    }
+                }
+
+                var promises = [];
+                for (user in grades) {
+                    promises.push(my_upsert(models.Evaluate,
+                                            {user: user, score: grades[user].score,
+                                             bonus: grades[user].bonus,
+                                             exercise_id: exercise.id, user_id: req.user.id},
+                                            {user: user, exercise_id: exercise.id}));
+                }
+
+                Promise.all(promises).then(function(result) {
+                    var results = result.map(function(r) { return {user: r.user, score: r.score, bonus: r.bonus}});
+                    res.json({success: true, message: 'Evaluated Successfully',
+                              status: 200, data: results});
+                }).catch(function(err) {
+                    return res.status(500).json({message: err.errors[0].message, status: 500});
+                });
             });
         });
     });

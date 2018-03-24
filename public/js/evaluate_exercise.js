@@ -166,7 +166,9 @@ $(document).on('click', '#btn-auto-evaluate', function(e) {
             for (var i = 0; i < response.data.length; i++) {
                 var item = response.data[i];
                 evexercise.students[item.user].evaluate.set_score(item.score);
+                evexercise.students[item.user].evaluate.set_bonus(item.bonus);
                 evexercise.students[item.user].evaluate.update_score();
+                evexercise.students[item.user].evaluate.update_bonus();
             }
         },
         error: function(jqXhr, textStatus, errorThrown) {
