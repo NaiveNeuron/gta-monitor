@@ -23,13 +23,16 @@ var auth = require('./routes/auth');
 var gta = require('./routes/gta');
 var exercise = require('./routes/exercise');
 
+var env = process.env.NODE_ENV || 'development';
+var app_config = require('./config/app_config.json')[env];
+
 var app = express();
 
 var secret_key = 'strong-secret';
 
 app.locals.pretty = true;
 
-global.inactivity = 60; /* inactivity in seconds TODO: move this to config */
+global.inactivity = app_config.inactivity_alert; /* inactivity in seconds */
 
 global.POST_START = 'start';
 global.POST_COMMAND = 'command';

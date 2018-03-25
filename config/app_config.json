@@ -1,5 +1,6 @@
 {
     "development": {
+        "inactivity_alert": 60,
         "ssl": {
             "use_ssl": true,
             "key": "../../certs/monitor.key",
@@ -7,6 +8,7 @@
         }
     },
     "production": {
+        "inactivity_alert": 60,
         "ssl": {
             "use_ssl": false,
             "key": "",
