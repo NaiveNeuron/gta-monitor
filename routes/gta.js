@@ -6,6 +6,9 @@ var models = require('../models');
 
 function is_ip_allowed(ip)
 {
+    if (!global.ALLOWED_SUBNETS.length)
+        return true;
+
     for (var i = 0; i < global.ALLOWED_SUBNETS.length; i++) {
         if (global.ALLOWED_SUBNETS[i].contains(ip))
             return true;
@@ -20,7 +23,7 @@ router.post('/', function(req, res, next) {
 
     var d = req.body;
 
-    if (true) { // is_ip_allowed(d.ip)) {
+    if (is_ip_allowed(d.ip)) {
         /* exercise comes as a exercise_id.gta, but we want to get only id */
         var ex_number = parseInt(d.exercise_number.replace(/\D/g,''));
         models.Exercise.findOne({

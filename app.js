@@ -43,12 +43,9 @@ global.POST_ACK = 'ack';
 
 global.EXCLUDE_NAME = '#x';
 
-global.ALLOWED_SUBNETS = [
-    ip.cidrSubnet('158.195.28.128/26'), /* eth0 h3 */
-    ip.cidrSubnet('158.195.28.192/26'), /* eth0 f1-248 */
-    ip.cidrSubnet('158.195.28.0/25'), /* eth0 h6 */
-    ip.cidrSubnet('158.195.252.0/23'), /* wlan eduroam */
-];
+global.ALLOWED_SUBNETS = [];
+for (var i = 0; i < app_config.allowed_subnets.length; i++)
+    global.ALLOWED_SUBNETS.push(ip.cidrSubnet(app_config.allowed_subnets[i]));
 
 if (!Date.now) {
     Date.now = function now() {
