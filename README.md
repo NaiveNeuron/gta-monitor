@@ -32,6 +32,7 @@ $ npm install
 * Choose the port `$ export PORT=4321` - if not set, app will use port 3000
 * Update `config/db_config.json` appropriately to set the connection to database
 * If you want to setup TLS/SSL, update path to certificate and key in `config/app_config.json`
+* If you want to allow storing data from specific ip addresses, add it to `allowed_subnets` in config (`xxx.yyy.zzz.vvv/mask`). Example `111.222.111.0/26`
 
 ## Running
 
