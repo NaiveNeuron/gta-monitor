@@ -15,7 +15,7 @@ $ git clone git@github.com:NaiveNeuron/gta-monitor.git
 ### Prerequisites
 
 * nodejs
-* database which is supported by sequelize - mysql, sqlite, postgres or mssql
+* database which is supported by sequelize - MySQL, MariaDB, SQLite, PostgreSQL or MsSQL
 
 ### Installation
 
