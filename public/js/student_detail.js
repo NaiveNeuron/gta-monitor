@@ -3,8 +3,13 @@ function modal_append_command(command, level, date, passed)
     var date = get_date_from_string(date);
     var date_str = pad(date.getHours()) + ':' + pad(date.getMinutes()) + ':' + pad(date.getSeconds());
 
-    var msg = '<code' + (passed ? ' class="passed-command"' : '') + '>'
-            +    date_str + ' ' + level + ' $ ' + command
+    var filtered_cmd = command.replace(/\s\#\s\[cvicenie.*/, '');
+
+    var msg = '<code>'
+            +   '<span' + (passed ? ' class="passed-command"' : '') + '>'
+            +     date_str + ' ' + level + ' $ '
+            +   '</span>'
+            +   '<span class="terminal-command">' + filtered_cmd + '</span>'
             + '</code>';
     $('.modal-command-history').append(msg);
 }
