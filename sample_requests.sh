@@ -1,6 +1,4 @@
 
-# TODO: get computer's ip (preferably from eth0)
-
 function urlencode() {
 	local LANG=C i c e=''
 	for ((i=0;i<${#1};i++)); do
@@ -26,7 +24,7 @@ if [ "$TYPE" = "start" ]; then
 elif [ "$TYPE" = "command" ]; then
     wget --no-check-certificate --header="Content-Type: application/json" --post-data '{"type": "command", "user": "'$USR'", "hostname": "'$HOSTNAME'", "date": '`date +%s`', "exercise_number": "'$EXERCISE_NUM'", "ip": "'$IP'", "level": "'$LVL'", "command": "'$CMD'"}' $SERVER/gta -O /dev/null
 elif [ "$TYPE" = "passed" ]; then
-    wget --no-check-certificate --header="Content-Type: application/json" --post-data '{"type": "passed", "user": "'$USR'", "hostname": "'$HOSTNAME'", "date": '`date +%s`', "exercise_number": "'$EXERCISE_NUM'", "ip": "'$IP'", "level": "'$LVL'", "command": "'$CMD'"}' $SERVER/gta -O /dev/null
+    wget --no-check-certificate --header="Content-Type: application/json" --post-data '{"type": "passed", "user": "'$USR'", "hostname": "'$HOSTNAME'", "date": '`date +%s`', "exercise_number": "'$EXERCISE_NUM'", "ip": "'$IP'", "level": "'$LVL'", "command": "'$CMD'", "homedir": "'$HOME'", "hash": "da886a7e66f4c87b2a21badf4ee97394"}' $SERVER/gta -O /dev/null
 elif [ "$TYPE" = "exit" ]; then
     wget --no-check-certificate --header="Content-Type: application/json" --post-data '{"type": "exit", "user": "'$USR'", "hostname": "'$HOSTNAME'", "date": '`date +%s`', "exercise_number": "'$EXERCISE_NUM'", "ip": "'$IP'", "homedir": "'$HOME'", "hash": "da886a7e66f4c87b2a21badf4ee97394"}' $SERVER/gta -O /dev/null
 elif [ "$TYPE" = "help" ]; then
