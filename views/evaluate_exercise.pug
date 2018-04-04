@@ -13,6 +13,7 @@ block js
       var EVALS = !{evals};
       var ALTERNATIVES = !{alternatives};
     script(src="/js/lib/bootstrap-table.min.js")
+    script(src="/js/lib/Chart.min.js")
     script(src="/js/socket.js")
     script(src="/js/utils.js")
     script(src="/js/alternative.js")
@@ -45,4 +46,6 @@ block content
             th(data-sortable="true") Score
             th(data-sortable="true") Bonus
         tbody
+      div(class="evaluate-exercise-charts")
+        canvas(id="level_histogram")
       include snippets/student_modal.pug

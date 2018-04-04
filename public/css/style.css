@@ -184,6 +184,11 @@ code .terminal-command {
 .bootstrap-table {
     margin-bottom: 20px;
 }
+.evaluate-exercise-container .evaluate-exercise-charts {
+    width: 70%;
+    margin: 0 auto;
+    margin-bottom: 10px;
+}
 
 @keyframes spin {
     0% { transform: rotate(0deg); }

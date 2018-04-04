@@ -8,7 +8,16 @@ function EVExercise()
     this.all = 0;
 
     this.alternative = new Alternative();
+
+    this.level_commands = {};
 }
+
+EVExercise.prototype.increment_or_set = function(dict, level, type) {
+    if (!(level in dict))
+        dict[level] = {'passed': 0, 'command': 0};
+    dict[level][type] += 1;
+}
+
 
 EVExercise.prototype.initialize = function(posts, evals)
 {
@@ -19,7 +28,11 @@ EVExercise.prototype.initialize = function(posts, evals)
             this.all++;
         }
         this.students[post.user].add_post(post);
+
+        if (post.type == POST_COMMAND || post.type == POST_PASSED)
+            this.increment_or_set(this.level_commands, post.level, post.type);
     }
+    console.log(this.level_commands);
 
     for (var i = 0; i < evals.length; i++) {
         var eval = evals[i];
@@ -48,11 +61,60 @@ EVExercise.prototype.initialize = function(posts, evals)
     $('.evaluate-exercise-table').bootstrapTable({'search': true});
 }
 
+EVExercise.prototype.initialize_level_histogram = function() {
+    var ctx = document.getElementById("level_histogram");
+
+    var myChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: Object.keys(this.level_commands),
+            datasets: [
+                {
+                    label: 'Passed',
+                    data: Object.values(this.level_commands).map(function(item) {
+                        return item[POST_PASSED];
+                    }),
+                    backgroundColor: 'rgba(58, 225, 55, 0.7)',
+                    borderColor: 'rgba(54, 162, 235, 1)',
+                    borderWidth: 1
+                },
+                {
+                    label: 'Failed',
+                    data: Object.values(this.level_commands).map(function(item) {
+                        return item[POST_COMMAND];
+                    }),
+                    backgroundColor: 'rgba(225, 58, 55, 0.7)',
+                    borderColor: 'rgba(54, 162, 235, 1)',
+                    borderWidth: 1
+                },
+            ]
+        },
+        options: {
+            tooltips: {
+			    mode: 'label',
+            },
+            scales: {
+                xAxes: [{
+          	         stacked: true,
+                     gridLines: { display: false },
+                }],
+                yAxes: [{
+                    stacked: true,
+                    ticks: {
+                        beginAtZero:true
+                    }
+                }]
+            }
+        }
+    });
+}
+
 var evexercise = new EVExercise();
 evexercise.alternative.build_alternatives(ALTERNATIVES);
 
 $(document).ready(function() {
     evexercise.initialize(POSTS, EVALS);
+    evexercise.initialize_level_histogram();
 });
 
 $(document).on('click', '.user-row-username', function(){
