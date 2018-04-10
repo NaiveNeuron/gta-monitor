@@ -435,6 +435,21 @@ router.post('/evaluate/:exercise_id/auto', login_required, function(req, res, ne
     });
 });
 
+router.get('/statistics/:exercise_id', login_required, function(req, res, next) {
+    models.Exercise.findById(req.params.exercise_id).then(function(exercise) {
+        models.Post.findAll({
+            where: {
+                exercise_id: exercise.id
+            }
+        }).then(function(resultset_posts) {
+            var posts = resultset_posts.map(function(post) { return post.dataValues; });
+            res.render('statistics_exercise', { header: 'Exercise statistics',
+                                                exercise: exercise,
+                                                posts: JSON.stringify(posts)});
+        });
+    });
+});
+
 router.post('/evaluate/alternative/set', login_required, function(req, res, next) {
     var user = req.body.user;
     var alternative = req.body.alternative;

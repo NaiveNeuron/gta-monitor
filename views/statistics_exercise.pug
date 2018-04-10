@@ -1,0 +1,31 @@
+extends layout
+
+block link
+  -var selected = 'Evaluate Exercise';
+
+block css
+  link(rel="stylesheet", href="/css/lib/bootstrap-table.min.css")
+
+block js
+  if exercise != null
+    script.
+      var POSTS = !{posts};
+    script(src="/js/lib/bootstrap-table.min.js")
+    script(src="/js/lib/Chart.min.js")
+    script(src="/js/socket.js")
+    script(src="/js/utils.js")
+    script(src="/js/alternative.js")
+    script(src="/js/post.js")
+    script(src="/js/evaluate.js")
+    script(src="/js/student.js")
+    script(src="/js/student_detail.js")
+
+    script(src="/js/statistics_exercise.js")
+
+block content
+  div(class="narrow-content-bigger")
+    h1 #{header}
+    div(class="statistics-exercise-container")
+      h5 Exercise #{exercise.name} - id #{exercise.id}
+      div(class="statistics-exercise-charts")
+        canvas(id="level_histogram")
