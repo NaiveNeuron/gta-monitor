@@ -1,5 +1,13 @@
 extends layout
 
 block content
-  h1= header
-  p Welcome to #{header}
+  div(class="narrow-content-bigger text-center")
+    h1 #{header}
+    p Welcome to #{header}
+    p.
+      This system aims to monitor student activities while they are using go-term-adventures application.<br>
+      It gathers data about student's progresses and informs the teacher when they are stuck in particular
+      level or haven't typed anything for some time.
+    p After the exercise, teacher is provided with valuable feedback which can be used to improve assignments in next sessions.
+    p.
+      Made with &hearts; by Adrián Matejov
