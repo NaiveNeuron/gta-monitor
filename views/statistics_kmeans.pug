@@ -1,0 +1,35 @@
+extends layout
+
+block js
+  script(src="/js/lib/tsne.js")
+  script(src="/js/lib/Chart.min.js")
+  script(src="/js/lib/chartjs-plugin-zoom.min.js")
+  script.
+    var CLUSTERS = !{string_clusters};
+  script(src="/js/clustering.js")
+
+block content
+  div(class="narrow-content-bigger")
+    h1 #{header}
+    div(class="statistics-exercise-container")
+      each cluster in clusters
+        br
+        br
+        h6 Cluster #{cluster.id} with centroid #{cluster.centroid}
+        table
+          tr
+            th(style="padding-right: 20px") username
+            th(style="padding-right: 20px") hostname
+            th(style="padding-right: 20px") date
+            th(style="padding-right: 20px") command
+          each item in cluster.items
+            tr
+              td(style="padding-right: 20px")
+                pre #{item.user}
+              td(style="padding-right: 20px")
+                pre #{item.hostname}
+              td(style="padding-right: 20px")
+                pre #{item.date}
+              td(style="padding-right: 20px")
+                pre #{item.command}
+    canvas(id="tsnecanvas")

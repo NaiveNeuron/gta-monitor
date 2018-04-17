@@ -5,6 +5,12 @@ var json2csv = require('json2csv').parse;
 var models = require('../models');
 var socketapi = require('../socketapi');
 var login_required = require('./middlewares').login_required;
+
+var shell_parse = require('shell-quote').parse;
+var jaccard = require('jaccard');
+var cos_distance = require('compute-cosine-distance');
+var kmeans = require('node-kmeans');
+
 var router = express.Router();
 
 function get_md5_hash(challenge_name, level, homedir)
@@ -446,6 +452,80 @@ router.get('/statistics/:exercise_id', login_required, function(req, res, next) 
             res.render('statistics_exercise', { header: 'Exercise statistics',
                                                 exercise: exercise,
                                                 posts: JSON.stringify(posts)});
+        });
+    });
+});
+
+router.get('/statistics/:exercise_id/:level', login_required, function(req, res, next) {
+    models.Exercise.findById(req.params.exercise_id).then(function(exercise) {
+        models.Post.findAll({
+            where: {
+                type: global.POST_PASSED,
+                exercise_id: exercise.id,
+                level: req.params.level
+            }
+        }).then(function(resultset_posts) {
+            var all_words = new Set();
+            var set_commands = resultset_posts.map(function(c) {
+                c = c.get({plain: true});
+
+                var p = shell_parse(c.command);
+                for (var i = 0; i < p.length; i++) {
+                    if (typeof(p[i]) === 'object')
+                        p[i] = p[i].op;
+
+                    all_words.add(p[i]);
+                }
+                c.date = new Date(c.date);
+                c.date = c.date.getHours() + ':' + c.date.getMinutes() + ':' + c.date.getSeconds();
+                c.unigrams = Array.from(new Set(p));
+                return c;
+            });
+
+            all_words = Array.from(all_words);
+            set_commads = set_commands.map(function(c) {
+                c.vector = [];
+                for (var i = 0; i < all_words.length; i++) {
+                    c.vector.push(
+                        c.unigrams.indexOf(all_words[i]) > -1 ? 1 : 0
+                    )
+                }
+                console.log(c.vector);
+                return c;
+            });
+            var output = '';
+            kmeans.clusterize(set_commands.map(function(c) {return c.vector;}),
+                {
+                    k: req.query.k,
+                    distance: function(a, b) {
+                        return cos_distance(a,b);
+                        //return 1-jaccard_vector_index(a,b);
+                    }
+                },
+                function(err, result) {
+                    if (err) {
+                        console.error(err);
+                        return;
+                    }
+
+                    var clusters = [];
+                    for (var i = 0; i < result.length; i++) {
+                        var item = result[i];
+                        var cluster = {centroid: item.centroid.join(', '), items: [], id: i};
+                        for (var j = 0; j < item.clusterInd.length; j++) {
+                            cluster.items.push({user: set_commands[item.clusterInd[j]].user,
+                                                hostname: set_commands[item.clusterInd[j]].hostname,
+                                                date: set_commands[item.clusterInd[j]].date,
+                                                command: set_commands[item.clusterInd[j]].command,
+                                                vector: set_commands[item.clusterInd[j]].vector,
+                                            });
+                        }
+                        clusters.push(cluster);
+                    }
+                    res.render('statistics_kmeans', { header: 'k-means clustering', clusters: clusters,
+                                                      string_clusters: JSON.stringify(clusters)});
+                }
+            );
         });
     });
 });
