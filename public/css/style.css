@@ -190,6 +190,24 @@ code .terminal-command {
     margin-bottom: 10px;
 }
 
+.statistics-exercise-container .statistics-kmeans-badges a {
+    font-size: 120%;
+    margin-right: 20px;
+    color: white;
+}
+
+.statistics-exercise-container .statistics-exercise-kmeans-table td pre {
+    margin: 0;
+    padding: 5px;
+}
+.statistics-exercise-container .statistics-cluster-container {
+    margin-bottom: 30px;
+}
+.word-badge {
+    margin: 5px;
+    font-size: 100%;
+}
+
 @keyframes spin {
     0% { transform: rotate(0deg); }
     100% { transform: rotate(360deg); }

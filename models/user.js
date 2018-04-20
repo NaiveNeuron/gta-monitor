@@ -71,7 +71,7 @@ module.exports = function(sequelize, DataTypes) {
         return crypt_password(user.password).then(function(hash) {
             user.password = hash;
         }).catch(function(err) {
-            if (err) console.log(err);
+            if (err) console.error(err);
         });
     });
 

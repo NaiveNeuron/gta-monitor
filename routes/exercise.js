@@ -1,22 +1,17 @@
 var express = require('express');
 var sequelize = require('sequelize');
-var md5 = require('md5');
 var json2csv = require('json2csv').parse;
 var models = require('../models');
 var socketapi = require('../socketapi');
 var login_required = require('./middlewares').login_required;
 
+var helpers = require('../helpers/helpers');
 var shell_parse = require('shell-quote').parse;
-var jaccard = require('jaccard');
-var cos_distance = require('compute-cosine-distance');
-var kmeans = require('node-kmeans');
+
+var env = process.env.NODE_ENV || 'development';
+var app_config = require('../config/app_config.json')[env];
 
 var router = express.Router();
-
-function get_md5_hash(challenge_name, level, homedir)
-{
-    return md5('i' + challenge_name + 'j%!d(string=' + level + ')k' + homedir + 'l');
-}
 
 function my_upsert(model, values, condition)
 {
@@ -28,22 +23,6 @@ function my_upsert(model, values, condition)
             else
                 return model.create(values);
         });
-}
-
-function get_point_mapping(pointmap, exid) {
-    var mapping = [];
-    for (var i = 0; i < pointmap.levels.length; i++) {
-        if (pointmap.levels[i] != '' && pointmap.points[i] != '') {
-            mapping.push({
-                level: pointmap.levels[i],
-                points: pointmap.points[i],
-                is_bonus: pointmap.is_bonus[i] == 'on' ? 1 : 0,
-                exercise_id: exid
-            });
-        }
-    }
-
-    return mapping;
 }
 
 function validate_exercise(req)
@@ -79,7 +58,7 @@ router.post('/create', login_required, function(req, res, next) {
                     starts_at: req.body.starts_at,
                     ends_at: req.body.ends_at,};
         models.Exercise.create(data).then(function(exercise) {
-            models.Pointmap.bulkCreate(get_point_mapping(req.body.pointmap, exercise.id)).then(function() {
+            models.Pointmap.bulkCreate(helpers.get_point_mapping(req.body.pointmap, exercise.id)).then(function() {
                 models.Exercise.findAll().then(function(resultset) {
                     req.app.locals.navbar_exercises = resultset;
 
@@ -150,7 +129,7 @@ router.post('/edit/:exercise_id', login_required, function(req, res, next) {
                 var mapping = [];
                 if (req.body.pointmap) {
                     levels = req.body.pointmap.levels;
-                    mapping = get_point_mapping(req.body.pointmap, req.params.exercise_id);
+                    mapping = helpers.get_point_mapping(req.body.pointmap, req.params.exercise_id);
                 }
                 for (var i = 0; i < pointmaps.length; i++) {
                     if (!(levels.indexOf(pointmaps[i].level) > -1))
@@ -399,7 +378,7 @@ router.post('/evaluate/:exercise_id/auto', login_required, function(req, res, ne
                         if (!regexps[j].test(item.level))
                             continue;
 
-                        var success_hash = get_md5_hash(exercise.name, item.level, item.homedir);
+                        var success_hash = helpers.get_md5_hash(exercise.name, item.level, item.homedir);
 
                         if (success_hash == item.hash) {
                             var bonus = 0;
@@ -457,12 +436,17 @@ router.get('/statistics/:exercise_id', login_required, function(req, res, next) 
 });
 
 router.get('/statistics/:exercise_id/:level', login_required, function(req, res, next) {
+    var k = req.param('k', 4);
+    var dist_function = req.param('distance', 'jaccard');
+
     models.Exercise.findById(req.params.exercise_id).then(function(exercise) {
         models.Post.findAll({
             where: {
                 type: global.POST_PASSED,
                 exercise_id: exercise.id,
-                level: req.params.level
+                level: {
+                    [sequelize.Op.like]: req.params.level + '%'
+                }
             }
         }).then(function(resultset_posts) {
             var all_words = new Set();
@@ -476,8 +460,10 @@ router.get('/statistics/:exercise_id/:level', login_required, function(req, res,
 
                     all_words.add(p[i]);
                 }
-                c.date = new Date(c.date);
-                c.date = c.date.getHours() + ':' + c.date.getMinutes() + ':' + c.date.getSeconds();
+                var date = new Date(c.date);
+                c.date = helpers.pad(date.getHours()) + ':'
+                       + helpers.pad(date.getMinutes()) + ':'
+                       + helpers.pad(date.getSeconds());
                 c.unigrams = Array.from(new Set(p));
                 return c;
             });
@@ -490,42 +476,38 @@ router.get('/statistics/:exercise_id/:level', login_required, function(req, res,
                         c.unigrams.indexOf(all_words[i]) > -1 ? 1 : 0
                     )
                 }
-                console.log(c.vector);
                 return c;
             });
-            var output = '';
-            kmeans.clusterize(set_commands.map(function(c) {return c.vector;}),
-                {
-                    k: req.query.k,
-                    distance: function(a, b) {
-                        return cos_distance(a,b);
-                        //return 1-jaccard_vector_index(a,b);
-                    }
-                },
-                function(err, result) {
-                    if (err) {
-                        console.error(err);
-                        return;
-                    }
 
-                    var clusters = [];
-                    for (var i = 0; i < result.length; i++) {
-                        var item = result[i];
-                        var cluster = {centroid: item.centroid.join(', '), items: [], id: i};
-                        for (var j = 0; j < item.clusterInd.length; j++) {
-                            cluster.items.push({user: set_commands[item.clusterInd[j]].user,
-                                                hostname: set_commands[item.clusterInd[j]].hostname,
-                                                date: set_commands[item.clusterInd[j]].date,
-                                                command: set_commands[item.clusterInd[j]].command,
-                                                vector: set_commands[item.clusterInd[j]].vector,
-                                            });
-                        }
-                        clusters.push(cluster);
-                    }
-                    res.render('statistics_kmeans', { header: 'k-means clustering', clusters: clusters,
-                                                      string_clusters: JSON.stringify(clusters)});
+            helpers.compute_kmeans(set_commands, k, app_config.kmeans_distance, function(err, result) {
+                if (err) {
+                    console.error(err);
+                    return res.render('statistics_kmeans', { header: 'k-means clustering - ' + dist_function + ' distance',
+                                                             error: 'The number of points must be greater than the number k of clusters',
+                                                             k: k,
+                                                             string_clusters: JSON.stringify([])});
                 }
-            );
+
+                var clusters = [];
+                for (var i = 0; i < result.length; i++) {
+                    var item = result[i];
+                    var cluster = {centroid: item.centroid.join(', '), items: [], id: i};
+                    for (var j = 0; j < item.clusterInd.length; j++) {
+                        cluster.items.push({user: set_commands[item.clusterInd[j]].user,
+                                            hostname: set_commands[item.clusterInd[j]].hostname,
+                                            date: set_commands[item.clusterInd[j]].date,
+                                            command: set_commands[item.clusterInd[j]].command,
+                                            vector: set_commands[item.clusterInd[j]].vector,
+                        });
+                    }
+                    clusters.push(cluster);
+                }
+                res.render('statistics_kmeans', { header: 'k-means clustering - ' + dist_function + ' distance',
+                                                  clusters: clusters,
+                                                  all_words: all_words,
+                                                  k: k,
+                                                  string_clusters: JSON.stringify(clusters)});
+            });
         });
     });
 });

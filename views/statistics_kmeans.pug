@@ -11,25 +11,42 @@ block js
 block content
   div(class="narrow-content-bigger")
     h1 #{header}
+    form(method="GET", class="form-inline")
+      label(for="k_parameter", class="m-2") Clusters
+      input(type="number", class="form-control m-2", name="k", id="k_parameter", value=k)
+      label(for="distance_function", class="m-2") Distance function
+      select(class="form-control m-2", name="distance", id="distance_function")
+        option jaccard
+        option cosine
+      button(class="btn btn-primary m-2", type="submit") Recompute
+    hr
     div(class="statistics-exercise-container")
-      each cluster in clusters
-        br
-        br
-        h6 Cluster #{cluster.id} with centroid #{cluster.centroid}
-        table
-          tr
-            th(style="padding-right: 20px") username
-            th(style="padding-right: 20px") hostname
-            th(style="padding-right: 20px") date
-            th(style="padding-right: 20px") command
-          each item in cluster.items
-            tr
-              td(style="padding-right: 20px")
-                pre #{item.user}
-              td(style="padding-right: 20px")
-                pre #{item.hostname}
-              td(style="padding-right: 20px")
-                pre #{item.date}
-              td(style="padding-right: 20px")
-                pre #{item.command}
-    canvas(id="tsnecanvas")
+      if error
+        div(class="alert alert-danger" role="alert") #{error}
+      else
+        h5 Words used in solutions
+        each word in all_words
+          span(class="badge badge-info word-badge") #{word}
+        hr
+        each cluster in clusters
+          div(class="statistics-cluster-container")
+            h5
+              strong Cluster #{cluster.id}
+            p(style="font-size: 0.9em;") Centroid #{cluster.centroid}
+            table(class="table table-hover table-sm statistics-exercise-kmeans-table")
+              tr
+                th Username
+                th Hostname
+                th Time
+                th Command
+              each item in cluster.items
+                tr
+                  td
+                    pre #{item.user}
+                  td
+                    pre #{item.hostname}
+                  td
+                    pre #{item.date}
+                  td
+                    pre #{item.command}
+        canvas(id="tsnecanvas")

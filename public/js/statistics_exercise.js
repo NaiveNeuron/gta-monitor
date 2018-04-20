@@ -31,6 +31,8 @@ STExercise.prototype.initialize = function(posts)
 STExercise.prototype.initialize_level_histogram = function() {
     var ctx = document.getElementById('level_histogram');
 
+    var level_commands = this.level_commands;
+
     var myChart = new Chart(ctx, {
         type: 'bar',
         data: {
@@ -46,7 +48,7 @@ STExercise.prototype.initialize_level_histogram = function() {
                     borderWidth: 1
                 },
                 {
-                    label: 'Failed',
+                    label: 'Commands',
                     data: Object.values(this.level_commands).map(function(item) {
                         return item[POST_COMMAND] / (item[POST_PASSED]+item[POST_COMMAND]);
                     }),
@@ -59,6 +61,16 @@ STExercise.prototype.initialize_level_histogram = function() {
         options: {
             tooltips: {
 			    mode: 'label',
+                callbacks: {
+                    label: function (tooltipItems, data) {
+                        var type = tooltipItems.datasetIndex == 0 ? POST_PASSED : POST_COMMAND;
+                        return type + ': ' + level_commands[tooltipItems.xLabel][type];
+                    }
+                }
+            },
+            title: {
+                display: true,
+                text: 'The number of `passed` (green) and `commands` (red) - hover over bars to see exact numbers'
             },
             scales: {
                 xAxes: [{
@@ -76,9 +88,21 @@ STExercise.prototype.initialize_level_histogram = function() {
     });
 }
 
+STExercise.prototype.initialize_kmeans_links = function() {
+    var labels = '';
+    for (level in this.level_commands) {
+        labels += '<a class="badge badge-primary" href="' + window.location.pathname.replace(/\/$/, '') + '/' + level.slice(0, -1) +  '">'
+                +   level
+                + '</a>';
+    }
+
+    $('.statistics-kmeans-badges').append(labels);
+}
+
 var stexercise = new STExercise();
 
 $(document).ready(function() {
     stexercise.initialize(POSTS);
     stexercise.initialize_level_histogram();
+    stexercise.initialize_kmeans_links();
 });
