@@ -1,3 +1,22 @@
+var POINT_COLORS = [
+    'red', 'blue', 'green', 'orange', 'purple', 'lightgreen', 'lightblue',
+    'magenta', 'brown', 'grey'
+]
+
+function jaccard_vector_index(a, b){
+    var intersection = 0;
+    var all = 0;
+    for (var i = 0; i < a.length; i++) {
+        if (a[i] == 1 || b[i] == 1) {
+            all++;
+            if (a[i] == b[i])
+                intersection++;
+        }
+    }
+
+    return 1 - (intersection / all);
+}
+
 var T = new tsnejs.tSNE({
     epsilon: 2, // epsilon is learning rate (10 = default)
     perplexity: 5
@@ -5,18 +24,23 @@ var T = new tsnejs.tSNE({
 
 $(document).ready(function() {
     if (CLUSTERS.length) {
-        var dists = CLUSTERS.map(function(c) {
+        var pairs = CLUSTERS.map(function(c) {
             return c.items.map(function(i) {
                 return [i.vector, c.id];
             });
         });
+        pairs = [].concat.apply([], pairs);
+        var data = pairs.map(function(d) { return d[0]; });
 
-        dists = [].concat.apply([], dists);
-        var data = dists.map(function(d) {
-            return d[0];
-        });
+        var dist_matrix = [];
+        for (var i = 0; i < data.length; i++) {
+            dist_matrix.push([]);
+            for (var j = 0; j < data.length; j++)
+                dist_matrix[i].push(jaccard_vector_index(data[i], data[j]));
+        }
 
         T.initDataRaw(data);
+        /* T.initDataDist(dist_matrix); */
 
         for(var k = 0; k < 500; k++) {
            T.step();
@@ -24,23 +48,43 @@ $(document).ready(function() {
 
         var Y = T.getSolution();
 
-        console.log(Y.map(function(pos){ return {x: pos[0]/20, y: pos[1]/20}}))
+        var datasets = [];
+        for (var i = 0; i <= pairs[pairs.length-1][1]; i++) {
+            datasets.push({
+                label: 'Cluster ' + i,
+                fill: false,
+                showLine: false,
+                pointBackgroundColor: i < POINT_COLORS.length ? POINT_COLORS[i] : 'black',
+                backgroundColor: i < POINT_COLORS.length ? POINT_COLORS[i] : 'black',
+                data: []
+            });
+        }
+
+        for (var i = 0; i < pairs.length; i++) {
+            datasets[pairs[i][1]].data.push({x: Y[i][0], y: Y[i][1]});
+        }
+
         var ctx = document.getElementById('tsnecanvas').getContext('2d');
         var scatterChart = new Chart(ctx, {
             type: 'scatter',
             data: {
-                datasets: [{
-                    label: 'Scatter Dataset',
-                    fill: false,
-                    showLine: false,
-                    data: Y.map(function(pos){ return {x: pos[0], y: pos[1]}})
-                }]
+                datasets: datasets
             },
             options: {
                 title: {
                     display: true,
-                    text: 'Vizualization of vectors of bag of words using t-SNE algorithm'
-                }
+                    text: 'Vizualization of vectors of bag of words using t-SNE algorithm in 2D'
+                },
+                tooltips: {
+                    mode: 'label',
+                    position: 'nearest',
+                    callbacks: {
+                        label: function (tooltipItems, data) {
+                            return CLUSTERS[tooltipItems.datasetIndex].items[tooltipItems.index].user +
+                                   ' (' + CLUSTERS[tooltipItems.datasetIndex].items[tooltipItems.index].hostname + ')';
+                        }
+                    }
+                },
             }
         });
     }
