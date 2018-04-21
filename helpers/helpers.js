@@ -42,19 +42,19 @@ module.exports = {
         return mapping;
     },
 
-    compute_kmeans: function (set_commands, k, dist_function, callback) {
-        var dist;
+    get_distance_function: function(dist_function) {
         switch (dist_function) {
             case 'cosine':
-                dist = cos_distance;
-                break;
+                return cos_distance;
             case 'jaccard':
-                dist = jaccard_vector_index;
-                break;
+                return jaccard_vector_index;
             default:
-                dist = jaccard_vector_index;
-                break;
+                return jaccard_vector_index;
         }
+    },
+
+    compute_kmeans: function (set_commands, k, dist_function, callback) {
+        var dist = this.get_distance_function(dist_function);
 
         kmeans.clusterize(set_commands.map(function(c) { return c.vector; }),
             {

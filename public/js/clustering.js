@@ -3,20 +3,6 @@ var POINT_COLORS = [
     'magenta', 'brown', 'grey'
 ]
 
-function jaccard_vector_index(a, b){
-    var intersection = 0;
-    var all = 0;
-    for (var i = 0; i < a.length; i++) {
-        if (a[i] == 1 || b[i] == 1) {
-            all++;
-            if (a[i] == b[i])
-                intersection++;
-        }
-    }
-
-    return 1 - (intersection / all);
-}
-
 var T = new tsnejs.tSNE({
     epsilon: 2, // epsilon is learning rate (10 = default)
     perplexity: 5
@@ -32,15 +18,7 @@ $(document).ready(function() {
         pairs = [].concat.apply([], pairs);
         var data = pairs.map(function(d) { return d[0]; });
 
-        var dist_matrix = [];
-        for (var i = 0; i < data.length; i++) {
-            dist_matrix.push([]);
-            for (var j = 0; j < data.length; j++)
-                dist_matrix[i].push(jaccard_vector_index(data[i], data[j]));
-        }
-
-        T.initDataRaw(data);
-        /* T.initDataDist(dist_matrix); */
+        T.initDataDist(DIST_MATRIX);
 
         for(var k = 0; k < 500; k++) {
            T.step();
@@ -73,10 +51,10 @@ $(document).ready(function() {
             options: {
                 title: {
                     display: true,
-                    text: 'Vizualization of vectors of bag of words using t-SNE algorithm in 2D'
+                    text: 'Vizualization of vectors of bag of words in 2D using t-SNE algorithm'
                 },
                 tooltips: {
-                    mode: 'label',
+                    mode: 'single',
                     position: 'nearest',
                     callbacks: {
                         label: function (tooltipItems, data) {
@@ -84,7 +62,7 @@ $(document).ready(function() {
                                    ' (' + CLUSTERS[tooltipItems.datasetIndex].items[tooltipItems.index].hostname + ')';
                         }
                     }
-                },
+                }
             }
         });
     }

@@ -436,7 +436,7 @@ router.get('/statistics/:exercise_id', login_required, function(req, res, next) 
 });
 
 router.get('/statistics/:exercise_id/:level', login_required, function(req, res, next) {
-    var k = req.param('k', 4);
+    var k = req.param('k', 3);
     var dist_function = req.param('distance', 'jaccard');
 
     models.Exercise.findById(req.params.exercise_id).then(function(exercise) {
@@ -479,7 +479,7 @@ router.get('/statistics/:exercise_id/:level', login_required, function(req, res,
                 return c;
             });
 
-            helpers.compute_kmeans(set_commands, k, app_config.kmeans_distance, function(err, result) {
+            helpers.compute_kmeans(set_commands, k, dist_function, function(err, result) {
                 if (err) {
                     console.error(err);
                     return res.render('statistics_kmeans', { header: 'k-means clustering - ' + dist_function + ' distance',
@@ -489,6 +489,7 @@ router.get('/statistics/:exercise_id/:level', login_required, function(req, res,
                 }
 
                 var clusters = [];
+                var vectors = [];
                 for (var i = 0; i < result.length; i++) {
                     var item = result[i];
                     var cluster = {centroid: item.centroid.join(', '), items: [], id: i};
@@ -499,13 +500,28 @@ router.get('/statistics/:exercise_id/:level', login_required, function(req, res,
                                             command: set_commands[item.clusterInd[j]].command,
                                             vector: set_commands[item.clusterInd[j]].vector,
                         });
+                        vectors.push(set_commands[item.clusterInd[j]].vector);
                     }
                     clusters.push(cluster);
                 }
+
+                var dist_matrix = [];
+                var distance = helpers.get_distance_function(dist_function);
+                for (var i = 0; i < vectors.length; i++) {
+                    dist_matrix.push([]);
+                    for (var j = 0; j < vectors.length; j++) {
+                        if (i != j)
+                            dist_matrix[i].push(distance(vectors[i], vectors[j]));
+                        else
+                            dist_matrix[i].push(0);
+                    }
+                }
+
                 res.render('statistics_kmeans', { header: 'k-means clustering - ' + dist_function + ' distance',
                                                   clusters: clusters,
                                                   all_words: all_words,
                                                   k: k,
+                                                  dist_matrix: JSON.stringify(dist_matrix),
                                                   string_clusters: JSON.stringify(clusters)});
             });
         });
