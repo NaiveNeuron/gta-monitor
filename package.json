@@ -32,7 +32,7 @@
     "sequelize": "^4.23.1",
     "sequelize-cli": "^3.1.0",
     "serve-favicon": "~2.4.5",
-    "shell-quote": "git+ssh://git@github.com/Adman/node-shell-quote.git",
+    "shell-quote": "git+https://github.com/Adman/node-shell-quote.git",
     "socket.io": "^2.0.4"
   },
   "description": "Intelligent system for monitoring students who work in the Linux terminal",
