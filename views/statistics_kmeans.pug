@@ -1,0 +1,53 @@
+extends layout
+
+block js
+  script(src="/js/lib/tsne.js")
+  script(src="/js/lib/Chart.min.js")
+  script(src="/js/lib/chartjs-plugin-zoom.min.js")
+  script.
+    var CLUSTERS = !{string_clusters};
+    var DIST_MATRIX = !{dist_matrix};
+  script(src="/js/clustering.js")
+
+block content
+  div(class="narrow-content-bigger")
+    h1 #{header}
+    form(method="GET", class="form-inline")
+      label(for="k_parameter", class="m-2") Clusters
+      input(type="number", class="form-control m-2", name="k", id="k_parameter", value=k)
+      label(for="distance_function", class="m-2") Distance function
+      select(class="form-control m-2", name="distance", id="distance_function")
+        option jaccard
+        option cosine
+      button(class="btn btn-primary m-2", type="submit") Recompute
+    hr
+    div(class="statistics-exercise-container")
+      if error
+        div(class="alert alert-danger" role="alert") #{error}
+      else
+        h5 Words used in solutions
+        each word in all_words
+          span(class="badge badge-info word-badge") #{word}
+        hr
+        each cluster in clusters
+          div(class="statistics-cluster-container")
+            h5
+              strong Cluster #{cluster.id}
+            p(style="font-size: 0.9em;") Centroid #{cluster.centroid}
+            table(class="table table-hover table-sm statistics-exercise-kmeans-table")
+              tr
+                th Username
+                th Hostname
+                th Time
+                th Command
+              each item in cluster.items
+                tr
+                  td
+                    pre #{item.user}
+                  td
+                    pre #{item.hostname}
+                  td
+                    pre #{item.date}
+                  td
+                    pre #{item.command}
+        canvas(id="tsnecanvas")
