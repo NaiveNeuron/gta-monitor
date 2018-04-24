@@ -438,6 +438,7 @@ router.get('/statistics/:exercise_id', login_required, function(req, res, next) 
 router.get('/statistics/:exercise_id/:level', login_required, function(req, res, next) {
     var k = req.param('k', 3);
     var dist_function = req.param('distance', 'jaccard');
+    var input_repr = req.param('representation', 'unigrams');
 
     models.Exercise.findById(req.params.exercise_id).then(function(exercise) {
         models.Post.findAll({
@@ -454,17 +455,42 @@ router.get('/statistics/:exercise_id/:level', login_required, function(req, res,
                 c = c.get({plain: true});
 
                 var p = shell_parse(c.command);
-                for (var i = 0; i < p.length; i++) {
-                    if (typeof(p[i]) === 'object')
-                        p[i] = p[i].op;
+                var words = new Set();
+                var prev_cmd = null;
+                var separator = true;
 
-                    all_words.add(p[i]);
+                for (var i = 0; i < p.length; i++) {
+                    separator = false;
+                    if (typeof(p[i]) === 'object') {
+                        p[i] = p[i].op;
+                        separator = true;
+                        prev_cmd = null;
+                    }
+
+                    switch(input_repr) {
+                        case 'unigrams':
+                            word = p[i];
+                            break;
+                        case 'bigrams':
+                            if (separator) {
+                                word = p[i];
+                            } else if (!separator && prev_cmd == null) {
+                                word = p[i];
+                                prev_cmd = word;
+                            } else {
+                                word = prev_cmd + ' ' + p[i];
+                            }
+                            break;
+                    }
+                    words.add(word);
+                    all_words.add(word);
                 }
+
                 var date = new Date(c.date);
                 c.date = helpers.pad(date.getHours()) + ':'
                        + helpers.pad(date.getMinutes()) + ':'
                        + helpers.pad(date.getSeconds());
-                c.unigrams = Array.from(new Set(p));
+                c.words = Array.from(words);
                 return c;
             });
 
@@ -473,7 +499,7 @@ router.get('/statistics/:exercise_id/:level', login_required, function(req, res,
                 c.vector = [];
                 for (var i = 0; i < all_words.length; i++) {
                     c.vector.push(
-                        c.unigrams.indexOf(all_words[i]) > -1 ? 1 : 0
+                        c.words.indexOf(all_words[i]) > -1 ? 1 : 0
                     )
                 }
                 return c;
@@ -482,7 +508,7 @@ router.get('/statistics/:exercise_id/:level', login_required, function(req, res,
             helpers.compute_kmeans(set_commands, k, dist_function, function(err, result) {
                 if (err) {
                     console.error(err);
-                    return res.render('statistics_kmeans', { header: 'k-means clustering - ' + dist_function + ' distance',
+                    return res.render('statistics_kmeans', { header: 'k-means clustering - ' + dist_function + ' distance - ' + input_repr,
                                                              error: 'The number of points must be greater than the number k of clusters',
                                                              k: k,
                                                              string_clusters: JSON.stringify([])});
@@ -517,7 +543,7 @@ router.get('/statistics/:exercise_id/:level', login_required, function(req, res,
                     }
                 }
 
-                res.render('statistics_kmeans', { header: 'k-means clustering - ' + dist_function + ' distance',
+                res.render('statistics_kmeans', { header: 'k-means clustering - ' + dist_function + ' distance - ' + input_repr,
                                                   clusters: clusters,
                                                   all_words: all_words,
                                                   k: k,
