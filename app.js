@@ -114,7 +114,7 @@ models.sequelize.sync().then(function() {
         });
     });
 }).catch(function(err) {
-    console.log(err, 'Something went wrong with the Database Update!');
+    console.error(err, 'Something went wrong with the Database Update!');
 });
 
 /* Change status of exercises scheduled -> active, active -> done */
@@ -131,10 +131,6 @@ var j = schedule.scheduleJob('* * * * *', function(){
             } else if (ex.status == 'active' && ends.getTime() < curr.getTime()) {
                 item.update({status: 'done'}).then(function() {
                     app.locals.navbar_evaluate_exercises.push(item);
-
-                    /* reset activities*/
-                    global.activities = {};
-                    global.inactive = [];
                 });
             }
         });
