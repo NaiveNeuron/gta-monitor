@@ -61,15 +61,21 @@ module.exports = function(sequelize, DataTypes) {
 
         homedir: {
             type: DataTypes.STRING
-        },
-
-        /*indexes: [
+        }
+    },
+    {
+        indexes: [
             {
-                name: 'post_index',
+                name: 'level',
                 method: 'HASH',
-                fields: ['exercise_id', {attribute: 'title', collate: 'en_US', order: 'DESC', length: 5}]
+                fields: ['level']
+            },
+            {
+                name: 'type',
+                method: 'HASH',
+                fields: ['type']
             }
-        ]*/
+        ]
     });
 
     Post.associate = function(models) {
