@@ -7,9 +7,9 @@ function jaccard_vector_index(a, b){
     var intersection = 0;
     var all = 0;
     for (var i = 0; i < a.length; i++) {
-        if (a[i] == 1 || b[i] == 1) {
+        if (a[i] >= 0.5 || b[i] >= 0.5) {
             all++;
-            if (a[i] == b[i])
+            if (a[i] >= 0.5 && b[i] >= 0.5)
                 intersection++;
         }
     }
