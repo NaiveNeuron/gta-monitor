@@ -1,3 +1,20 @@
+var tags_to_replace = {
+    '&': '&amp;',
+    '<': '&lt;',
+    '>': '&gt;'
+};
+
+function replace_tag(tag)
+{
+    return tags_to_replace[tag] || tag;
+}
+
+function safe_tags_replace(str)
+{
+    return str.replace(/[&<>]/g, replace_tag);
+}
+
+
 function modal_append_command(command, level, date, passed)
 {
     var date = get_date_from_string(date);
@@ -9,7 +26,7 @@ function modal_append_command(command, level, date, passed)
             +   '<span' + (passed ? ' class="passed-command"' : '') + '>'
             +     date_str + ' ' + level + ' $ '
             +   '</span>'
-            +   '<span class="terminal-command">' + filtered_cmd + '</span>'
+            +   '<span class="terminal-command">' + safe_tags_replace(filtered_cmd) + '</span>'
             + '</code>';
     $('.modal-command-history').append(msg);
 }
