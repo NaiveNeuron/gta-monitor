@@ -352,7 +352,7 @@ router.post('/evaluate/:exercise_id/auto', login_required, function(req, res, ne
                 where: {
                     exercise_id: exercise.id,
                     type: {
-                        [sequelize.Op.or]: [global.POST_PASSED, global.POST_EXIT]
+                        [sequelize.Op.or]: [global.POST_PASSED, global.POST_EXIT, global.POST_START]
                     }
                 }
             }).then(function(resultset) {
@@ -361,7 +361,7 @@ router.post('/evaluate/:exercise_id/auto', login_required, function(req, res, ne
                 for (var i = resultset.length - 1; i >= 0; i--) {
                     var item = resultset[i];
 
-                    if (item.type == global.POST_EXIT && item.user in grades) {
+                    if ((item.type == global.POST_EXIT || item.type == global.POST_START) && item.user in grades) {
                         grades[item.user].exit = true;
                         continue;
                     }
