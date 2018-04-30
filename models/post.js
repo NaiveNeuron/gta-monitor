@@ -43,7 +43,7 @@ module.exports = function(sequelize, DataTypes) {
             type: DataTypes.STRING,
             allowNull: false,
             validate: {
-                isIPv4: true
+                isIP: true
             }
         },
 
