@@ -42,9 +42,6 @@ module.exports = function(sequelize, DataTypes) {
         ip: {
             type: DataTypes.STRING,
             allowNull: false,
-            validate: {
-                isIP: true
-            }
         },
 
         level: {
