@@ -40,8 +40,13 @@ router.post('/', function(req, res, next) {
                     try {
                         data.command = decodeURI(decodeURIComponent(d.command));
                     } catch (e) {
-                        data.command = d.command;
                         console.error(e);
+                        try {
+                    		data.command = decodeURI(d.command);
+                    	} catch (e) {
+                            data.command = d.command;
+                            console.error(e);
+                    	}
                     }
                 }
 
