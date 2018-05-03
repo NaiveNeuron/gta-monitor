@@ -49,3 +49,14 @@ $ node create_admin.js
 ```
 
 It will prompt you to fill in basic info including password and save it.
+
+### Sending POST requests
+
+File `sample_requests.sh` contains requests of all types that gta-monitor
+accepts. If you want to send a request, run command below. Note that if
+you specify some optional argument, all of optional arguments before must be
+specified.
+
+```bash
+$ bash sample_requests.sh <type> [USER] [HOSTNAME] [SERVER] [IP]
+```
