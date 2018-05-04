@@ -1,7 +1,8 @@
 var tags_to_replace = {
     '&': '&amp;',
     '<': '&lt;',
-    '>': '&gt;'
+    '>': '&gt;',
+    '\n': '&#10;'
 };
 
 function replace_tag(tag)
@@ -11,9 +12,8 @@ function replace_tag(tag)
 
 function safe_tags_replace(str)
 {
-    return str.replace(/[&<>]/g, replace_tag);
+    return str.replace(/[&<>\n]/g, replace_tag);
 }
-
 
 function modal_append_command(command, level, date, passed)
 {
