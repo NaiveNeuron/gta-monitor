@@ -28,9 +28,8 @@ EVExercise.prototype.initialize = function(posts, evals)
         this.students[eval.user].evaluate.set_comment(eval.comment);
     }
 
-    var total_lines = 0;
-    var total_seconds = 0;
-    var unknown_times = 0;
+    var total_times = [];
+    var total_lines = [];
 
     for (var stud in this.students) {
         var student = this.students[stud];
@@ -46,23 +45,32 @@ EVExercise.prototype.initialize = function(posts, evals)
                 +   '<td class="bonus-cell">' + student.evaluate.get_bonus() + '</td>'
                 + '</tr>';
 
-        total_lines += student.lines;
+        if (student.lines > 0)
+            total_lines.push(student.lines);
+
         var curr_working_time = student.get_working_time_seconds();
         if (curr_working_time)
-            total_seconds += curr_working_time;
-        else
-            unknown_times++;
+            total_times.push(curr_working_time);
 
         $('.evaluate-exercise-table tbody').append(row);
     }
 
-    var ave_seconds = total_seconds / (Object.keys(this.students).length - unknown_times);
+    var ave_lines = total_lines.reduce(function(acc, val) { return acc + val; }) / total_lines.length
+    var ave_seconds = total_times.reduce(function(acc, val) { return acc + val; }) / total_times.length;
     var t = new Date(0);
     t.setSeconds(ave_seconds);
     var ave_time = pad(t.getUTCHours()) + ':' + pad(t.getUTCMinutes()) + ':' + pad(t.getUTCSeconds());
 
-    $('.evaluate-exercise-average-commands').text(total_lines / Object.keys(this.students).length);
+    var med_seconds = median(total_times);
+    var t2 = new Date(0);
+    t2.setSeconds(med_seconds);
+    var med_time = pad(t2.getUTCHours()) + ':' + pad(t2.getUTCMinutes()) + ':' + pad(t2.getUTCSeconds());
+
+    $('.evaluate-exercise-average-commands').text(ave_lines);
+    $('.evaluate-exercise-median-commands').text(median(total_lines));
     $('.evaluate-exercise-average-time').text(ave_time);
+    $('.evaluate-exercise-median-time').text(med_time);
+
     $('.evaluate-exercise-table').bootstrapTable({'search': true});
 }
 

@@ -17,3 +17,16 @@ function parse_level_id(level)
     }
     return null;
 }
+
+function median(numbers) {
+    var median = 0;
+    var numsLen = numbers.length;
+    numbers.sort(function(a,b) { return a-b; });
+
+    if (numsLen % 2 === 0)
+        median = (numbers[numsLen / 2 - 1] + numbers[numsLen / 2]) / 2;
+    else
+        median = numbers[(numsLen - 1) / 2];
+
+    return median;
+}

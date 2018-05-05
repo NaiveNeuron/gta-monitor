@@ -162,6 +162,13 @@ code .terminal-command {
     display: inline-block;
     visibility: hidden;
 }
+.evaluate-exercise-average-commands,
+.evaluate-exercise-median-commands,
+.evaluate-exercise-average-time,
+.evaluate-exercise-median-time {
+    font-weight: bold;
+    margin-right: 20px;
+}
 
 .evaluate-exercise-container h5::after {
     content: '';
