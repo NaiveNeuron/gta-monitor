@@ -28,6 +28,10 @@ EVExercise.prototype.initialize = function(posts, evals)
         this.students[eval.user].evaluate.set_comment(eval.comment);
     }
 
+    var total_lines = 0;
+    var total_seconds = 0;
+    var unknown_times = 0;
+
     for (var stud in this.students) {
         var student = this.students[stud];
 
@@ -42,9 +46,23 @@ EVExercise.prototype.initialize = function(posts, evals)
                 +   '<td class="bonus-cell">' + student.evaluate.get_bonus() + '</td>'
                 + '</tr>';
 
+        total_lines += student.lines;
+        var curr_working_time = student.get_working_time_seconds();
+        if (curr_working_time)
+            total_seconds += curr_working_time;
+        else
+            unknown_times++;
+
         $('.evaluate-exercise-table tbody').append(row);
     }
 
+    var ave_seconds = total_seconds / (Object.keys(this.students).length - unknown_times);
+    var t = new Date(0);
+    t.setSeconds(ave_seconds);
+    var ave_time = pad(t.getUTCHours()) + ':' + pad(t.getUTCMinutes()) + ':' + pad(t.getUTCSeconds());
+
+    $('.evaluate-exercise-average-commands').text(total_lines / Object.keys(this.students).length);
+    $('.evaluate-exercise-average-time').text(ave_time);
     $('.evaluate-exercise-table').bootstrapTable({'search': true});
 }
 

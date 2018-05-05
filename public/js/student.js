@@ -68,6 +68,14 @@ Student.prototype.get_working_time_or_dash = function() {
     return '-';
 }
 
+Student.prototype.get_working_time_seconds = function() {
+    if (this.started_at != null && this.finished_at != null) {
+        var diff = new Date(this.finished_at - this.started_at);
+        return diff.getTime() / 1000;;
+    }
+    return null;
+}
+
 /* Return dict containing {'string': MM:SS, 'seconds': diff} */
 Student.prototype.get_inactivity_time = function(now) {
     var diff = new Date(now - this.last_activity_time);
