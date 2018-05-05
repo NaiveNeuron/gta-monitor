@@ -37,21 +37,11 @@ router.post('/', function(req, res, next) {
                 var data = {type: d.type, date: dt, user: d.user,
                             hostname: d.hostname, ip: d.ip, exercise_id: ex.id};
                 if (d.type == global.POST_COMMAND || d.type == global.POST_PASSED) {
-                    /* These nested try-catch blocks are quite unavoidable */
                     try {
-                        data.command = decodeURI(decodeURIComponent(d.command));
+                        data.command = Buffer.from(d.command, 'base64').toString();
                     } catch (e) {
+                        data.command = d.command;
                         console.error(e);
-                        try {
-                            data.command = decodeURIComponent(d.command);
-                    	} catch (e) {
-                            try {
-                                data.command = decodeURI(d.command);
-                            } catch (e) {
-                                data.command = d.command;
-                                console.error(e);
-                            }
-                    	}
                     }
                 }
 
