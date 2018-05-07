@@ -438,7 +438,7 @@ router.get('/statistics/:exercise_id', login_required, function(req, res, next) 
 router.get('/statistics/:exercise_id/:level', login_required, function(req, res, next) {
     var k = req.param('k', 3);
     var dist_function = req.param('distance', 'cosine');
-    var input_repr = req.param('representation', 'unigrams');
+    var input_repr = req.param('representation', 'bigrams');
 
     models.Exercise.findById(req.params.exercise_id).then(function(exercise) {
         models.Post.findAll({
