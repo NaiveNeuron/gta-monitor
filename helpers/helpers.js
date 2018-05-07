@@ -49,7 +49,7 @@ module.exports = {
             case 'jaccard':
                 return jaccard_vector_index;
             default:
-                return jaccard_vector_index;
+                return cos_distance;
         }
     },
 
