@@ -59,7 +59,8 @@ $(document).ready(function() {
                     callbacks: {
                         label: function (tooltipItems, data) {
                             return CLUSTERS[tooltipItems.datasetIndex].items[tooltipItems.index].user +
-                                   ' (' + CLUSTERS[tooltipItems.datasetIndex].items[tooltipItems.index].hostname + ')';
+                                   ' (' + CLUSTERS[tooltipItems.datasetIndex].items[tooltipItems.index].hostname + ')' +
+                                   ' $ ' + CLUSTERS[tooltipItems.datasetIndex].items[tooltipItems.index].command;
                         }
                     }
                 }
