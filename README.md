@@ -60,3 +60,5 @@ specified.
 ```bash
 $ bash sample_requests.sh <type> [USER] [HOSTNAME] [SERVER] [IP]
 ```
+Argument `type` is one of the following: `start`, `command`, `passed`,
+`exit`, `help`, `ack`
