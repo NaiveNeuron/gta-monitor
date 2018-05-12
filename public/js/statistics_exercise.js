@@ -73,6 +73,11 @@ STExercise.prototype.initialize_level_histogram = function() {
                 text: 'The number of `passed` (green) and `commands` (red) - hover over bars to see exact numbers',
                 fontSize: 15
             },
+            legend: {
+                labels: {
+                    fontSize: 18
+                }
+            },
             scales: {
                 xAxes: [{
           	         stacked: true,
