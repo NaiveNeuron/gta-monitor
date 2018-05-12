@@ -70,17 +70,22 @@ STExercise.prototype.initialize_level_histogram = function() {
             },
             title: {
                 display: true,
-                text: 'The number of `passed` (green) and `commands` (red) - hover over bars to see exact numbers'
+                text: 'The number of `passed` (green) and `commands` (red) - hover over bars to see exact numbers',
+                fontSize: 15
             },
             scales: {
                 xAxes: [{
           	         stacked: true,
                      gridLines: { display: false },
+                     ticks: {
+                         fontSize: 18
+                     }
                 }],
                 yAxes: [{
                     stacked: true,
                     ticks: {
-                        beginAtZero:true
+                        beginAtZero: true,
+                        fontSize: 15
                     }
                 }]
             }
