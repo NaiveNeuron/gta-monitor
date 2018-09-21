@@ -1,0 +1,19 @@
+div(class="modal fade", id="rename-room-modal", tabindex="-1", role="dialog", aria-labelledby="renameRoomLabel", aria-hidden="true")
+  div(class="modal-dialog", role="document")
+    div(class="modal-content")
+      div(class="modal-header")
+        h5(class="modal-title", id="renameRoomLabel") Rename room
+        button(type="button", class="close", data-dismiss="modal", aria-label="Close")
+          span(aria-hidden="true") &times;
+      div(class="modal-body")
+        form(method="POST", class="modal-rename-room-form")
+          div(class="form-group")
+            input(type="text", class="form-control", id="rename_room_name", name="rename_room_name", placeholder="Enter room name")
+        div(class="renaming-new-room")
+          div(class="loader")
+          span Renaming room...
+        div(class="rename-room-failed") Cannot rename room:&nbsp;
+          span
+      div(class="modal-footer")
+        button(type="button", class="btn btn-secondary", data-dismiss="modal") Close
+        button(type="button", class="btn btn-primary", id="btn-rename-room-submit") Rename

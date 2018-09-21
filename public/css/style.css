@@ -56,7 +56,11 @@ code .terminal-command {
     max-height: 120px;
 }
 
-.active-exercise-container #active-exercise-hall {
+.active-exercise-container #tabs {
+    margin-top: 10px;
+}
+
+.active-exercise-container .active-exercise-hall {
     /* TODO: for the future, make the container auto resizable */
     min-height: 4000px;
     border: 1px solid #ccc;
@@ -64,7 +68,7 @@ code .terminal-command {
     position: relative;
 }
 
-.active-exercise-container #active-exercise-hall .user-box {
+.active-exercise-container .active-exercise-hall .user-box {
     position: absolute;
 }
 .user-box {
@@ -144,6 +148,20 @@ code .terminal-command {
     word-wrap: break-word;
 }
 
+#new-room-modal .create-new-room-failed,
+#rename-room-modal .rename-room-failed {
+    display: none;
+    color: red;
+}
+#new-room-modal .loader,
+#rename-room-modal .loader {
+    visibility: visible;
+}
+#new-room-modal .creating-new-room,
+#rename-room-modal .renaming-new-room {
+    display: none;
+}
+
 .loader {
     border: 5px solid #f3f3f3;
     -webkit-animation: spin 1s linear infinite;
@@ -156,6 +174,7 @@ code .terminal-command {
 
 .modal .loader {
     visibility: hidden;
+    display: inline-block;
 }
 
 .evaluate-exercise-buttons .loader {

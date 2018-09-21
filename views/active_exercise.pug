@@ -40,8 +40,14 @@ block content
           span /
           span(id="active-exercise-students-all") 0
           span(class="active-exercise-buttons")
+            button(class="btn btn-outline-info", id="btn-create-room", data-toggle="modal", data-target="#new-room-modal") Create room
+            button(class="btn btn-outline-info", id="btn-rename-room", data-toggle="modal", data-target="#rename-room-modal") Rename room
             button(class="btn btn-outline-info", id="btn-toggle-userboxes") Toggle
             button(class="btn btn-primary", id="btn-save-positions") Save positions
       div(id="active-exercise-students")
-      div(id="active-exercise-hall")
+      div(id="tabs")
+        ul
+
       include snippets/student_modal.pug
+      include snippets/new_room_modal.pug
+      include snippets/rename_room_modal.pug

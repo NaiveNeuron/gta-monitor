@@ -18,7 +18,8 @@ function parse_level_id(level)
     return null;
 }
 
-function median(numbers) {
+function median(numbers)
+{
     var median = 0;
     var numsLen = numbers.length;
     numbers.sort(function(a,b) { return a-b; });
@@ -29,4 +30,10 @@ function median(numbers) {
         median = numbers[(numsLen - 1) / 2];
 
     return median;
+}
+
+/* replace illegal characters from DOM id attribute */
+function sanitize_room_name(name)
+{
+    return name.replace(/^[^a-z]+|[^\w:.-]+/gi, '_');
 }

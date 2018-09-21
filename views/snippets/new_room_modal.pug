@@ -1,0 +1,19 @@
+div(class="modal fade", id="new-room-modal", tabindex="-1", role="dialog", aria-labelledby="newRoomLabel", aria-hidden="true")
+  div(class="modal-dialog", role="document")
+    div(class="modal-content")
+      div(class="modal-header")
+        h5(class="modal-title", id="newRoomLabel") Create new room
+        button(type="button", class="close", data-dismiss="modal", aria-label="Close")
+          span(aria-hidden="true") &times;
+      div(class="modal-body")
+        form(method="POST", class="modal-new-room-form")
+          div(class="form-group")
+            input(type="text", class="form-control", id="new_room_name", name="new_room_name", placeholder="Enter room name")
+        div(class="creating-new-room")
+          div(class="loader")
+          span Creating new room...
+        div(class="create-new-room-failed") Cannot create new room:&nbsp;
+          span
+      div(class="modal-footer")
+        button(type="button", class="btn btn-secondary", data-dismiss="modal") Close
+        button(type="button", class="btn btn-primary", id="btn-create-room-submit") Create
