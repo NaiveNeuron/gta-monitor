@@ -365,7 +365,7 @@ Exercise.prototype.create_box_grid = function() {
 
     for(var user in this.students) {
        var student = this.students[user];
-        if (/*!student.exit && */student.is_waiting_for_dragging()) {
+        if (!student.exit && student.is_waiting_for_dragging()) {
             $('#student-' + student.user).detach().appendTo('#active-exercise-hall-' + this.current_room);
             $('#student-' + student.user).css({'position': 'absolute', 'top': next_top, 'left': next_left});
 
