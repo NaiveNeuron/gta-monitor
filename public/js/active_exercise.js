@@ -348,6 +348,46 @@ Exercise.prototype.update_finished_students = function() {
     $('#active-exercise-students-finished').text(this.finished);
 }
 
+Exercise.prototype.is_create_box_grid_allowed = function() {
+   return Object.keys(this.positions[this.current_room]).length == 0;
+}
+/* Automatically order boxes into a grid in the current room */
+Exercise.prototype.create_box_grid = function() {
+    if (!this.is_create_box_grid_allowed()) {
+        return;
+    }
+
+    var width = -1;
+    var height = -1;
+    var next_top = 0;
+    var next_left = 0;
+    var container_width = $('#active-exercise-hall-' + this.current_room).width();
+
+    for(var user in this.students) {
+       var student = this.students[user];
+        if (/*!student.exit && */student.is_waiting_for_dragging()) {
+            $('#student-' + student.user).detach().appendTo('#active-exercise-hall-' + this.current_room);
+            $('#student-' + student.user).css({'position': 'absolute', 'top': next_top, 'left': next_left});
+
+            this.positions[this.current_room][student.hostname] = new Position(next_top, next_left);
+            this.positions[this.current_room][student.hostname].set_occupy(student.user);
+
+            if (width == -1) {
+                /* Compute the actual width and height if a box */
+                width = $('#student-' + student.user).outerWidth();
+                height = $('#student-' + student.user).outerHeight();
+           }
+
+           next_left += width;
+           if (next_left + width > container_width) {
+               next_left = 0;
+               next_top += height;
+           }
+       }
+    }
+    bind_draggables();
+}
+
 var exercise = new Exercise();
 
 $(document).ready(function() {
@@ -382,6 +422,11 @@ $(document).on('submit','form.modal-new-room-form', function(e) {
     exercise.create_new_room($('.modal-new-room-form #new_room_name').val());
 
     return false;
+});
+
+/* Create grid stuff */
+$(document).on('click', '#btn-order-boxes', function(e) {
+    exercise.create_box_grid();
 });
 
 /* Rename room stuff */

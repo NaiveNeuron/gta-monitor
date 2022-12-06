@@ -202,3 +202,7 @@ Student.prototype.add_post = function(post) {
         this.lines++;
     }
 }
+
+Student.prototype.is_waiting_for_dragging = function() {
+    return $('#student-' + this.user).parent().attr('id') == 'active-exercise-students';
+}
